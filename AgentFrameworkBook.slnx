@@ -29,17 +29,17 @@
     <Project Path="OpenAIResponsesWithBackgroundResponses/OpenAIResponsesWithBackgroundResponses.csproj" Id="41c00d70-5424-4066-818b-006bc37f7263" />
   </Folder>
   <Folder Name="/05. Agents/">
-    <Project Path="MultipleAgentsWithSameSession/MultipleAgentsWithSameSession.csproj" Id="f05259fd-d151-46f9-96d7-8426c6da7627" />
+    <Project Path="Agent/Agent.csproj" Id="fece06e3-a9f1-4482-be9e-de754d23195a" />
+    <Project Path="AgentWithBackgroundResponses/AgentWithBackgroundResponses.csproj" Id="f78cafa2-72f7-44e1-a1fc-cb07ad6a13e5" />
     <Project Path="AgentWithChatMessages/AgentWithChatMessages.csproj" Id="52ea5da1-ac91-4c7e-bb82-132992baeff3" />
     <Project Path="AgentWithChatMessagesAndMultiModal/AgentWithChatMessagesAndMultiModal.csproj" Id="31edf045-ea95-45cc-af30-bc115d9b6803" />
     <Project Path="AgentWithInServiceConversation/AgentWithInServiceConversation.csproj" Id="c6ce86ea-4f6f-4bd8-8c7c-9c3237d44ded" />
-    <Project Path="AgentWithBackgroundResponses/AgentWithBackgroundResponses.csproj" Id="f78cafa2-72f7-44e1-a1fc-cb07ad6a13e5" />
     <Project Path="AgentWithSerialization/AgentWithSerialization.csproj" />
+    <Project Path="AgentWithSession/AgentWithSession.csproj" Id="c8c611b0-91e1-414b-be22-715edae76a52" />
     <Project Path="AgentWithStreaming/AgentWithStreaming.csproj" Id="46e0e8cc-cca7-4299-ae34-9962ee48e9d9" />
     <Project Path="AgentWithStructuredOutput/AgentWithStructuredOutput.csproj" Id="49800875-db92-4293-bc4e-fdec091e7388" />
-    <Project Path="AgentWithSession/AgentWithSession.csproj" Id="c8c611b0-91e1-414b-be22-715edae76a52" />
     <Project Path="DeclarativeAgent/DeclarativeAgent.csproj" />
-    <Project Path="Agent/Agent.csproj" Id="fece06e3-a9f1-4482-be9e-de754d23195a" />
+    <Project Path="MultipleAgentsWithSameSession/MultipleAgentsWithSameSession.csproj" Id="f05259fd-d151-46f9-96d7-8426c6da7627" />
   </Folder>
   <Folder Name="/06. Tools/">
     <Project Path="AgentWithFunctionApproval/AgentWithFunctionApproval.csproj" Id="3acf6a90-ad39-4614-a9f5-f74c8935c064" />
@@ -54,14 +54,17 @@
     <Project Path="AgentWithFileBasedChatHistoryProvider/AgentWithFileBasedChatHistoryProvider.csproj" Id="0b75af6f-310d-4163-a2c7-b331545323a5" />
     <Project Path="AgentWithInMemoryChatHistoryProvider/AgentWithInMemoryChatHistoryProvider.csproj" Id="75cf3aa0-4a46-4a80-9dbf-b130680be66f" />
     <Project Path="AgentWithInMemoryChatMessagesAndInMemoryContextProvider/AgentWithInMemoryChatMessagesAndInMemoryContextProvider.csproj" Id="6d9df092-fc46-4190-9b89-40e16cf34170" />
+    <Project Path="AgentWithInMemoryVectorStoreProvider/AgentWithInMemoryVectorStoreProvider.csproj" Id="b4ce436c-6e61-44d4-934d-58ec4e10ae7d" />
     <Project Path="AgentWithTextSearchProvider/AgentWithTextSearchProvider.csproj" Id="3f7ad7a2-0a98-4af0-ba40-ddf7f272f758" />
     <Project Path="AgentWithVectorStoreChatHistoryProvider/AgentWithVectorStoreChatHistoryProvider.csproj" Id="7abd3e3e-5a46-48fe-b918-9fe8721ef6cc" />
-    <Project Path="AgentWithInMemoryVectorStoreProvider/AgentWithInMemoryVectorStoreProvider.csproj" Id="b4ce436c-6e61-44d4-934d-58ec4e10ae7d" />
   </Folder>
   <Folder Name="/08. MCP/">
     <Project Path="MCPClientWithHttp/MCPClientWithHttp.csproj" Id="11319cbb-130c-48f4-817a-3da33521266b" />
     <Project Path="MCPClientWithStdio/MCPClientWithStdio.csproj" Id="00d7ba99-6c36-420f-acea-b58b44076210" />
     <Project Path="MCPServerWithHttp/MCPServerWithHttp.csproj" Id="95dc6035-a066-4f1d-a205-eb434a09cd8d" />
     <Project Path="MCPServerWithStdio/MCPServerWithStdio.csproj" Id="f3625ef7-b036-40f1-9a22-7b3e408a38c5" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
   </Folder>
 </Solution>
