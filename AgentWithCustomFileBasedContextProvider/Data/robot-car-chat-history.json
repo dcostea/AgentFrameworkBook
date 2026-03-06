@@ -1,0 +1,20 @@
+﻿[
+  {
+    "Role": "user",
+    "Contents": [
+      {
+        "$type": "text",
+        "Text": "What day is today?"
+      }
+    ]
+  },
+  {
+    "Role": "assistant",
+    "Contents": [
+      {
+        "$type": "text",
+        "Text": "Today is June 2, 2025"
+      }
+    ]
+  }
+]

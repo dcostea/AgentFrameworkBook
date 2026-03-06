@@ -1,0 +1,5 @@
+root = true
+
+[*.cs]
+# Namespaces are intentionally suggestive/descriptive and not aligned with folder structure.
+dotnet_diagnostic.IDE0130.severity = none

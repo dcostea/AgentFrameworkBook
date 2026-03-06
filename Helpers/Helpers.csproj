@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+		<NoWarn>1701;1702;OPENAI001</NoWarn>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.0.0-rc3" />
+		<PackageReference Include="Microsoft.Agents.AI.Workflows" Version="1.0.0-rc3" />
+	</ItemGroup>
+	
+</Project>

@@ -1,0 +1,62 @@
+[
+  {
+    "AuthorName": null,
+    "CreatedAt": null,
+    "Role": "user",
+    "Contents": [
+      {
+        "$type": "text",
+        "Text": "Complex command: \r\n\u0022There is a tree directly in front of the car. Avoid it and then return to the original path.\u0022",
+        "Annotations": null,
+        "AdditionalProperties": null
+      }
+    ],
+    "MessageId": null,
+    "AdditionalProperties": null
+  },
+  {
+    "AuthorName": "RobotCarAgent",
+    "CreatedAt": "2026-02-26T16:19:44+00:00",
+    "Role": "assistant",
+    "Contents": [
+      {
+        "$type": "text",
+        "Text": "1. Turn right 90 degrees\n2. Forward 5 meters\n3. Turn left 90 degrees\n4. Forward 10 meters\n5. Turn left 90 degrees\n6. Forward 5 meters\n7. Turn right 90 degrees",
+        "Annotations": null,
+        "AdditionalProperties": null
+      }
+    ],
+    "MessageId": "chatcmpl-DDYNU3sgeEM2PbXCWnJ6vbXJM9r8m",
+    "AdditionalProperties": null
+  },
+  {
+    "AuthorName": null,
+    "CreatedAt": null,
+    "Role": "user",
+    "Contents": [
+      {
+        "$type": "text",
+        "Text": "What was your second last basic move?",
+        "Annotations": null,
+        "AdditionalProperties": null
+      }
+    ],
+    "MessageId": null,
+    "AdditionalProperties": null
+  },
+  {
+    "AuthorName": "RobotCarAgent",
+    "CreatedAt": "2026-02-26T16:19:45+00:00",
+    "Role": "assistant",
+    "Contents": [
+      {
+        "$type": "text",
+        "Text": "Forward 5 meters",
+        "Annotations": null,
+        "AdditionalProperties": null
+      }
+    ],
+    "MessageId": "chatcmpl-DDYNVQv8CUgL6avUyoSCpyfHrN5KM",
+    "AdditionalProperties": null
+  }
+]
