@@ -1,9 +1,11 @@
 ﻿using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
+using ModelContextProtocol;
 using ModelContextProtocol.Client;
 using ModelContextProtocol.Protocol;
 using OpenAI;
+using System.Text.Json;
 
 IClientTransport stdioTransport = new StdioClientTransport(new StdioClientTransportOptions
 {
@@ -29,7 +31,7 @@ IList<McpClientPrompt> mcpPrompts = await mcpClient.ListPromptsAsync();
 Console.WriteLine("PROMPTS AVAILABLE:");
 foreach (var prompt in mcpPrompts)
 {
-  var arguments = string.Join(",", System.Text.Json.JsonSerializer.Serialize(prompt.ProtocolPrompt.Arguments));
+  var arguments = string.Join(",", JsonSerializer.Serialize(prompt.ProtocolPrompt.Arguments));
   Console.WriteLine($"  {prompt.Name} {arguments}");
 }
 Console.WriteLine();
@@ -39,22 +41,15 @@ IList<McpClientResource> mcpResources = await mcpClient.ListResourcesAsync();
 Console.WriteLine("RESOURCES AVAILABLE:");
 foreach (var resource in mcpResources)
 {
-  var arguments = string.Join(",", System.Text.Json.JsonSerializer.Serialize(resource.ProtocolResource));
+  var arguments = string.Join(",", JsonSerializer.Serialize(resource.ProtocolResource));
   Console.WriteLine($"  {resource.Name} {arguments}");
 }
 Console.WriteLine();
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-////var endpoint = configuration["AzureOpenAI:Endpoint"]!;
-////var apiKey = configuration["AzureOpenAI:ApiKey"]!;
-////var deploymentName = configuration["AzureOpenAI:DeploymentName"]!;
 var model = configuration["OpenAI:ModelId"]!;
 var apiKey = configuration["OpenAI:ApiKey"]!;
 
-// Initialize Azure OpenAI Chat Client
-////IChatClient chatClient = new AzureOpenAIClient(new Uri(endpoint), new ApiKeyCredential(apiKey))
-////  .GetChatClient(deploymentName)
-////  .AsIChatClient();
 IChatClient chatClient = new OpenAIClient(apiKey)
   .GetChatClient(model)
   .AsIChatClient();
@@ -98,3 +93,43 @@ var query = userParametrizedPrompt!.Text;
 Console.WriteLine("AGENT RESPONSE:");
 AgentResponse response = await agent.RunAsync(query);
 Console.WriteLine(response);
+
+Console.WriteLine();
+
+// --- TASKS DEMO ---
+#pragma warning disable MCPEXP001 // Tasks are experimental in MCP SDK v1.0
+
+// Must be registered BEFORE the call and kept alive until PollTaskUntilCompleteAsync returns.
+// The SDK's internal handler (inside CallToolAsTaskAsync) is disposed as soon as the initial
+// tools/call response returns (~instant for tasks), before the background task runs.
+await using IAsyncDisposable progressReg = mcpClient.RegisterNotificationHandler(
+  "notifications/progress",
+  (notification, ct) =>
+  {
+    double prog = notification.Params?["progress"]?.GetValue<double>() ?? 0;
+    double? total = notification.Params?["total"]?.GetValue<double>();
+    Console.WriteLine($"  PROGRESS: {prog}/{total} motors checked");
+    return ValueTask.CompletedTask;
+  });
+
+// run_diagnostics is a long-running task.
+// Either run_diagnostics or run_diagnostics_with_progress can be used, but not both.
+// Remember to comment out one of them.
+////McpTask task = await mcpClient.CallToolAsTaskAsync(
+////  "run_diagnostics",
+////  arguments: new Dictionary<string, object?> { { "detailed", true } });
+////Console.WriteLine($"TASK STARTED: {task.TaskId} | Status: {task.Status}");
+
+// run_diagnostics_with_progress is a long-running task that sends progress updates.
+// Either run_diagnostics or run_diagnostics_with_progress can be used, but not both.
+// Remember to comment out one of them.
+McpTask task = await mcpClient.CallToolAsTaskAsync(
+  "run_diagnostics_with_progress",
+  arguments: new Dictionary<string, object?> { { "detailed", true } },
+  progress: new Progress<ProgressNotificationValue>(_ => { }));
+Console.WriteLine($"TASK STARTED: {task.TaskId} | Status: {task.Status}");
+
+// Poll until Completed / Failed / Cancelled, then retrieve the result
+McpTask completed = await mcpClient.PollTaskUntilCompleteAsync(task.TaskId);
+JsonElement result = await mcpClient.GetTaskResultAsync(task.TaskId);
+Console.WriteLine($"TASK DONE: {completed.Status} | RESULT: {result}");

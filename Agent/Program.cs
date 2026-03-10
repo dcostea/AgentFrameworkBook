@@ -28,3 +28,10 @@ var query = """
   """;
 AgentResponse response = await agent.RunAsync(query);
 Console.WriteLine(response.Text);
+
+var followupQuery = """  
+  Complex command: 
+  "What was your second last move?"
+  """;
+AgentResponse followupResponse = await agent.RunAsync(followupQuery);
+Console.WriteLine(followupResponse.Text);

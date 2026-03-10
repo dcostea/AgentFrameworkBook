@@ -1,6 +1,7 @@
 ﻿using MCPServerWithHttp.Prompts;
 using MCPServerWithHttp.Resources;
 using MCPServerWithHttp.Tools;
+using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using Serilog;
@@ -14,6 +15,9 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
 
+#pragma warning disable MCPEXP001
+InMemoryMcpTaskStore taskStore = new();
+
 McpServerOptions options = new()
 {
   ServerInfo = new Implementation
@@ -22,6 +26,7 @@ McpServerOptions options = new()
     Version = "1.0.0",
   },
   InitializationTimeout = TimeSpan.FromSeconds(10),
+  TaskStore = taskStore,
 };
 
 builder.Services
@@ -29,13 +34,12 @@ builder.Services
   {
     opt.ServerInfo = options.ServerInfo;
     opt.InitializationTimeout = options.InitializationTimeout;
+    opt.TaskStore = options.TaskStore;
   })
   .WithHttpTransport(o => o.Stateless = true)
   .WithTools<MotorTools>()
   .WithPrompts<MotorPrompts>()
   .WithResources<MotorResources>();
-
-Console.WriteLine($"Starting MCP Server with HTTP transport type at: {builder.Configuration["urls"]}.");
 
 var app = builder.Build();
 app.MapMcp();

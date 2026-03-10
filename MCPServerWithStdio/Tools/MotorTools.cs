@@ -1,9 +1,8 @@
-﻿using ModelContextProtocol.Protocol;
+﻿using ModelContextProtocol;
+using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using Serilog;
 using System.ComponentModel;
-
-#pragma warning disable MCPEXP001 // Tasks are experimental in MCP SDK v1.0
 
 namespace MCPServerWithStdio.Tools;
 
@@ -11,6 +10,8 @@ namespace MCPServerWithStdio.Tools;
 public class MotorTools
 {
   private const int Delay = 100; // x seconds delay for mocking an action
+
+  #pragma warning disable MCPEXP001 // Tasks are experimental in MCP SDK v1.0
 
   [McpMeta("category", "motor")]
   [McpServerTool(Name = "backward", TaskSupport = ToolTaskSupport.Optional), Description("Basic command: Moves the robot car backward.")]
@@ -53,30 +54,26 @@ public class MotorTools
     return $"turned clockwise {angle}°.";
   }
 
-  /// <summary>
-  /// Runs a full diagnostics check on all motors. Always runs as a task due to the long execution time.
-  /// </summary>
   [McpServerTool(Name = "run_diagnostics", TaskSupport = ToolTaskSupport.Required)]
-  [Description("Runs a full diagnostics check on all robot car motors. This is a long-running operation that always runs as a task.")]
-  public static async Task<string> RunDiagnosticsAsync(
-    [Description("Whether to include a detailed report with individual motor metrics.")] bool detailed,
-    CancellationToken cancellationToken)
+  [Description("Runs a full diagnostics check on all robot car motors. Always runs as a background task.")]
+  public static async Task<string> RunDiagnosticsAsync()
   {
-    Log.Information("MOTORS: Diagnostics started (detailed: {Detailed})", detailed);
+    await Task.Delay(TimeSpan.FromSeconds(2));
 
-    string[] motors = ["front-left", "front-right", "rear-left", "rear-right"];
+    return "Diagnostics complete. All 4 motors passed.";
+  }
 
-    foreach (string motor in motors)
+  [McpServerTool(Name = "run_diagnostics_with_progress", TaskSupport = ToolTaskSupport.Required)]
+  [Description("Runs a full diagnostics check with progress on all robot car motors. Always runs as a background task.")]
+  public static async Task<string> RunDiagnosticsWithProgressAsync(
+    IProgress<ProgressNotificationValue> progress)
+  {
+    for (int i = 1; i <= 4; i++)
     {
-      cancellationToken.ThrowIfCancellationRequested();
-      Log.Information("MOTORS: Checking motor {Motor}...", motor);
-      await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+      await Task.Delay(TimeSpan.FromSeconds(2));
+      progress.Report(new() { Progress = i, Total = 4 });
     }
 
-    Log.Information("MOTORS: Diagnostics completed");
-
-    return detailed
-      ? $"Diagnostics complete. All {motors.Length} motors passed. RPM: 1200, Temp: 42°C, Voltage: 12.1V per motor."
-      : $"Diagnostics complete. All {motors.Length} motors passed.";
+    return "Diagnostics complete. All 4 motors passed.";
   }
 }

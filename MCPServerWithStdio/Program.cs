@@ -6,8 +6,6 @@ using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using Serilog;
 
-#pragma warning disable MCPEXP001 // Tasks are experimental in MCP SDK v1.0
-
 Log.Logger = new LoggerConfiguration()
   .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss:fff}] {Message:lj}{NewLine}")
   .CreateLogger();
@@ -17,10 +15,8 @@ HostApplicationBuilder builder = Host.CreateEmptyApplicationBuilder(null);
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
 
-var taskStore = new InMemoryMcpTaskStore(
-  defaultTtl: TimeSpan.FromMinutes(30),
-  pollInterval: TimeSpan.FromSeconds(2),
-  maxTasks: 100);
+#pragma warning disable MCPEXP001 // Tasks are experimental in MCP SDK v1.0
+InMemoryMcpTaskStore taskStore = new();
 
 McpServerOptions options = new()
 {
@@ -45,12 +41,7 @@ builder.Services
   .WithPrompts<MotorPrompts>()
   .WithResources<MotorResources>();
 
-Log.Information("Starting MCP Server with Stdio transport type");
-Log.Information("Task store: {TaskStore} (TTL: {Ttl}, poll: {Poll}, max: {Max})",
-  taskStore.GetType().Name,
-  TimeSpan.FromMinutes(30),
-  TimeSpan.FromSeconds(2),
-  100);
+Log.Information("Starting MCP Server is running with Stdio transport type");
 
 var app = builder.Build();
 app.Run();
