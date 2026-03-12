@@ -4,20 +4,11 @@ using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using OpenAI;
+using OpenAI.Chat;
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-
 var model = configuration["OpenAI:ModelId"];
 var apiKey = configuration["OpenAI:ApiKey"];
-var embeddingModel = configuration["OpenAI:EmbeddingModelId"];
-
-IChatClient chatClient = new OpenAIClient(apiKey)
-  .GetChatClient(model)
-  .AsIChatClient();
-
-var embeddingGenerator = new OpenAIClient(apiKey)
-  .GetEmbeddingClient(embeddingModel)
-  .AsIEmbeddingGenerator();
 
 TextSearchProviderOptions textSearchOptions = new()
 {
@@ -30,20 +21,22 @@ CustomKeywordSearchAdapter.Initialize(textSearchOptions, topResults: 5);
 
 AIContextProvider keywordSearchProvider = new TextSearchProvider(CustomKeywordSearchAdapter.KeywordSearch, textSearchOptions);
 
-ChatClientAgent agent = chatClient.AsAIAgent(new ChatClientAgentOptions
-{
-  Name = "RobotCarAgent",
-  Description = "An agent that assists a robot with the basic moves.",
-  ChatOptions = new ChatOptions
+ChatClientAgent agent = new OpenAIClient(apiKey)
+  .GetChatClient(model)
+  .AsAIAgent(new ChatClientAgentOptions
   {
-    Instructions = """
+    Name = "RobotCarAgent",
+    Description = "An agent that assists a robot with the basic moves.",
+    ChatOptions = new ChatOptions
+    {
+      Instructions = """
       You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
       You have to break down the provided complex commands into the basic moves you know.
       Respond only with the moves and their parameters (angle or distance), without any additional explanations.
       """
-  },
-  AIContextProviders = [keywordSearchProvider]
-});
+    },
+    AIContextProviders = [keywordSearchProvider]
+  });
 
 AgentSession session = await agent.CreateSessionAsync();
 

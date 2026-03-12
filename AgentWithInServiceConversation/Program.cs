@@ -8,7 +8,6 @@ using OpenAI.Conversations;
 using OpenAI.Responses;
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-
 var model = configuration["OpenAI:ModelId"];
 var apiKey = configuration["OpenAI:ApiKey"];
 

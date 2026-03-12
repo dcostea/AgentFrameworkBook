@@ -6,20 +6,17 @@ using OpenAI;
 using OpenAI.Responses;
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-
 var model = configuration["OpenAI:ModelId"];
 var apiKey = configuration["OpenAI:ApiKey"];
 
 #pragma warning disable OPENAI001
-IChatClient responsesClient = new OpenAIClient(apiKey)
+ChatClientAgent agent = new OpenAIClient(apiKey)
   .GetResponsesClient(model)
-  .AsIChatClient();
-
-ChatClientAgent agent = responsesClient.AsAIAgent("""
-  You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
-  You have to break down the provided complex commands into the basic moves you know.
-  Respond only with the moves and their parameters (angle or distance), and provide additional explanations.
-  """);
+  .AsAIAgent("""
+    You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
+    You have to break down the provided complex commands into the basic moves you know.
+    Respond only with the moves and their parameters (angle or distance), and provide additional explanations.
+    """);
 
 var query = """  
   Complex command: 

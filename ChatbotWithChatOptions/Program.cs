@@ -45,6 +45,7 @@ while (true)
 
   conversation.Add(new ChatMessage(ChatRole.User, query));
 
+  // warning: reasoning models don't support all attributes below
   ChatOptions options = new()
   {
     Temperature = 0.4F,    // Creativity level (0.0-2.0)

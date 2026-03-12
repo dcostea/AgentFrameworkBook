@@ -7,13 +7,12 @@ using OpenAI.Chat;
 using System.Text.Json;
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-
 var model = configuration["OpenAI:ModelId"];
 var apiKey = configuration["OpenAI:ApiKey"];
-IChatClient chatClient = new OpenAIClient(apiKey)
-  .GetChatClient(model).AsIChatClient();
 
-ChatClientAgent agent = chatClient.AsAIAgent(instructions: """
+ChatClientAgent agent = new OpenAIClient(apiKey)
+  .GetChatClient(model)
+  .AsAIAgent(instructions: """
   You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
   You have to break down the provided complex commands into the basic moves you know.
   Respond only with the moves and their parameters (angle or distance), without any additional explanations.
@@ -36,7 +35,7 @@ JsonElement serializedSession = await agent.SerializeSessionAsync(session);
 string filePath = "agent_session.json";
 await File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(serializedSession));
 
-Thread.Sleep(2000);
+await Task.Delay(2000);
 
 Console.WriteLine("\nDeserializing session...");
 string reloadedJsonContent = await File.ReadAllTextAsync(filePath);

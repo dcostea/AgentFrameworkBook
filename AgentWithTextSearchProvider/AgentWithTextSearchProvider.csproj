@@ -9,9 +9,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.3" />
-		<PackageReference Include="Microsoft.Extensions.AI.AzureAIInference" Version="10.0.0-preview.1.25559.3" />
-		<PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.0.0-rc3" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.4" />
+		<PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.0.0-rc4" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -6,18 +6,17 @@ using OpenAI;
 using OpenAI.Chat;
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-
 var model = configuration["OpenAI:ModelId"];
 var apiKey = configuration["OpenAI:ApiKey"];
-IChatClient chatClient = new OpenAIClient(apiKey)
-  .GetChatClient(model).AsIChatClient();
 
-ChatClientAgent motorsAgent = chatClient.AsAIAgent("""
-  You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
-  You have to break down the provided complex commands into the basic moves you know.
-  Respond only with the moves and their parameters (angle or distance), without any additional explanations.
-  """
-);
+ChatClientAgent motorsAgent = new OpenAIClient(apiKey)
+  .GetChatClient(model)
+  .AsAIAgent("""
+    You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
+    You have to break down the provided complex commands into the basic moves you know.
+    Respond only with the moves and their parameters (angle or distance), without any additional explanations.
+    """
+  );
 
 AgentSession session = await motorsAgent.CreateSessionAsync();
 
@@ -30,11 +29,13 @@ ColorHelper.PrintColoredLine($"USER (MOTORS): {query}", ConsoleColor.Yellow);
 AgentResponse response = await motorsAgent.RunAsync(query, session);
 ColorHelper.PrintColoredLine($"ASSISTANT (MOTORS): {response.Text}", ConsoleColor.Green);
 
-ChatClientAgent auditorAgent = chatClient.AsAIAgent("""
-  You are an AI auditor overseeing a robot car controlled by another AI agent called "MotorsAgent".
-  You need to ensure safety and correctness.
-  """
-);
+ChatClientAgent auditorAgent = new OpenAIClient(apiKey)
+  .GetChatClient(model)
+  .AsAIAgent("""
+    You are an AI auditor overseeing a robot car controlled by another AI agent called "MotorsAgent".
+    You need to ensure safety and correctness.
+    """
+  );
 
 var auditQuery = $"""  
   Audit request: 

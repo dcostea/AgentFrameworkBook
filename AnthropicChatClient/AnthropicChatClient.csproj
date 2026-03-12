@@ -10,8 +10,8 @@
 
   <ItemGroup>
 		<!--<PackageReference Include="Anthropic.Foundry" Version="0.4.2" />-->
-		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.3" />
-		<PackageReference Include="Microsoft.Agents.AI.Anthropic" Version="1.0.0-rc3" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.4" />
+		<PackageReference Include="Microsoft.Agents.AI.Anthropic" Version="1.0.0-rc4" />
 	</ItemGroup>
 
 </Project>

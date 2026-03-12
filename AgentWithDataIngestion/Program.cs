@@ -16,8 +16,8 @@ using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.Add
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
 
-var model = configuration["OpenAI:ModelId"]!;
-var apiKey = configuration["OpenAI:ApiKey"]!;
+var model = configuration["OpenAI:SmallerModelId"];
+var apiKey = configuration["OpenAI:ApiKey"];
 IChatClient chatClient = new OpenAIClient(apiKey)
   .GetChatClient(model)
   .AsIChatClient()
@@ -40,7 +40,7 @@ EnricherOptions enricherOptions = new(chatClient)
 IngestionDocumentProcessor imageAlternativeTextEnricher = new ImageAlternativeTextEnricher(enricherOptions);
 
 // Configure chunker to split text into semantic chunks
-IngestionChunkerOptions chunkerOptions = new(TiktokenTokenizer.CreateForModel(model))
+IngestionChunkerOptions chunkerOptions = new(TiktokenTokenizer.CreateForModel(model!))
 {
   MaxTokensPerChunk = 150,
   OverlapTokens = 20,

@@ -50,7 +50,6 @@ while (true)
 
   ChatOptions options = new()
   {
-    Temperature = 0.4F,
     ResponseFormat = ChatResponseFormat.ForJsonSchema<StepsResponse>(),
   };
 

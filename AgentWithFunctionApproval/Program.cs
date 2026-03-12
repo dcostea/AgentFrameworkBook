@@ -2,18 +2,16 @@
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using OpenAI;
+using OpenAI.Chat;
 using System.Text.Json;
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
 var model = configuration["OpenAI:ModelId"];
 var apiKey = configuration["OpenAI:ApiKey"];
 
-IChatClient chatClient = new OpenAIClient(apiKey)
+ChatClientAgent agent = new OpenAIClient(apiKey)
   .GetChatClient(model)
-  .AsIChatClient();
-
-#pragma warning disable MEAI001
-ChatClientAgent agent = chatClient.AsAIAgent(instructions: """
+  .AsAIAgent(instructions: """
   You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
   You have to break down the provided complex commands into the basic moves you know.
   """,
@@ -35,33 +33,35 @@ var query = "Complex command: Danger ahead! Stop! Full back!";
 AgentSession session = await agent.CreateSessionAsync();
 AgentResponse response = await agent.RunAsync(query, session);
 
-// Collect every pending approval request from the agent's response
-var approvalRequests = response.Messages
-  .SelectMany(m => m.Contents)
-  .OfType<FunctionApprovalRequestContent>();
+// Loop until the agent has no more pending approval requests
+List<ToolApprovalRequestContent> approvalRequests = GetToolApprovalRequests(response);
+while (approvalRequests.Count > 0)
+{
+  var approvalResponses = approvalRequests
+    .Select(request => new Microsoft.Extensions.AI.ChatMessage(ChatRole.User, [request.CreateResponse(PromptForToolApproval(request))]))
+    .ToList();
 
-// For each request, ask the human operator to approve or deny
-var userInputMessages = approvalRequests
-  .Select(request =>
-  {
-    bool isApproved = PromptForApproval(request);
-    List<AIContent> contents = [request.CreateResponse(isApproved)];
-    return new ChatMessage(ChatRole.User, contents);
-  })
-  .ToList();
-
-// Send all approval responses back to the agent, this may generate new requests
-response = await agent.RunAsync(userInputMessages, session);
+  response = await agent.RunAsync(approvalResponses, session);
+  approvalRequests = GetToolApprovalRequests(response);
+}
 
 // Display the final response from the agent
 Console.WriteLine($"\nRESPONSE: {response}");
 
 
-// Displays the tool call details and waits for the operator to press Y or Enter
-bool PromptForApproval(FunctionApprovalRequestContent request)
+static List<ToolApprovalRequestContent> GetToolApprovalRequests(AgentResponse response)
 {
-  var toolName = request.FunctionCall.Name;
-  var toolArgs = JsonSerializer.Serialize(request.FunctionCall.Arguments);
+  return [.. response.Messages
+    .SelectMany(m => m.Contents)
+    .OfType<ToolApprovalRequestContent>()];
+}
+
+// Displays the tool call details and waits for the operator to press Y or Enter
+static bool PromptForToolApproval(ToolApprovalRequestContent request)
+{
+  var call = request.ToolCall as FunctionCallContent;
+  var toolName = call?.Name;
+  var toolArgs = JsonSerializer.Serialize(call?.Arguments);
 
   Console.WriteLine($"Agent invoking {toolName} {toolArgs}. Approve? [Y/n] ");
   ConsoleKeyInfo key = Console.ReadKey(true);

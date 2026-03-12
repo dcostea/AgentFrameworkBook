@@ -5,28 +5,17 @@ using OpenAI;
 using OpenAI.Chat;
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
+var model = configuration["OpenAI:ModelId"];
+var apiKey = configuration["OpenAI:ApiKey"];
 
-var model = configuration["OpenAI:ModelId"]!;
-var apiKey = configuration["OpenAI:ApiKey"]!;
-
-var chatClient = new OpenAIClient(apiKey)
+ChatClientAgent agent = new OpenAIClient(apiKey)
   .GetChatClient(model)
-  .AsIChatClient();
-
-////var endpoint = configuration["AzureOpenAI:Endpoint"]!;
-////var apiKey = configuration["AzureOpenAI:ApiKey"]!;
-////var deploymentName = configuration["AzureOpenAI:DeploymentName"]!;
-
-////IChatClient chatClient = new AzureOpenAIClient(new Uri(endpoint), new ApiKeyCredential(apiKey))
-////  .GetChatClient(deploymentName)
-////  .AsIChatClient();
-
-ChatClientAgent agent = chatClient.AsAIAgent("""
-  You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
-  You have to break down the provided complex commands into the basic moves you know.
-  Use a JSON array like [move1, move2, move3] for the response.
-  Respond only with the moves and their parameters (angle or distance), without any additional explanations.
-  """
+  .AsAIAgent(instructions: """
+    You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
+    You have to break down the provided complex commands into the basic moves you know.
+    Use a JSON array like [move1, move2, move3] for the response.
+    Respond only with the moves and their parameters (angle or distance), without any additional explanations.
+    """
 );
 
 List<Microsoft.Extensions.AI.ChatMessage> conversation = [

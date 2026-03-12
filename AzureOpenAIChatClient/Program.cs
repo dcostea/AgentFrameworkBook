@@ -26,8 +26,8 @@ ChatClient azureOpenAIChatClient = new AzureOpenAIClient(new Uri(endpoint), new 
 OpenAI.Chat.UserChatMessage message = new(query);
 List<OpenAI.Chat.UserChatMessage> conversation = [];
 conversation.Add(message);
-////ClientResult<ChatCompletion> response = azureOpenAIChatClient.CompleteChat(conversation);
-////Console.WriteLine($"\nAssistant (Azure ChatClient): {response.Value.Content.First().Text}");
+ClientResult<ChatCompletion> response = azureOpenAIChatClient.CompleteChat(conversation);
+Console.WriteLine($"\nAssistant (Azure ChatClient): {response.Value.Content.First().Text}");
 
 // Using IChatClient interface
 IChatClient chatClient = new AzureOpenAIClient(new Uri(endpoint), new ApiKeyCredential(apiKey))

@@ -8,14 +8,12 @@ using OpenAI;
 using OpenAI.Chat;
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-
 var model = configuration["OpenAI:ModelId"];
 var apiKey = configuration["OpenAI:ApiKey"];
 var embeddingModel = configuration["OpenAI:EmbeddingModelId"];
 
-IChatClient chatClient = new OpenAIClient(apiKey)
-  .GetChatClient(model)
-  .AsIChatClient();
+ChatClient chatClient = new OpenAIClient(apiKey)
+  .GetChatClient(model);
 
 IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator = new OpenAIClient(apiKey)
   .GetEmbeddingClient(embeddingModel)
