@@ -23,19 +23,19 @@ var query = """
   Respond with a JSON array like [move1, move2, move3].
   Do not respond with reasoning, comments, or any additional text.
   """;
-Console.WriteLine($"USER: {query}");
+Console.WriteLine($"User: {query}");
 
 #pragma warning disable OPENAI001
 
 // Using OpenAIClient directly with Responses API
 ResponsesClient responsesClient = new OpenAIClient(apiKey)
-  .GetResponsesClient(model);
-ClientResult<ResponseResult> response = responsesClient.CreateResponse(query);
+  .GetResponsesClient();
+ClientResult<ResponseResult> response = responsesClient.CreateResponse(model, query);
 Console.WriteLine($"\nAssistant (OpenAI Responses): {response.Value.GetOutputText()}");
 
 // Using IChatClient interface
 IChatClient chatClient = new OpenAIClient(apiKey)
-  .GetResponsesClient(model)
-  .AsIChatClient();
-ChatResponse chatResponse = await chatClient.GetResponseAsync(query, new ChatOptions { ModelId = model });
+  .GetResponsesClient()
+  .AsIChatClient(model);
+ChatResponse chatResponse = await chatClient.GetResponseAsync(query);
 Console.WriteLine($"\nAssistant (IChatClient): {chatResponse.Text}");

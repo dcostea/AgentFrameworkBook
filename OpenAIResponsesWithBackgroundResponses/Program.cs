@@ -23,8 +23,8 @@ Console.WriteLine(query);
 // GetOpenAIResponseClient is for evaluation purposes only and is subject to change or removal in future updates.
 #pragma warning disable OPENAI001
 IChatClient chatClient = new OpenAIClient(apiKey)
-  .GetResponsesClient(model)
-  .AsIChatClient();
+  .GetResponsesClient()
+  .AsIChatClient(model);
 
 try
 {
@@ -69,7 +69,8 @@ try
 
     Console.ForegroundColor = ConsoleColor.Yellow;
     Console.WriteLine($"\n\n[FINAL] Assistant:");
-    Console.WriteLine($"Finish Reason: {chatResponse.FinishReason?.Value ?? "(null)"}");
+    var finishReason = chatResponse.FinishReason?.Value ?? "(null)";
+    Console.WriteLine($"Finish Reason: {finishReason}");
     Console.ResetColor();
     Console.WriteLine(chatResponse.Text);
   }

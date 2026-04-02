@@ -11,8 +11,8 @@ var apiKey = configuration["OpenAI:ApiKey"];
 
 #pragma warning disable OPENAI001
 ChatClientAgent agent = new OpenAIClient(apiKey)
-  .GetResponsesClient(model)
-  .AsAIAgent("""
+  .GetResponsesClient()
+  .AsAIAgent(model, """
     You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
     You have to break down the provided complex commands into the basic moves you know.
     Respond only with the moves and their parameters (angle or distance), and provide additional explanations.

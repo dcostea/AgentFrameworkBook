@@ -27,19 +27,19 @@ var query = """
 Console.WriteLine($"USER: {query}");
 
 // Using OpenAIClient directly
-#pragma warning disable OPENAI001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning disable OPENAI001
 ResponsesClient azureOpenAIChatClient = new AzureOpenAIClient(
   new Uri(endpoint),
   new ApiKeyCredential(apiKey))
-  .GetResponsesClient(deploymentName);
+  .GetResponsesClient();
 
-ClientResult<ResponseResult> response = azureOpenAIChatClient.CreateResponse(query);
+ClientResult<ResponseResult> response = azureOpenAIChatClient.CreateResponse(deploymentName, query);
 Console.WriteLine($"\nAssistant (Azure Responses): {response.Value.GetOutputText()}");
 
 // Using IChatClient interface
 IChatClient chatClient = new AzureOpenAIClient(new Uri(endpoint), new ApiKeyCredential(apiKey))
-  .GetResponsesClient(deploymentName)
-  .AsIChatClient();
+  .GetResponsesClient()
+  .AsIChatClient(deploymentName);
 ChatResponse chatResponse = await chatClient.GetResponseAsync(query);
 
 Console.WriteLine($"\nAssistant (IChatClient): {chatResponse.Text}");

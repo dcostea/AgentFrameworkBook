@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using ModelContextProtocol.Client;
 using ModelContextProtocol.Protocol;
 using OpenAI;
+using OpenAI.Chat;
 using System.Data;
 
 IClientTransport httpTransport = new HttpClientTransport(new()
@@ -44,21 +45,6 @@ foreach (var resource in mcpResources)
 }
 Console.WriteLine();
 
-var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-////var endpoint = configuration["AzureOpenAI:Endpoint"]!;
-////var apiKey = configuration["AzureOpenAI:ApiKey"]!;
-////var deploymentName = configuration["AzureOpenAI:DeploymentName"]!;
-var model = configuration["OpenAI:ModelId"]!;
-var apiKey = configuration["OpenAI:ApiKey"]!;
-
-// Initialize Azure OpenAI Chat Client
-////IChatClient chatClient = new AzureOpenAIClient(new Uri(endpoint), new ApiKeyCredential(apiKey))
-////  .GetChatClient(deploymentName)
-////  .AsIChatClient();
-IChatClient chatClient = new OpenAIClient(apiKey)
-  .GetChatClient(model)
-  .AsIChatClient();
-
 // Fetch a tool to use its definition
 var mcpTool = await mcpClient.CallToolAsync("turn_left",
   arguments: new Dictionary<string, object?> { { "angle", 99 } }
@@ -84,14 +70,20 @@ var mcpResourceResponse = mcpResource.Contents.FirstOrDefault() as TextResourceC
 Console.WriteLine($"RESOURCE RESPONSE: {mcpResourceResponse?.Text}");
 Console.WriteLine();
 
+var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
+var model = configuration["OpenAI:ModelId"];
+var apiKey = configuration["OpenAI:ApiKey"];
+
 // Create AI agent with MCP tools
-AIAgent agent = chatClient.AsAIAgent("""
-  You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
-  You have to break down the provided complex commands into the basic moves you know. Run the basic moves using the corresponding tools.
-  Respond only with the moves and their parameters (angle or distance), without any additional explanations.
-  """,
-  tools: [.. mcpTools.Cast<AITool>()]
-);
+ChatClientAgent agent = new OpenAIClient(apiKey)
+  .GetChatClient(model)
+  .AsAIAgent("""
+    You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
+    You have to break down the provided complex commands into the basic moves you know. Run the basic moves using the corresponding tools.
+    Respond only with the moves and their parameters (angle or distance), without any additional explanations.
+    """,
+    tools: [.. mcpTools.Cast<AITool>()]
+  );
 
 var query = userParametrizedPrompt!.Text;
 

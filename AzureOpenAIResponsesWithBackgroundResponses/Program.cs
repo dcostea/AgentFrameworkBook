@@ -26,14 +26,14 @@ Console.WriteLine(query);
 // GetOpenAIResponseClient is for evaluation purposes only and is subject to change or removal in future updates.
 #pragma warning disable OPENAI001
 IChatClient chatClient = new AzureOpenAIClient(new Uri(endpoint), new ApiKeyCredential(apiKey))
-    .GetResponsesClient(deploymentName)
+    .GetResponsesClient()
     .AsIChatClient();
 
 try
 {
     // AllowBackgroundResponses and ContinuationToken are for evaluation purposes only and is subject to change or removal in future updates.
     #pragma warning disable MEAI001 // Suppress this diagnostic to proceed.
-    ChatOptions options = new() { AllowBackgroundResponses = true };
+    ChatOptions options = new() { AllowBackgroundResponses = true, ModelId = deploymentName };
     ChatResponse chatResponse = await chatClient.GetResponseAsync(query, options);
     Console.ForegroundColor = ConsoleColor.Yellow;
     Console.WriteLine($"\n[INITIAL] Assistant:");

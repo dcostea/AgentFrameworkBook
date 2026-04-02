@@ -14,7 +14,7 @@ var apiKey = configuration["OpenAI:ApiKey"];
 OpenAIClient openAIClient = new(apiKey);
 
 #pragma warning disable OPENAI001
-IChatClient chatClient = openAIClient.GetResponsesClient(model).AsIChatClient();
+IChatClient chatClient = openAIClient.GetResponsesClient().AsIChatClient(model);
 
 // Create a new conversation (in server-side storage)
 ConversationClient conversationClient = openAIClient.GetConversationClient();

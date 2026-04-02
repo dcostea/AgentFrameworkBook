@@ -10,7 +10,7 @@ public static class ConversationsHelper
 {
   public static async Task<string> CreateAndGetConversationIdAsync(ConversationClient conversationClient)
   {
-    var result = await conversationClient.CreateConversationAsync(BinaryContent.Create(BinaryData.FromString("{}")));
+    ClientResult result = await conversationClient.CreateConversationAsync(BinaryContent.Create(BinaryData.FromString("{}")));
     return JsonNode.Parse(result.GetRawResponse().Content)!["id"]!.GetValue<string>();
   }
 
@@ -18,7 +18,7 @@ public static class ConversationsHelper
   {
     var pages = conversationClient.GetConversationItemsAsync(conversationId);
 
-    await foreach (var result in pages.GetRawPagesAsync())
+    await foreach (ClientResult result in pages.GetRawPagesAsync())
     {
       if (JsonNode.Parse(result.GetRawResponse().Content)?["data"] is not JsonArray data) 
         continue;
@@ -39,8 +39,8 @@ public static class ConversationsHelper
 
   public static async Task DeleteConversationAsync(ConversationClient conversationClient, string conversationId)
   {
-    var result = await conversationClient.DeleteConversationAsync(conversationId);
-    var deleted = JsonNode.Parse(result.GetRawResponse().Content)?["deleted"] is JsonValue;
+    ClientResult result = await conversationClient.DeleteConversationAsync(conversationId);
+    bool deleted = JsonNode.Parse(result.GetRawResponse().Content)?["deleted"] is JsonValue;
     ColorHelper.PrintColoredLine($"  Deleted: {deleted}", ConsoleColor.Yellow);
   }
 }
