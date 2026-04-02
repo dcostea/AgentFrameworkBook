@@ -12,7 +12,7 @@
 		<PackageReference Include="Microsoft.Bcl.Memory" Version="10.0.5" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.5" />
 		<PackageReference Include="Microsoft.Extensions.AI.AzureAIInference" Version="10.0.0-preview.1.25559.3" />
-		<PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.0.0-rc5" />
+		<PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DataIngestion" Version="10.4.0-preview.1.26160.2" />
 		<PackageReference Include="Microsoft.Extensions.DataIngestion.Markdig" Version="10.4.0-preview.1.26160.2" />
 		<PackageReference Include="Microsoft.Extensions.DataIngestion.MarkItDown" Version="10.4.0-preview.1.26160.2" />

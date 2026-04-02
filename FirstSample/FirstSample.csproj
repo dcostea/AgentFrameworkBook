@@ -16,7 +16,7 @@
 		<PackageReference Include="Microsoft.Extensions.AI" Version="10.4.1" />
 		<PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="10.4.1" />
 		
-		<PackageReference Include="OllamaSharp" Version="5.4.24" />
+		<PackageReference Include="OllamaSharp" Version="5.4.25" />
 	</ItemGroup>
 
   <ItemGroup>
