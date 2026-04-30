@@ -12,11 +12,11 @@
 		<PackageReference Include="Fluid.Core" Version="3.0.0-beta.5" />
 		<PackageReference Include="Handlebars.Net" Version="2.1.6" />
 		
-		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.5" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.7" />
 
 		<PackageReference Include="Azure.AI.OpenAI" Version="2.9.0-beta.1" />
-		<PackageReference Include="Microsoft.Extensions.AI" Version="10.4.1" />
-		<PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="10.4.1" />
+		<PackageReference Include="Microsoft.Extensions.AI" Version="10.5.0" />
+		<PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="10.5.0" />
 
 		<PackageReference Include="OllamaSharp" Version="5.4.25" />
 

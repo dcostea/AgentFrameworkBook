@@ -4,9 +4,9 @@ using Microsoft.Extensions.DataIngestion;
 using Microsoft.Extensions.DataIngestion.Chunkers;
 using Microsoft.Extensions.Logging;
 using Microsoft.ML.Tokenizers;
-using Microsoft.SemanticKernel.Connectors.InMemory;
-using Microsoft.SemanticKernel.Connectors.SqliteVec;
+using Microsoft.Extensions.VectorData;
 using OpenAI;
+using Microsoft.SemanticKernel.Connectors.InMemory;
 
 // https://github.com/microsoft/markitdown
 // https://devblogs.microsoft.com/dotnet/introducing-data-ingestion-building-blocks-preview/
@@ -60,7 +60,7 @@ IngestionChunkProcessor<string> summaryEnricher = new SummaryEnricher(enricherOp
 ////  });
 
 // Configure In-Memory Vector Store
-using InMemoryVectorStore vectorStore = new (new() { EmbeddingGenerator = embeddingGenerator });
+using InMemoryVectorStore vectorStore = new(new() { EmbeddingGenerator = embeddingGenerator });
 
 // Configure document reader Markdown (md) or MarkItDown (docx, pdf, etc.)
 IngestionDocumentReader reader = new MarkdownReader();

@@ -64,6 +64,20 @@
     <Project Path="MCPServerWithHttp/MCPServerWithHttp.csproj" Id="95dc6035-a066-4f1d-a205-eb434a09cd8d" />
     <Project Path="MCPServerWithStdio/MCPServerWithStdio.csproj" Id="f3625ef7-b036-40f1-9a22-7b3e408a38c5" />
   </Folder>
+  <Folder Name="/09. ChatClientMiddleware/">
+    <Project Path="ChatClientFunctionCallingMiddleware/ChatClientFunctionCallingMiddleware.csproj" />
+    <Project Path="ChatClientResponseMiddleware/ChatClientResponseMiddleware.csproj" />
+    <Project Path="ChatClientSharedFunctionMiddleware/ChatClientSharedFunctionMiddleware.csproj" />
+    <Project Path="MiddlewareBaseline/MiddlewareBaseline.csproj" />
+    <Project Path="MiddlewareMixed/ChatClientMiddlewareMixed.csproj" />
+  </Folder>
+  <Folder Name="/10. AgentMiddleware/">
+    <Project Path="AgentFunctionCallingMiddleware/AgentFunctionCallingMiddleware.csproj" />
+    <Project Path="AgentMiddlewareMixed/AgentMiddlewareMixed.csproj" />
+    <Project Path="AgentResponseMiddleware/AgentResponseMiddleware.csproj" />
+    <Project Path="AgentSharedFunctionMiddleware/AgentSharedFunctionMiddleware.csproj" />
+    <Project Path="AgentWithLogging/AgentWithLogging.csproj" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path="README.md" />
   </Folder>
