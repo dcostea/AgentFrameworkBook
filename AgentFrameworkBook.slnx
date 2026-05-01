@@ -78,6 +78,10 @@
     <Project Path="AgentSharedFunctionMiddleware/AgentSharedFunctionMiddleware.csproj" />
     <Project Path="AgentWithLogging/AgentWithLogging.csproj" />
   </Folder>
+  <Folder Name="/11. ObservabilityAndEvaluations/">
+    <Project Path="Evaluators/Evaluators.csproj" />
+    <Project Path="Observations/Observations.csproj" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path="README.md" />
   </Folder>

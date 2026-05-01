@@ -17,8 +17,8 @@ var userMessage = """
     "There is a tree directly in front of the car. Avoid it and then come back to the original path."  
     """;
 
-//var modelName = "gemma3:4b";
-var modelName = "ministral-3";
+var modelName = "gemma4:e4b";
+//var modelName = "ministral-3";
 //var modelName = "mistral-small3.1";
 var ollamaServer = "http://localhost:11434";
 
