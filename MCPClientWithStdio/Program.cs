@@ -47,6 +47,16 @@ foreach (var resource in mcpResources)
 }
 Console.WriteLine();
 
+// List available MCP resource templates
+IList<McpClientResourceTemplate> mcpResourceTemplates = await mcpClient.ListResourceTemplatesAsync();
+Console.WriteLine("RESOURCE TEMPLATES AVAILABLE:");
+foreach (var template in mcpResourceTemplates)
+{
+  var details = JsonSerializer.Serialize(template.ProtocolResourceTemplate);
+  Console.WriteLine($"  {template.Name} {details}");
+}
+Console.WriteLine();
+
 // Fetch a tool to use its definition
 var mcpTool = await mcpClient.CallToolAsync("turn_left",
   arguments: new Dictionary<string, object?> { { "angle", 99 } }
@@ -66,10 +76,15 @@ Console.WriteLine($"SIMPLE PROMPT RESPONSE: {userPrompt?.Text}");
 Console.WriteLine($"PROMPT TEMPLATE (PARAMETRIZED) RESPONSE: {userParametrizedPrompt?.Text}");
 Console.WriteLine();
 
-// Fetch a resource to use its definition
+// Fetch a static resource
 var mcpResource = await mcpClient.ReadResourceAsync("resource://mcp/bio");
 var mcpResourceResponse = mcpResource.Contents.FirstOrDefault() as TextResourceContents;
 Console.WriteLine($"RESOURCE RESPONSE: {mcpResourceResponse?.Text}");
+
+// Fetch a template resource with a concrete name
+var mcpGreetResource = await mcpClient.ReadResourceAsync("resource://mcp/greet/Robby");
+var mcpGreetResourceResponse = mcpGreetResource.Contents.FirstOrDefault() as TextResourceContents;
+Console.WriteLine($"TEMPLATE RESOURCE RESPONSE: {mcpGreetResourceResponse?.Text}");
 Console.WriteLine();
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();

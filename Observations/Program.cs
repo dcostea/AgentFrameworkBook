@@ -2,86 +2,73 @@
 using Helpers;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using OpenAI;
-using OpenTelemetry;
 using OpenTelemetry.Metrics;
-using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
+
+const string SourceName = "OpenTelemetry.ConsoleApp";
 
 Log.Logger = new LoggerConfiguration()
   .MinimumLevel.Information()
   .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss:fff}] [{Level:u3}] {Message:lj}{NewLine}{Exception}")
   .CreateLogger();
 
-ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddSerilog(Log.Logger));
-var sessionId = Guid.NewGuid().ToString("N");
-var logger = loggerFactory.CreateLogger<Program>();
+var builder = Host.CreateApplicationBuilder(args);
 
-const string SourceName = "OpenTelemetry.ConsoleApp";
-const string ServiceName = "AgentOpenTelemetry";
+builder.Configuration.AddUserSecrets<Program>(optional: false);
 
-var resourceBuilder = ResourceBuilder.CreateDefault()
-  .AddService(ServiceName, serviceVersion: "1.0.0")
-  .AddTelemetrySdk();
+builder.AddServiceDefaults();
 
-// Setup tracing with console exporter
-using var tracerProvider = Sdk.CreateTracerProviderBuilder()
-  .SetResourceBuilder(resourceBuilder)
-  .AddSource(SourceName)
-  .AddSource("*Microsoft.Agents.AI")
-  .AddConsoleExporter()
-  .Build();
+builder.Logging.AddSerilog(Log.Logger);
 
-using var meterProvider = Sdk.CreateMeterProviderBuilder()
-  .SetResourceBuilder(resourceBuilder)
-  .AddMeter(SourceName)
-  .AddMeter("*Microsoft.Agents.AI")
-  //.AddConsoleExporter() // uncomment to see full metric dumps (histograms, counters) in the console
-  .Build();
+builder.Services.AddOpenTelemetry()
+  .WithTracing(tracing => tracing
+    .AddSource(SourceName)
+    .AddSource("*Microsoft.Agents.AI")
+    .AddConsoleExporter())
+  .WithMetrics(metrics => metrics
+    .AddMeter(SourceName)
+    .AddMeter("*Microsoft.Agents.AI")
+    .AddConsoleExporter());
+
+var host = builder.Build();
+await host.StartAsync();
+
+var loggerFactory = host.Services.GetRequiredService<ILoggerFactory>();
+var logger = loggerFactory.CreateLogger("Observations");
+var meterFactory = host.Services.GetRequiredService<IMeterFactory>();
+var configuration = host.Services.GetRequiredService<IConfiguration>();
 
 using var activitySource = new ActivitySource(SourceName);
-using var meter = new Meter(SourceName);
-
-// Create custom metrics
-var interactionCounter = meter.CreateCounter<int>("agent_interactions_total", description: "Total number of agent interactions");
-var responseTimeHistogram = meter.CreateHistogram<double>("agent_response_time_seconds", description: "Agent response time in seconds");
+using var meter = meterFactory.Create(SourceName);
+var consecutiveCommandCounter = meter.CreateCounter<int>("robot_consecutive_same_command_total", description: "Total times the same robot command was repeated consecutively");
 
 ColorHelper.PrintColoredLine("""
   === OpenTelemetry Console Demo ===
   This demo shows OpenTelemetry integration with the Agent Framework.
-  Telemetry data is exported to the console.
+  Telemetry data is exported to the Aspire Dashboard.
   Type your message and press Enter. Type 'exit' or empty message to quit.
   """, ConsoleColor.Yellow);
 
 logger.LogInformation("OpenTelemetry Console Demo application started");
 
-var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-var model = configuration["OpenAI:ModelId"];
-var apiKey = configuration["OpenAI:ApiKey"];
-
-using var chatClient = new OpenAIClient(apiKey)
-  .GetChatClient(model)
+var agent = new OpenAIClient(configuration["OpenAI:ApiKey"])
+  .GetChatClient(configuration["OpenAI:ModelId"])
   .AsIChatClient()
   .AsBuilder()
   .UseFunctionInvocation()
-  .UseLogging(loggerFactory)
   .UseOpenTelemetry(sourceName: SourceName)
-  .Build();
-
-logger.LogInformation("Creating Agent with OpenTelemetry instrumentation");
-
-var agent = chatClient.AsAIAgent(
-  name: "OpenTelemetryDemoAgent",
-  instructions: """
-  You are an AI assistant controlling a robot car.
-  The available robot car permitted moves are forward, backward, turn left, turn right, and stop.
-  """,
-  tools: [.. MotorTools.AsAITools()])
+  .Build()
+  .AsAIAgent(
+    name: "RobotCarDemoAgent",
+    instructions: """
+      You are an AI assistant controlling a robot car.
+      The available robot car permitted moves are forward, backward, turn left, turn right, and stop.
+      """,
+    tools: [.. MotorTools.AsAITools()])
   .AsBuilder()
   .UseLogging(loggerFactory)
   .UseOpenTelemetry(SourceName)
@@ -89,20 +76,12 @@ var agent = chatClient.AsAIAgent(
 
 var session = await agent.CreateSessionAsync();
 
-logger.LogInformation("Agent created successfully with ID: {AgentId}", agent.Id);
-
-// Create a parent span for the entire agent session
 using var sessionActivity = activitySource.StartActivity("Agent Session");
-ColorHelper.PrintColoredLine($"Trace ID: {sessionActivity?.TraceId}", ConsoleColor.Yellow);
+sessionActivity?.SetTag("agent.name", "RobotCarDemoAgent");
 
-sessionActivity?
-  .SetTag("agent.name", "OpenTelemetryDemoAgent")
-  .SetTag("session.id", sessionId)
-  .SetTag("session.start_time", DateTimeOffset.UtcNow.ToString("O"));
+logger.LogInformation("Robot Car Agent session started with ID: {AgentId}", agent.Id);
 
-logger.LogInformation("Starting agent session with ID: {SessionId}", sessionId);
-
-var interactionCount = 0;
+string? previousCommand = null;
 
 while (true)
 {
@@ -110,40 +89,32 @@ while (true)
   var userInput = Console.ReadLine();
 
   if (string.IsNullOrWhiteSpace(userInput) || userInput.Equals("exit", StringComparison.OrdinalIgnoreCase))
-  {
-    logger.LogInformation("User requested to exit the session");
     break;
-  }
 
-  interactionCount++;
+  logger.LogInformation("User input: {UserInput}", userInput);
 
-  // Create a child span for each individual interaction
-  using var activity = activitySource.StartActivity("Agent Interaction");
-  activity?
-    .SetTag("user.input", userInput)
-    .SetTag("agent.name", "OpenTelemetryDemoAgent")
-    .SetTag("interaction.number", interactionCount);
+  using var activity = activitySource.StartActivity("Robot Car Agent Interaction");
+  activity?.SetTag("user.input", userInput);
 
-  var stopwatch = Stopwatch.StartNew();
-
-  // Run the agent (this will create its own internal telemetry spans)
   var response = await agent.RunAsync(userInput, session);
 
   ColorHelper.PrintColoredLine($"RESPONSE: {response.Text}", ConsoleColor.Green);
+  logger.LogInformation("Robot Car Agent response: {Response}", response.Text);
 
-  stopwatch.Stop();
-  var responseTime = stopwatch.Elapsed.TotalSeconds;
-
-  // Record metrics
-  interactionCounter.Add(1, new KeyValuePair<string, object?>("status", "success"));
-  responseTimeHistogram.Record(responseTime,
-      new KeyValuePair<string, object?>("status", "success"));
+  string? currentCommand = (response.Text ?? "") switch
+  {
+    var t when t.Contains("forward",  StringComparison.OrdinalIgnoreCase) => "forward",
+    var t when t.Contains("backward", StringComparison.OrdinalIgnoreCase) => "backward",
+    var t when t.Contains("left",     StringComparison.OrdinalIgnoreCase) => "turn_left",
+    var t when t.Contains("right",    StringComparison.OrdinalIgnoreCase) => "turn_right",
+    var t when t.Contains("stop",     StringComparison.OrdinalIgnoreCase) => "stop",
+    _ => null
+  };
+  if (currentCommand is not null && currentCommand == previousCommand)
+    consecutiveCommandCounter.Add(1, new KeyValuePair<string, object?>("command", currentCommand));
+  previousCommand = currentCommand;
 }
 
-// Add session summary to the parent span
-sessionActivity?
-  .SetTag("session.total_interactions", interactionCount)
-  .SetTag("session.end_time", DateTimeOffset.UtcNow.ToString("O"));
+logger.LogInformation("Robot Car Agent session completed.");
 
-logger.LogInformation("Agent session completed. Total interactions: {TotalInteractions}", interactionCount);
-logger.LogInformation("OpenTelemetry Console Demo application shutting down");
+await host.StopAsync();

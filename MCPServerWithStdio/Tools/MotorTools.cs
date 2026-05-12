@@ -14,7 +14,7 @@ public class MotorTools
   #pragma warning disable MCPEXP001 // Tasks are experimental in MCP SDK v1.0
 
   [McpMeta("category", "motor")]
-  [McpServerTool(Name = "backward", TaskSupport = ToolTaskSupport.Optional), Description("Basic command: Moves the robot car backward.")]
+  [McpServerTool(Name = "backward", Title = "Move Backward", ReadOnly = false, Destructive = true, Idempotent = false, OpenWorld = false, TaskSupport = ToolTaskSupport.Optional), Description("Basic command: Moves the robot car backward.")]
   public async Task<string> BackwardAsync([Description("The distance (in meters) to move the robot car backward.")] int distance)
   {
     Log.Information("MOTORS: Backward: {Distance}m", distance);
@@ -22,7 +22,7 @@ public class MotorTools
     return $"moved backward for {distance} meters.";
   }
 
-  [McpServerTool(Name = "forward", TaskSupport = ToolTaskSupport.Optional), Description("Basic command: Moves the robot car forward.")]
+  [McpServerTool(Name = "forward", Title = "Move Forward", ReadOnly = false, Destructive = true, Idempotent = false, OpenWorld = false, TaskSupport = ToolTaskSupport.Optional), Description("Basic command: Moves the robot car forward.")]
   public async Task<string> ForwardAsync([Description("The distance (in meters) to move the robot car forward.")] int distance)
   {
     Log.Information("MOTORS: Forward: {Distance}m", distance);
@@ -30,7 +30,7 @@ public class MotorTools
     return $"moved forward for {distance} meters.";
   }
 
-  [McpServerTool(Name = "stop", TaskSupport = ToolTaskSupport.Optional), Description("Basic command: Stops the robot car.")]
+  [McpServerTool(Name = "stop", Title = "Stop", ReadOnly = false, Destructive = false, Idempotent = true, OpenWorld = false, TaskSupport = ToolTaskSupport.Optional), Description("Basic command: Stops the robot car.")]
   public async Task<string> StopAsync()
   {
     Log.Information("MOTORS: Stop");
@@ -38,7 +38,7 @@ public class MotorTools
     return "stopped.";
   }
 
-  [McpServerTool(Name = "turn_left", TaskSupport = ToolTaskSupport.Optional), Description("Basic command: Turns the robot car anticlockwise.")]
+  [McpServerTool(Name = "turn_left", Title = "Turn Left", ReadOnly = false, Destructive = true, Idempotent = false, OpenWorld = false, TaskSupport = ToolTaskSupport.Optional), Description("Basic command: Turns the robot car anticlockwise.")]
   public async Task<string> TurnLeftAsync([Description("The angle (in ° / degrees) to turn the robot car anticlockwise.")] int angle)
   {
     Log.Information("MOTORS: TurnLeft: {Angle}°", angle);
@@ -46,7 +46,7 @@ public class MotorTools
     return $"turned anticlockwise {angle}°.";
   }
 
-  [McpServerTool(Name = "turn_right", TaskSupport = ToolTaskSupport.Optional), Description("Basic command: Turns the robot car clockwise.")]
+  [McpServerTool(Name = "turn_right", Title = "Turn Right", ReadOnly = false, Destructive = true, Idempotent = false, OpenWorld = false, TaskSupport = ToolTaskSupport.Optional), Description("Basic command: Turns the robot car clockwise.")]
   public async Task<string> TurnRightAsync([Description("The angle (in ° / degrees) to turn the robot car clockwise.")] int angle)
   {
     Log.Information("MOTORS: TurnRight: {Angle}°", angle);
@@ -54,7 +54,7 @@ public class MotorTools
     return $"turned clockwise {angle}°.";
   }
 
-  [McpServerTool(Name = "run_diagnostics", TaskSupport = ToolTaskSupport.Required)]
+  [McpServerTool(Name = "run_diagnostics", Title = "Run Diagnostics", ReadOnly = true, Destructive = false, Idempotent = true, OpenWorld = false, TaskSupport = ToolTaskSupport.Required)]
   [Description("Runs a full diagnostics check on all robot car motors. Always runs as a background task.")]
   public static async Task<string> RunDiagnosticsAsync()
   {
@@ -63,7 +63,7 @@ public class MotorTools
     return "Diagnostics complete. All 4 motors passed.";
   }
 
-  [McpServerTool(Name = "run_diagnostics_with_progress", TaskSupport = ToolTaskSupport.Required)]
+  [McpServerTool(Name = "run_diagnostics_with_progress", Title = "Run Diagnostics with Progress", ReadOnly = true, Destructive = false, Idempotent = true, OpenWorld = false, TaskSupport = ToolTaskSupport.Required)]
   [Description("Runs a full diagnostics check with progress on all robot car motors. Always runs as a background task.")]
   public static async Task<string> RunDiagnosticsWithProgressAsync(
     IProgress<ProgressNotificationValue> progress)

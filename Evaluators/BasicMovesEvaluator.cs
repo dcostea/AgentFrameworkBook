@@ -40,6 +40,37 @@ public class BasicMovesEvaluator : IEvaluator
         "float", "swim", "skip"
     };
 
+  public ValueTask<EvaluationResult> EvaluateAsync(
+      IEnumerable<ChatMessage> messages,
+      ChatResponse modelResponse,
+      ChatConfiguration? chatConfiguration = null,
+      IEnumerable<EvaluationContext>? additionalContext = null,
+      CancellationToken cancellationToken = default)
+  {
+    // Evaluate the basic moves in the response
+    var (isValid, reason, foundValidMoves, foundInvalidMoves) = EvaluateBasicMoves(modelResponse.Text);
+
+    // Create a detailed reason including what was found
+    string detailedReason = reason;
+    if (foundValidMoves.Count > 0)
+    {
+      detailedReason += $" Valid moves found: {foundValidMoves.Count}.";
+    }
+    if (foundInvalidMoves.Count > 0)
+    {
+      detailedReason += $" Invalid moves found: {foundInvalidMoves.Count}.";
+    }
+
+    // Create a BooleanMetric with the evaluation result
+    var metric = new BooleanMetric(BasicMovesMetricName, value: isValid, detailedReason);
+
+    // Attach interpretation
+    Interpret(metric, detailedReason);
+
+    // Return the evaluation result
+    return new ValueTask<EvaluationResult>(new EvaluationResult(metric));
+  }
+
   /// <summary>
   /// Evaluates if the response contains only valid basic moves and no invalid moves.
   /// </summary>
@@ -132,36 +163,5 @@ public class BasicMovesEvaluator : IEvaluator
               failed: true,
               reason: reason);
     }
-  }
-
-  public ValueTask<EvaluationResult> EvaluateAsync(
-      IEnumerable<ChatMessage> messages,
-      ChatResponse modelResponse,
-      ChatConfiguration? chatConfiguration = null,
-      IEnumerable<EvaluationContext>? additionalContext = null,
-      CancellationToken cancellationToken = default)
-  {
-    // Evaluate the basic moves in the response
-    var (isValid, reason, foundValidMoves, foundInvalidMoves) = EvaluateBasicMoves(modelResponse.Text);
-
-    // Create a detailed reason including what was found
-    string detailedReason = reason;
-    if (foundValidMoves.Count > 0)
-    {
-      detailedReason += $" Valid moves found: {foundValidMoves.Count}.";
-    }
-    if (foundInvalidMoves.Count > 0)
-    {
-      detailedReason += $" Invalid moves found: {foundInvalidMoves.Count}.";
-    }
-
-    // Create a BooleanMetric with the evaluation result
-    var metric = new BooleanMetric(BasicMovesMetricName, value: isValid, detailedReason);
-
-    // Attach interpretation
-    Interpret(metric, detailedReason);
-
-    // Return the evaluation result
-    return new ValueTask<EvaluationResult>(new EvaluationResult(metric));
   }
 }

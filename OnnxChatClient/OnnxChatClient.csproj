@@ -9,6 +9,6 @@
 
 	<ItemGroup>
 		
-		<PackageReference Include="Microsoft.ML.OnnxRuntimeGenAI.Cuda" Version="0.13.1" />
+		<PackageReference Include="Microsoft.ML.OnnxRuntimeGenAI.Cuda" Version="0.13.2" />
 	</ItemGroup>
 </Project>

@@ -13,7 +13,7 @@ public class MotorTools
   #pragma warning disable MCPEXP001 // Tasks are experimental in MCP SDK v1.0
 
   [McpMeta("category", "motor")]
-  [McpServerTool(Name = "backward", TaskSupport = ToolTaskSupport.Optional), Description("Basic command: Moves the robot car backward.")]
+  [McpServerTool(Name = "backward", Title = "Move Backward", ReadOnly = false, Destructive = true, Idempotent = false, OpenWorld = false, TaskSupport = ToolTaskSupport.Optional), Description("Basic command: Moves the robot car backward.")]
   public async Task<string> BackwardAsync([Description("The distance (in meters) to move the robot car backward.")] int distance)
   {
     Log.Information("MOTORS: Backward: {Distance}m", distance);
@@ -21,7 +21,7 @@ public class MotorTools
     return $"moved backward for {distance} meters.";
   }
 
-  [McpServerTool(Name = "forward"), Description("Basic command: Moves the robot car forward.")]
+  [McpServerTool(Name = "forward", Title = "Move Forward", ReadOnly = false, Destructive = true, Idempotent = false, OpenWorld = false), Description("Basic command: Moves the robot car forward.")]
   public async Task<string> ForwardAsync([Description("The distance (in meters) to move the robot car forward.")] int distance)
   {
     Log.Information("MOTORS: Forward: {Distance}m", distance);
@@ -29,7 +29,7 @@ public class MotorTools
     return $"moved forward for {distance} meters.";
   }
 
-  [McpServerTool(Name = "stop"), Description("Basic command: Stops the robot car.")]
+  [McpServerTool(Name = "stop", Title = "Stop", ReadOnly = false, Destructive = false, Idempotent = true, OpenWorld = false), Description("Basic command: Stops the robot car.")]
   public async Task<string> StopAsync()
   {
     Log.Information("MOTORS: Stop");
@@ -37,7 +37,7 @@ public class MotorTools
     return "stopped.";
   }
 
-  [McpServerTool(Name = "turn_left"), Description("Basic command: Turns the robot car anticlockwise.")]
+  [McpServerTool(Name = "turn_left", Title = "Turn Left", ReadOnly = false, Destructive = true, Idempotent = false, OpenWorld = false), Description("Basic command: Turns the robot car anticlockwise.")]
   public async Task<string> TurnLeftAsync([Description("The angle (in ° / degrees) to turn the robot car anticlockwise.")] int angle)
   {
     Log.Information("MOTORS: TurnLeft: {Angle}°", angle);
@@ -45,7 +45,7 @@ public class MotorTools
     return $"turned anticlockwise {angle}°.";
   }
 
-  [McpServerTool(Name = "turn_right"), Description("Basic command: Turns the robot car clockwise.")]
+  [McpServerTool(Name = "turn_right", Title = "Turn Right", ReadOnly = false, Destructive = true, Idempotent = false, OpenWorld = false), Description("Basic command: Turns the robot car clockwise.")]
   public async Task<string> TurnRightAsync([Description("The angle (in ° / degrees) to turn the robot car clockwise.")] int angle)
   {
     Log.Information("MOTORS: TurnRight: {Angle}°", angle);

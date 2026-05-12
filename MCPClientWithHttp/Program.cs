@@ -6,6 +6,7 @@ using ModelContextProtocol.Protocol;
 using OpenAI;
 using OpenAI.Chat;
 using System.Data;
+using System.Text.Json;
 
 IClientTransport httpTransport = new HttpClientTransport(new()
 {
@@ -30,7 +31,7 @@ IList<McpClientPrompt> mcpPrompts = await mcpClient.ListPromptsAsync();
 Console.WriteLine("PROMPTS AVAILABLE:");
 foreach (var prompt in mcpPrompts)
 {
-  var arguments = string.Join(",", System.Text.Json.JsonSerializer.Serialize(prompt.ProtocolPrompt.Arguments));
+  var arguments = string.Join(",", JsonSerializer.Serialize(prompt.ProtocolPrompt.Arguments));
   Console.WriteLine($"  {prompt.Name} {arguments}");
 }
 Console.WriteLine();
@@ -40,8 +41,18 @@ IList<McpClientResource> mcpResources = await mcpClient.ListResourcesAsync();
 Console.WriteLine("RESOURCES AVAILABLE:");
 foreach (var resource in mcpResources)
 {
-  var arguments = string.Join(",", System.Text.Json.JsonSerializer.Serialize(resource.ProtocolResource));
+  var arguments = string.Join(",", JsonSerializer.Serialize(resource.ProtocolResource));
   Console.WriteLine($"  {resource.Name} {arguments}");
+}
+Console.WriteLine();
+
+// List available MCP resource templates
+IList<McpClientResourceTemplate> mcpResourceTemplates = await mcpClient.ListResourceTemplatesAsync();
+Console.WriteLine("RESOURCE TEMPLATES AVAILABLE:");
+foreach (var template in mcpResourceTemplates)
+{
+  var details = JsonSerializer.Serialize(template.ProtocolResourceTemplate);
+  Console.WriteLine($"  {template.Name} {details}");
 }
 Console.WriteLine();
 
@@ -64,10 +75,15 @@ Console.WriteLine($"SIMPLE PROMPT RESPONSE: {userPrompt?.Text}");
 Console.WriteLine($"PROMPT TEMPLATE (PARAMETRIZED) RESPONSE: {userParametrizedPrompt?.Text}");
 Console.WriteLine();
 
-// Fetch a resource to use its definition
+// Fetch a static resource
 var mcpResource = await mcpClient.ReadResourceAsync("resource://mcp/bio");
 var mcpResourceResponse = mcpResource.Contents.FirstOrDefault() as TextResourceContents;
 Console.WriteLine($"RESOURCE RESPONSE: {mcpResourceResponse?.Text}");
+
+// Fetch a template resource with a concrete name
+var mcpGreetResource = await mcpClient.ReadResourceAsync("resource://mcp/greet/Robby");
+var mcpGreetResourceResponse = mcpGreetResource.Contents.FirstOrDefault() as TextResourceContents;
+Console.WriteLine($"TEMPLATE RESOURCE RESPONSE: {mcpGreetResourceResponse?.Text}");
 Console.WriteLine();
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();

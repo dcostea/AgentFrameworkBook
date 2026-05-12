@@ -80,6 +80,8 @@
   </Folder>
   <Folder Name="/11. ObservabilityAndEvaluations/">
     <Project Path="Evaluators/Evaluators.csproj" />
+    <Project Path="Observations.AppHost/Observations.AppHost.csproj" />
+    <Project Path="Observations.ServiceDefaults/Observations.ServiceDefaults.csproj" />
     <Project Path="Observations/Observations.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">

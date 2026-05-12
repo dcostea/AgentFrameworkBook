@@ -12,7 +12,21 @@ var apiKey = configuration["OpenAI:ApiKey"];
 
 IChatClient chatClient = new OpenAIClient(apiKey)
   .GetChatClient(model)
-  .AsIChatClient();
+  .AsIChatClient().AsBuilder()
+  .Use(ChatClientSharedFunctions.LimitRequests)
+  .Use(ChatClientSharedFunctions.RemoveEmail)    // Story 2: GDPR Nightmare — sanitize input
+  .Use(ChatClientResponses.EnforceTokenBudget, null)  // Story 1: token consumption spirals unchecked into a $10,847 bill
+  .Use(ChatClientResponses.AddTimestamp, null)
+  .UseFunctionInvocation(loggerFactory: null, configure: options =>
+  {
+    options.FunctionInvoker = async (context, ct) =>
+    {
+      var response = await Middleware.ChatClientFunctionCallings.ConstrainDistance(context, ct)  // Story 3: constrain backward distance
+        ?? await Middleware.ChatClientFunctionCallings.AuditFunctionCalling(context, ct);
+      return response;
+    };
+  })
+  .Build();
 
 ChatClientAgent motorsAgent = chatClient.AsAIAgent(new ChatClientAgentOptions
 {
