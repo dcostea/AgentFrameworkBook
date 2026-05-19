@@ -91,7 +91,7 @@ session1.StateBag.SetValue("Environment", "production");
 
 ColorHelper.PrintColoredLine("""
   --- TEST 1: Captain's Log ---
-  (Watch the "Captain's log. Stardate..." prefix on the response)
+  (Watch the Captain's log "Stardate..." prefix on the response)
   """, ConsoleColor.DarkGray);
 
 var query1 = "Move forward 5 meters";

@@ -123,7 +123,7 @@ public static class ChatClientSharedFunctions
         ? "[ChatClient] [SharedFunction] [Email] Email detected and removed!"
         : "[ChatClient] [SharedFunction] [Email] No email found",
       emailFound
-        ? ConsoleColor.DarkYellow
+        ? ConsoleColor.Yellow
         : ConsoleColor.Yellow);
 
     await next(sanitizedMessages, options, cancellationToken);

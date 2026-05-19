@@ -62,7 +62,7 @@ public static class AgentSharedFunctions
         ? "[Agent] [SharedFunction] [Email] Email detected and removed!"
         : "[Agent] [SharedFunction] [Email] No email found",
       emailFound
-        ? ConsoleColor.DarkYellow
+        ? ConsoleColor.Yellow
         : ConsoleColor.Yellow);
 
     await next(sanitizedMessages, session, options, cancellationToken);
@@ -112,7 +112,7 @@ public static class AgentSharedFunctions
     if (missionTag is not null)
       enrichedMessages[^1] = new ChatMessage(ChatRole.User, $"[{missionTag}] {enrichedMessages[^1].Text}");
 
-    ColorHelper.PrintColoredLine($"[Agent] [SharedFunction] [Guardrails] Mission tag: '{missionTag ?? "none"}'", ConsoleColor.DarkYellow);
+    ColorHelper.PrintColoredLine($"[Agent] [SharedFunction] [Guardrails] Mission tag: '{missionTag ?? "none"}'", ConsoleColor.Yellow);
 
     await next(enrichedMessages, session, options, cancellationToken);
 

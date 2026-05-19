@@ -85,11 +85,10 @@ public static class AgentFunctionCallings
 
     try
     {
-      // CALL NEXT - chainable!
       var result = await next(context, cancellationToken);
       stopwatch.Stop();
 
-      ColorHelper.PrintColoredLine($"[Agent] [FunctionCall] [Audit] [{timestamp:HH:mm:ss}] COMPLETED in {stopwatch.ElapsedMilliseconds}ms | Result: {result}", ConsoleColor.Green);
+      ColorHelper.PrintColoredLine($"[Agent] [FunctionCall] [Audit] [{timestamp:HH:mm:ss}] COMPLETED in {stopwatch.ElapsedMilliseconds}ms | Result: {result}", ConsoleColor.Yellow);
 
       return result;
     }

@@ -105,7 +105,7 @@ AgentResponse result1 = await motorsAgent.RunAsync(query1, session);
 ColorHelper.PrintColoredLine($"\nRESULT: {result1}\n", ConsoleColor.Yellow);
 ColorHelper.PrintColoredLine("""
   >>> The email was NOT redacted — sent directly to the LLM provider (GDPR violation).
-  """, ConsoleColor.DarkYellow);
+  """, ConsoleColor.Yellow);
 
 // =============================================================================
 // TEST 2: No request or token budget (Step 1 + Step 2 gap)
@@ -125,7 +125,7 @@ AgentResponse result2 = await motorsAgent.RunAsync(query2, session);
 ColorHelper.PrintColoredLine($"\nRESULT: {result2}\n", ConsoleColor.Yellow);
 ColorHelper.PrintColoredLine("""
   >>> No request limit hit, no token budget enforced — costs accumulate silently.
-  """, ConsoleColor.DarkYellow);
+  """, ConsoleColor.Yellow);
 
 // =============================================================================
 // TEST 3: Backward runs unconstrained (Step 3 gap — no ConstrainDistance)
@@ -144,7 +144,7 @@ AgentResponse result3 = await motorsAgent.RunAsync(query3, session);
 ColorHelper.PrintColoredLine($"\nRESULT: {result3}\n", ConsoleColor.Yellow);
 ColorHelper.PrintColoredLine("""
   >>> Backward ran the full 10 m — no constraint, no audit. The robot could hit a wall.
-  """, ConsoleColor.DarkYellow);
+  """, ConsoleColor.Yellow);
 
 // =============================================================================
 // SUMMARY: What Each Middleware Project Adds

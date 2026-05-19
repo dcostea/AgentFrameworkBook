@@ -49,9 +49,9 @@ public class AgentResponses
     int toolCallCount = response.Messages.Sum(m => m.Contents.OfType<FunctionCallContent>().Count());
     string toolTag = toolCallCount > 0 ? $" Tools fired: {toolCallCount}." : string.Empty;
 
-    string journalPrefix = $"Captain's log. Stardate {timestamp}. Agent {innerAgent.Name}. Session {sessionId}.{envTag}{toolTag} ";
+    string journalPrefix = $"Stardate {timestamp}. Agent {innerAgent.Name}. Session {sessionId}.{envTag}{toolTag} ";
 
-    ColorHelper.PrintColoredLine($"[Agent] [Response] [CaptainsLog] {journalPrefix}", ConsoleColor.Cyan);
+    ColorHelper.PrintColoredLine($"[Agent] [Response] [CaptainsLog] {journalPrefix}", ConsoleColor.Yellow);
 
     foreach (ChatMessage message in response.Messages)
     {
@@ -99,11 +99,7 @@ public class AgentResponses
 
       ChatMessage? assistantMessage = response.Messages.LastOrDefault(m => m.Role == ChatRole.Assistant);
       assistantMessage?.Contents = [new TextContent(
-        $"{assistantMessage.Text}\n\n⚠ WARNING: illegal direction reversal detected in executed sequence. A stop command was missing.")];
-    }
-    else
-    {
-      ColorHelper.PrintColoredLine($"[Agent] [Response] [SequenceAuditor] Sequence is valid.", ConsoleColor.Green);
+        $"WARNING: illegal direction '{assistantMessage.Text}' reversal detected in executed sequence. A stop command was missing.")];
     }
 
     return response;
