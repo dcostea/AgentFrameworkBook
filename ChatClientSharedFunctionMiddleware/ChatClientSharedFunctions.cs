@@ -104,11 +104,11 @@ public static class ChatClientSharedFunctions
     bool emailFound = false;
     List<ChatMessage> sanitizedMessages = [];
 
-    foreach (var message in messages)
+    foreach (ChatMessage message in messages)
     {
       if (message.Role == ChatRole.User && message.Text is not null)
       {
-        var sanitized = Regex.Replace(message.Text, EmailPattern, EmailMask);
+        string sanitized = Regex.Replace(message.Text, EmailPattern, EmailMask);
         if (sanitized != message.Text) emailFound = true;
         sanitizedMessages.Add(new ChatMessage(message.Role, sanitized));
       }

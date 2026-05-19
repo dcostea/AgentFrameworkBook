@@ -35,3 +35,5 @@ List<Microsoft.Extensions.AI.ChatMessage> conversation = [
 
 AgentResponse response = await agent.RunAsync(conversation);
 Console.WriteLine(response.Text);
+
+conversation.Add(new Microsoft.Extensions.AI.ChatMessage(ChatRole.Assistant, response.Text));

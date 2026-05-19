@@ -17,7 +17,7 @@ IClientTransport stdioTransport = new StdioClientTransport(new StdioClientTransp
 
 await using var mcpClient = await McpClient.CreateAsync(stdioTransport);
 
-// List available MCP tools
+// List discovered MCP tools
 IList<McpClientTool> mcpTools = await mcpClient.ListToolsAsync();
 Console.WriteLine("TOOLS AVAILABLE:");
 foreach (var tool in mcpTools)
@@ -27,7 +27,7 @@ foreach (var tool in mcpTools)
 }
 Console.WriteLine();
 
-// List available MCP prompts
+// List discovered MCP prompts
 IList<McpClientPrompt> mcpPrompts = await mcpClient.ListPromptsAsync();
 Console.WriteLine("PROMPTS AVAILABLE:");
 foreach (var prompt in mcpPrompts)
@@ -37,7 +37,7 @@ foreach (var prompt in mcpPrompts)
 }
 Console.WriteLine();
 
-// List available MCP resources
+// List discovered MCP resources
 IList<McpClientResource> mcpResources = await mcpClient.ListResourcesAsync();
 Console.WriteLine("RESOURCES AVAILABLE:");
 foreach (var resource in mcpResources)
@@ -47,7 +47,7 @@ foreach (var resource in mcpResources)
 }
 Console.WriteLine();
 
-// List available MCP resource templates
+// List discovered MCP resource templates
 IList<McpClientResourceTemplate> mcpResourceTemplates = await mcpClient.ListResourceTemplatesAsync();
 Console.WriteLine("RESOURCE TEMPLATES AVAILABLE:");
 foreach (var template in mcpResourceTemplates)
@@ -81,7 +81,7 @@ var mcpResource = await mcpClient.ReadResourceAsync("resource://mcp/bio");
 var mcpResourceResponse = mcpResource.Contents.FirstOrDefault() as TextResourceContents;
 Console.WriteLine($"RESOURCE RESPONSE: {mcpResourceResponse?.Text}");
 
-// Fetch a template resource with a concrete name
+// Fetch a template resource (dynamic) with a concrete argument
 var mcpGreetResource = await mcpClient.ReadResourceAsync("resource://mcp/greet/Robby");
 var mcpGreetResourceResponse = mcpGreetResource.Contents.FirstOrDefault() as TextResourceContents;
 Console.WriteLine($"TEMPLATE RESOURCE RESPONSE: {mcpGreetResourceResponse?.Text}");

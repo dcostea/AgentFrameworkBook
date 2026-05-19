@@ -37,11 +37,12 @@ builder.Services
     opt.TaskStore = options.TaskStore;
   })
   .WithStdioServerTransport()
+  // Registering tools, prompts and resources in the server
   .WithTools<MotorTools>()
   .WithPrompts<MotorPrompts>()
   .WithResources<MotorResources>();
 
-Log.Information("Starting MCP Server is running with Stdio transport type");
+Log.Information("Starting MCP Server running with Stdio transport type");
 
 var app = builder.Build();
 app.Run();

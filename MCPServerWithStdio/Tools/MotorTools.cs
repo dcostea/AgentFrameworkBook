@@ -14,7 +14,15 @@ public class MotorTools
   #pragma warning disable MCPEXP001 // Tasks are experimental in MCP SDK v1.0
 
   [McpMeta("category", "motor")]
-  [McpServerTool(Name = "backward", Title = "Move Backward", ReadOnly = false, Destructive = true, Idempotent = false, OpenWorld = false, TaskSupport = ToolTaskSupport.Optional), Description("Basic command: Moves the robot car backward.")]
+  [McpServerTool(
+    Name = "backward", 
+    Title = "Move Backward", 
+    ReadOnly = false, 
+    Destructive = true, 
+    Idempotent = false, 
+    OpenWorld = false, 
+    TaskSupport = ToolTaskSupport.Optional)]
+  [Description("Basic command: Moves the robot car backward.")]
   public async Task<string> BackwardAsync([Description("The distance (in meters) to move the robot car backward.")] int distance)
   {
     Log.Information("MOTORS: Backward: {Distance}m", distance);

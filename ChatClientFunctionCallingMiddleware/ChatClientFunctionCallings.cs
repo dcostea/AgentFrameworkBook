@@ -51,7 +51,9 @@ public static class ChatClientFunctionCallings
   /// This middleware silently constrains backward distance so the robot never hits the wall.
   /// Forward moves are unrestricted.
   /// </summary>
-  public static async Task<object?> ConstrainDistance(FunctionInvocationContext context, CancellationToken cancellationToken)
+  public static async Task<object?> ConstrainDistance(
+    FunctionInvocationContext context, 
+    CancellationToken cancellationToken)
   {
     const int MaxBackwardDistance = 5;
     bool isBackward = context.Function.Name.Contains("backward", StringComparison.OrdinalIgnoreCase);

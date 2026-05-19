@@ -92,13 +92,14 @@ public static class ChatClientResponses
     CancellationToken cancellationToken)
   {
     ChatResponse response = await innerClient.GetResponseAsync(messages, options, cancellationToken);
+    string timestamp = DateTimeOffset.UtcNow.ToString("o");
+
+    ColorHelper.PrintColoredLine($"[ChatClient] [Response] [Timestamp] Stamping response with [{timestamp}]", ConsoleColor.Cyan);
 
     foreach (ChatMessage message in response.Messages)
     {
-      if (!string.IsNullOrEmpty(message.Text))
+      if (message.Role == ChatRole.Assistant && !string.IsNullOrEmpty(message.Text))
       {
-        string timestamp = DateTimeOffset.UtcNow.ToString("o");
-        ColorHelper.PrintColoredLine($"[ChatClient] [Response] [Timestamp] Stamping response with [{timestamp}]", ConsoleColor.Cyan);
         message.Contents = [new TextContent($"[{timestamp}] {message.Text}")];
       }
     }

@@ -16,7 +16,7 @@ using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.Add
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
 
-var model = configuration["OpenAI:SmallerModelId"];
+var model = configuration["OpenAI:TokenizerModelId"];
 var apiKey = configuration["OpenAI:ApiKey"];
 IChatClient chatClient = new OpenAIClient(apiKey)
   .GetChatClient(model)
@@ -63,8 +63,8 @@ IngestionChunkProcessor<string> summaryEnricher = new SummaryEnricher(enricherOp
 using InMemoryVectorStore vectorStore = new(new() { EmbeddingGenerator = embeddingGenerator });
 
 // Configure document reader Markdown (md) or MarkItDown (docx, pdf, etc.)
-IngestionDocumentReader reader = new MarkdownReader();
-////IngestionDocumentReader reader = new MarkItDownReader();
+////IngestionDocumentReader reader = new MarkdownReader();
+IngestionDocumentReader reader = new MarkItDownReader();
 
 // The writer requires the embedding dimension count to be specified.
 // For OpenAI's `text-embedding-3-small`, the dimension count is 1536.
@@ -80,7 +80,7 @@ using IngestionPipeline<string> pipeline = new(reader, chunker, writer, loggerFa
 int processedCount = 0;
 int successCount = 0;
 
-await foreach (var result in pipeline.ProcessAsync(new DirectoryInfo("./data"), searchPattern: "*.md"))
+await foreach (var result in pipeline.ProcessAsync(new DirectoryInfo("./data"), searchPattern: "*.*"))
 {
   processedCount++;
   if (result.Succeeded)

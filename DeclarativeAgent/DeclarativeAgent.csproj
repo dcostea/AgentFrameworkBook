@@ -10,11 +10,11 @@
 
 	<ItemGroup>
 		
-		<PackageReference Include="Microsoft.Extensions.AI" Version="10.5.2" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.7" />
-		<PackageReference Include="Microsoft.Agents.AI" Version="1.5.0" />
-		<PackageReference Include="Microsoft.Agents.AI.Declarative" Version="1.5.0-rc1" />
-		<PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.5.0" />
+		<PackageReference Include="Microsoft.Extensions.AI" Version="10.6.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.8" />
+		<PackageReference Include="Microsoft.Agents.AI" Version="1.6.1" />
+		<PackageReference Include="Microsoft.Agents.AI.Declarative" Version="1.6.1-rc1" />
+		<PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.6.1" />
 	</ItemGroup>
 
 	<ItemGroup>

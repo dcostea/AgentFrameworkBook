@@ -7,7 +7,8 @@ namespace MCPServerWithStdio.Prompts;
 [McpServerPromptType]
 public class MotorPrompts
 {
-  [McpServerPrompt(Name = "string_prompt"), Description("A string prompt without arguments")]
+  [McpServerPrompt(Name = "string_prompt")]
+  [Description("A string prompt without arguments")]
   public static string StringPrompt()
   {
     return """
@@ -17,7 +18,8 @@ public class MotorPrompts
       """;
   }
 
-  [McpServerPrompt(Name = "message_prompt"), Description("A message prompt without arguments")]
+  [McpServerPrompt(Name = "message_prompt")]
+  [Description("A message prompt without arguments")]
   public static IEnumerable<ChatMessage> MessagePrompt()
   {
     return [
@@ -29,7 +31,8 @@ public class MotorPrompts
     ];
   }
 
-  [McpServerPrompt(Name = "parametrized_message_prompt"), Description("A message prompt with arguments")]
+  [McpServerPrompt(Name = "parametrized_message_prompt")]
+  [Description("A message prompt with arguments")]
   public static IEnumerable<ChatMessage> MessagePromptWithArguments(
     [Description("The complex action to be performed")] string action)
   {

@@ -70,148 +70,52 @@ public static class AgentSharedFunctions
     ColorHelper.PrintColoredLine($"[Agent] [SharedFunction] [Email] POST: Completed", ConsoleColor.Yellow);
   }
 
+  private const string AuthorisedOperatorRole = "driver";
+
   /// <summary>
-  /// Limits the number of agent runs per session using a session-scoped counter.
-  /// Evolved from <c>ChatClientSharedFunctions.LimitRequests</c>: that version uses a
-  /// global static counter (app-instance-wide, round-trip-centric). This version
-  /// stores the counter in <c>session.StateBag</c>, making it per-session and user-centric.
+  /// Guards command execution
+  /// - <c>OperatorName</c>: must equal <c>"driver"</c> (case-insensitive); any other value throws
+  ///   <see cref="OperationDeniedException"/> before <c>next</c> is called — the agent never runs.
+  /// - <c>MissionTag</c>: prefixed onto every user message so the LLM is always anchored to the
+  ///   active mission context, even in long multi-turn conversations.
   ///
-  /// Why Agent layer: ChatClient cannot access session state; its limit is shared
-  /// across every user and every session in the process. Here each session enforces
-  /// its own budget, so one noisy user cannot starve others.
-  ///
-  /// Story 1 (evolved): The $10,000 Weekend — now with per-user fairness.
+  /// Demonstrates two distinct StateBag patterns in one middleware:
+  /// a hard PRE gate (operator check) and a message transformation (mission prefix).
+  /// Both are impossible at the ChatClient layer — there is no session there.
   /// </summary>
-  public static async Task SessionScopedLimitRequests(
+  public static async Task AgentGuardrails(
     IEnumerable<ChatMessage> messages,
     AgentSession? session,
     AgentRunOptions? options,
     Func<IEnumerable<ChatMessage>, AgentSession?, AgentRunOptions?, CancellationToken, Task> next,
     CancellationToken cancellationToken)
   {
-    const int MaxRunsPerSession = 5; // low for demo — real apps would configure per tenant
-    const string CounterKey = "RoundTripCount";
+    // OperatorName: authorisation gate — only "driver" may proceed.
+    string? operatorName = null;
+    session?.StateBag.TryGetValue("OperatorName", out operatorName);
+    operatorName ??= "unknown";
 
-    int currentCount = 0;
-    if (session?.StateBag.TryGetValue<object>(CounterKey, out object? value) == true && value is int count)
+    // MissionTag: prefixed onto user messages to anchor the LLM to the active mission.
+    string? missionTag = null;
+    session?.StateBag.TryGetValue("MissionTag", out missionTag);
+
+    ColorHelper.PrintColoredLine($"[Agent] [SharedFunction] [Guardrails] PRE: operator='{operatorName}', mission='{missionTag ?? "none"}'", ConsoleColor.Yellow);
+
+    if (!operatorName.Equals(AuthorisedOperatorRole, StringComparison.OrdinalIgnoreCase))
     {
-      currentCount = count;
-    }
-    currentCount++;
-    session?.StateBag.SetValue<object>(CounterKey, currentCount);
-
-    ColorHelper.PrintColoredLine($"[Agent] [SharedFunction] [Limit] PRE: Session run {currentCount} of {MaxRunsPerSession} max", ConsoleColor.Yellow);
-
-    if (currentCount > MaxRunsPerSession)
-    {
-      throw new SessionLimitExceededException(currentCount, MaxRunsPerSession);
+      throw new OperationDeniedException(operatorName);
     }
 
-    await next(messages, session, options, cancellationToken);
+    ChatMessage[] enrichedMessages = [.. messages];
 
-    ColorHelper.PrintColoredLine($"[Agent] [SharedFunction] [Limit] POST: Session run {currentCount} completed", ConsoleColor.Yellow);
-  }
+    // Prefix only the last message (always the new user command) with the mission tag.
+    if (missionTag is not null)
+      enrichedMessages[^1] = new ChatMessage(ChatRole.User, $"[{missionTag}] {enrichedMessages[^1].Text}");
 
-  /// <summary>
-  /// Injects guardrail system messages based on tenant identity and region stored in
-  /// <c>session.StateBag</c>. For EU tenants the middleware prepends strict data-handling
-  /// instructions; for internal tenants it permits richer logging.
-  ///
-  /// New: impossible at ChatClient because there is no AgentSession, no tenant, and
-  /// no region identity. Only the Agent layer can read per-session context and inject
-  /// policy-aware system messages before the LLM sees the conversation.
-  /// </summary>
-  public static async Task TenantGuardrails(
-    IEnumerable<ChatMessage> messages,
-    AgentSession? session,
-    AgentRunOptions? options,
-    Func<IEnumerable<ChatMessage>, AgentSession?, AgentRunOptions?, CancellationToken, Task> next,
-    CancellationToken cancellationToken)
-  {
-    string? tenantId = null;
-    string? region = null;
-
-    session?.StateBag.TryGetValue<string>("TenantId", out tenantId);
-    session?.StateBag.TryGetValue<string>("Region", out region);
-
-    tenantId ??= "unknown";
-    region ??= "unknown";
-
-    ColorHelper.PrintColoredLine($"[Agent] [SharedFunction] [Tenant] PRE: Tenant='{tenantId}', Region='{region}'", ConsoleColor.Yellow);
-
-    List<ChatMessage> enrichedMessages = [];
-
-    if (region.Equals("EU", StringComparison.OrdinalIgnoreCase))
-    {
-      enrichedMessages.Add(new ChatMessage(ChatRole.System,
-        """
-        GUARDRAIL (EU tenant): You must NOT include personal data in your responses.
-        Do not reference names, addresses, or identifiers. Comply with GDPR at all times.
-        If the user shares personal data, acknowledge it without repeating it.
-        """));
-      ColorHelper.PrintColoredLine("[Agent] [SharedFunction] [Tenant] Injected EU strict data-handling guardrail", ConsoleColor.DarkYellow);
-    }
-    else if (tenantId.Equals("internal", StringComparison.OrdinalIgnoreCase))
-    {
-      enrichedMessages.Add(new ChatMessage(ChatRole.System,
-        """
-        GUARDRAIL (internal tenant): Verbose diagnostic output is permitted.
-        Include tool call details and intermediate reasoning when helpful.
-        """));
-      ColorHelper.PrintColoredLine("[Agent] [SharedFunction] [Tenant] Injected internal verbose-logging guardrail", ConsoleColor.DarkYellow);
-    }
-
-    enrichedMessages.AddRange(messages);
+    ColorHelper.PrintColoredLine($"[Agent] [SharedFunction] [Guardrails] Mission tag: '{missionTag ?? "none"}'", ConsoleColor.DarkYellow);
 
     await next(enrichedMessages, session, options, cancellationToken);
 
-    ColorHelper.PrintColoredLine($"[Agent] [SharedFunction] [Tenant] POST: Completed for tenant '{tenantId}'", ConsoleColor.Yellow);
-  }
-
-  /// <summary>
-  /// Turns feature flags into session-local switches that tools and downstream logic
-  /// can read. Uses session state keys <c>AgentName</c> and <c>Environment</c> to
-  /// resolve flags and stores the result in <c>session.StateBag["FeatureFlags"]</c>.
-  ///
-  /// New: flags are per-agent and per-session, not a global process-wide toggle.
-  /// ChatClient has no session, so it cannot vary features by user or environment.
-  ///
-  /// Why Agent layer: each agent instance may run in a different environment
-  /// ("production", "staging") and need different behaviors per session.
-  /// </summary>
-  public static async Task FeatureFlagBootstrap(
-    IEnumerable<ChatMessage> messages,
-    AgentSession? session,
-    AgentRunOptions? options,
-    Func<IEnumerable<ChatMessage>, AgentSession?, AgentRunOptions?, CancellationToken, Task> next,
-    CancellationToken cancellationToken)
-  {
-    string? agentName = null;
-    string? environment = null;
-
-    session?.StateBag.TryGetValue("AgentName", out agentName);
-    session?.StateBag.TryGetValue("Environment", out environment);
-
-    agentName ??= "default";
-    environment ??= "production";
-
-    ColorHelper.PrintColoredLine($"[Agent] [SharedFunction] [Flags] PRE: Resolving flags for agent='{agentName}', env='{environment}'", ConsoleColor.Yellow);
-
-    // Simulated feature flag resolution — real apps would call a config provider
-    Dictionary<string, bool> flags = new()
-    {
-      ["VerboseToolLogging"] = environment.Equals("staging", StringComparison.OrdinalIgnoreCase),
-      ["EnableExperimentalTools"] = environment.Equals("staging", StringComparison.OrdinalIgnoreCase),
-      ["StrictSafetyMode"] = agentName.Equals("MotorsAgent", StringComparison.OrdinalIgnoreCase)
-                             && environment.Equals("production", StringComparison.OrdinalIgnoreCase),
-    };
-
-    session?.StateBag.SetValue("FeatureFlags", flags);
-
-    ColorHelper.PrintColoredLine($"[Agent] [SharedFunction] [Flags] Flags: {string.Join(", ", flags.Select(f => $"{f.Key}={f.Value}"))}", ConsoleColor.Yellow);
-
-    await next(messages, session, options, cancellationToken);
-
-    ColorHelper.PrintColoredLine($"[Agent] [SharedFunction] [Flags] POST: Completed", ConsoleColor.Yellow);
+    ColorHelper.PrintColoredLine($"[Agent] [SharedFunction] [Guardrails] POST: Completed for operator='{operatorName}', mission='{missionTag ?? "none"}'", ConsoleColor.Yellow);
   }
 }

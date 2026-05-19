@@ -1,4 +1,19 @@
-﻿using AITools;
+﻿// =============================================================================
+// ChatClient Middleware Mixed: SharedFunction + Response + FunctionCalling
+// =============================================================================
+//
+// Uses only middleware from the focused ChatClient middleware projects:
+// - ChatClientSharedFunctions: LimitRequests, RemoveEmail
+// - ChatClientResponses: EnforceTokenBudget, AddTimestamp
+// - ChatClientFunctionCallings: ConstrainDistance, AuditFunctionCalling
+//
+// Order:
+//   SharedFunction  → prepares/sanitizes every LLM round-trip
+//   Response        → handles ChatResponse and token usage
+//   FunctionCalling → terminal tool invocation pattern
+// =============================================================================
+
+using AITools;
 using Helpers;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
@@ -13,10 +28,13 @@ var apiKey = configuration["OpenAI:ApiKey"];
 IChatClient chatClient = new OpenAIClient(apiKey)
   .GetChatClient(model)
   .AsIChatClient().AsBuilder()
+  // SharedFunction — Prepare layer (outermost)
   .Use(ChatClientSharedFunctions.LimitRequests)
   .Use(ChatClientSharedFunctions.RemoveEmail)    // Story 2: GDPR Nightmare — sanitize input
+  // Response — Handle layer
   .Use(ChatClientResponses.EnforceTokenBudget, null)  // Story 1: token consumption spirals unchecked into a $10,847 bill
   .Use(ChatClientResponses.AddTimestamp, null)
+  // FunctionCalling — Invoke layer (innermost)
   .UseFunctionInvocation(loggerFactory: null, configure: options =>
   {
     options.FunctionInvoker = async (context, ct) =>
