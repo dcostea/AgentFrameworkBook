@@ -133,15 +133,13 @@ ColorHelper.PrintColoredLine("""
   operator='observer' is not 'driver' — AgentGuardrails throws before agent runs.
   """);
 
-AgentSession internalSession = await motorsAgent.CreateSessionAsync();
-internalSession.StateBag.SetValue("OperatorName", "observer");
-internalSession.StateBag.SetValue("MissionTag", "MISSION-99 | INSPECTION");
+session.StateBag.SetValue("OperatorName", "observer");
 
 var query3 = "Move forward 3 meters.";
 ColorHelper.PrintColoredLine($"QUERY: {query3}", ConsoleColor.Yellow);
 try
 {
-  var result3 = await motorsAgent.RunAsync(query3, internalSession);
+  var result3 = await motorsAgent.RunAsync(query3, session);
   ColorHelper.PrintColoredLine($"\nRESULT: {result3}\n", ConsoleColor.Yellow);
 }
 catch (OperationDeniedException ex)

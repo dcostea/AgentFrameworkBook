@@ -26,8 +26,11 @@ namespace Middleware;
 /// </summary>
 public static class AgentFunctionCallings
 {
+  private const string MotorsAgentName = "MotorsAgent";
+
   /// <summary>
-  /// Blocks direction reversals without an intervening stop command.
+  /// Blocks direction reversals without an intervening stop command, but only for
+  /// <c>MotorsAgent</c>. Other agents pass through unconditionally.
   /// Reads the previous tool call from <c>context.Messages</c> — the in-flight chat
   /// history — and refuses to call <c>next</c> when a reversal is detected:
   /// - <c>forward → backward</c>
@@ -35,6 +38,9 @@ public static class AgentFunctionCallings
   ///
   /// Returns a synthetic blocking result instead of executing the motor command.
   /// The agent sees the refusal and can decide to re-plan with a stop in between.
+  ///
+  /// Why Agent layer: <c>agent.Name</c> is available here, making it possible to
+  /// scope this safety rule to a specific agent.
   ///
   /// To audit the full sequence after the run completes, use Response middleware
   /// (<c>MovementSequenceAuditor</c>), which sees all tool calls at once.
@@ -45,21 +51,25 @@ public static class AgentFunctionCallings
     Func<FunctionInvocationContext, CancellationToken, ValueTask<object?>> next,
     CancellationToken cancellationToken)
   {
-    string current = context.Function.Name;
-
-    string previous = context.Messages
-      .SelectMany(m => m.Contents.OfType<FunctionCallContent>())
-      .LastOrDefault()?.Name ?? string.Empty;
-
-    bool isDangerous = $"{previous}-{current}" is "forward-backward" or "backward-forward";
-
-    if (isDangerous)
+    if (!string.Equals(agent.Name, MotorsAgentName))
     {
-      ColorHelper.PrintColoredLine($"[Agent] [FunctionCall] [Safety] BLOCKED: '{previous}-{current}' is an illegal reversal — a 'stop' is required first.", ConsoleColor.Red);
-      return $"BLOCKED: cannot execute '{current}' directly after '{previous}'. Issue a stop command first.";
+      ColorHelper.PrintColoredLine($"[Agent] [FunctionCall] [Safety] SKIP: rule does not apply to agent '{agent.Name}'", ConsoleColor.DarkGray);
+      return await next(context, cancellationToken);
     }
 
-    ColorHelper.PrintColoredLine($"[Agent] [FunctionCall] [Safety] SAFE: '{current}' (last: '{previous}')", ConsoleColor.Yellow);
+    string sequence = string.Join("-", context.Messages
+      .SelectMany(m => m.Contents.OfType<FunctionCallContent>())
+      .Select(f => f.Name.ToLowerInvariant()));
+
+    bool isIllegal = sequence.Contains("forward-backward")
+      || sequence.Contains("backward-forward");
+
+    if (isIllegal)
+    {
+      ColorHelper.PrintColoredLine($"[Agent] [FunctionCall] [Safety] BLOCKED: illegal reversal detected — a 'stop' is required first.", ConsoleColor.Red);
+      return $"BLOCKED: cannot execute the command due to illegal reversal. Issue a stop command first.";
+    }
+
     return await next(context, cancellationToken);
   }
 
@@ -78,24 +88,18 @@ public static class AgentFunctionCallings
     var functionName = context.Function.Name;
     var args = string.Join(", ", context.Arguments.Select(kvp => $"{kvp.Key}={kvp.Value}"));
     var timestamp = DateTime.UtcNow;
-
     ColorHelper.PrintColoredLine($"[Agent] [FunctionCall] [Audit] [{timestamp:HH:mm:ss}] Agent '{agent.Name}' invoking '{functionName}({args})'", ConsoleColor.Yellow);
-
-    var stopwatch = Stopwatch.StartNew();
 
     try
     {
       var result = await next(context, cancellationToken);
-      stopwatch.Stop();
-
-      ColorHelper.PrintColoredLine($"[Agent] [FunctionCall] [Audit] [{timestamp:HH:mm:ss}] COMPLETED in {stopwatch.ElapsedMilliseconds}ms | Result: {result}", ConsoleColor.Yellow);
+      ColorHelper.PrintColoredLine($"[Agent] [FunctionCall] [Audit] [{timestamp:HH:mm:ss}] COMPLETED | Result: {result}", ConsoleColor.Green);
 
       return result;
     }
     catch (Exception ex)
     {
-      stopwatch.Stop();
-      ColorHelper.PrintColoredLine($"[Agent] [FunctionCall] [Audit] [{timestamp:HH:mm:ss}] FAILED in {stopwatch.ElapsedMilliseconds}ms | Error: {ex.Message}", ConsoleColor.Red);
+      ColorHelper.PrintColoredLine($"[Agent] [FunctionCall] [Audit] [{timestamp:HH:mm:ss}] FAILED | Error: {ex.Message}", ConsoleColor.Red);
       throw;
     }
   }

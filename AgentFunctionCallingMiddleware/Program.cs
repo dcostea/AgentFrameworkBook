@@ -71,10 +71,6 @@ ChatClientAgent motorsAgent = new OpenAIClient(apiKey)
     }
   });
 
-// =============================================================================
-// SCENARIO A: Safety + Audit chain
-// =============================================================================
-//
 // Chain order (outer → inner):
 //   PreventDangerousMoves — block illegal direction reversals
 //   AuditFunctionCalls    — log every tool call with timing
@@ -87,60 +83,34 @@ AIAgent motorsAgentWithAllMiddleware = motorsAgent
   .Build();
 
 // =============================================================================
-// SCENARIO B: Safety only (separate pipeline)
-// =============================================================================
-
-AIAgent motorsAgentWithSafety = motorsAgent
-  .AsBuilder()
-  .Use(AgentFunctionCallings.PreventDangerousMoves)
-  .Use(AgentFunctionCallings.AuditAgentFunctionCalls)
-  .Build();
-
-// =============================================================================
 // TEST 1: Safe movement — no reversal
 // =============================================================================
 
-AgentSession session1 = await motorsAgent.CreateSessionAsync();
+AgentSession session = await motorsAgent.CreateSessionAsync();
 
 ColorHelper.PrintColoredLine("""
   --- TEST 1: Safe movement (no reversal) ---
-  Forward then backward — PreventDangerousMoves blocks the reversal.
+  Forward — Audit the movement.
   """);
 
-var query1 = "Move forward 10 meters then go backward 8 meters";
+var query1 = "Move forward 10 meters.";
 ColorHelper.PrintColoredLine($"QUERY: {query1}", ConsoleColor.Yellow);
-AgentResponse result1 = await motorsAgentWithAllMiddleware.RunAsync(query1, session1);
+AgentResponse result1 = await motorsAgentWithAllMiddleware.RunAsync(query1, session);
 ColorHelper.PrintColoredLine($"\nRESULT: {result1}\n", ConsoleColor.Yellow);
 
 // =============================================================================
-// TEST 2: Safe movement with stop in between
+// TEST 2: Illegal movement with no stop in between
 // =============================================================================
 
 ColorHelper.PrintColoredLine("""
-  --- TEST 2: Safe movement (stop between reversals) ---
-  Forward → stop → backward — no reversal, all safe.
+  --- TEST 2: Illegal movement with no stop in between ---
+  Forward → backward — PreventDangerousMoves blocks the reversal.
   """);
 
-var query2 = "Turn right 45 degrees then stop";
+var query2 = "Move forward 2 meters and immediatelly move backward 2 meters.";
 ColorHelper.PrintColoredLine($"QUERY: {query2}", ConsoleColor.Yellow);
-AgentResponse result2 = await motorsAgentWithAllMiddleware.RunAsync(query2, session1);
+AgentResponse result2 = await motorsAgentWithAllMiddleware.RunAsync(query2, session);
 ColorHelper.PrintColoredLine($"\nRESULT: {result2}\n", ConsoleColor.Yellow);
-
-// =============================================================================
-// TEST 3: Dangerous reversal (separate session)
-// =============================================================================
-
-AgentSession session2 = await motorsAgent.CreateSessionAsync();
-
-ColorHelper.PrintColoredLine("""
-  --- TEST 3: Dangerous reversal ---
-  Story 3: The Runaway Robot — backward directly after forward is blocked!
-  """);
-
-var query3 = "Danger ahead! Move backward 10 meters and stop!";
-ColorHelper.PrintColoredLine($"QUERY: {query3}", ConsoleColor.Yellow);
-AgentResponse result3 = await motorsAgentWithSafety.RunAsync(query3, session2);
-ColorHelper.PrintColoredLine($"\nRESULT: {result3}\n", ConsoleColor.Yellow);
 
 ColorHelper.PrintColoredLine("""
   --- CRITICAL DIFFERENCE: Agent vs ChatClient FunctionCalling ---

@@ -34,7 +34,7 @@ ColorHelper.PrintColoredLine("""
 
   Response:
     3. MovementSequenceAuditor — warning footer for illegal completed sequences
-    4. CaptainsLog             — journal prefix with agent/session/tool context
+    4. CaptainsLog             — journal prefix with agent name and tool call count
 
   FunctionCalling:
     5. AuditAgentFunctionCalls — wraps every tool call with timing
@@ -98,7 +98,6 @@ ColorHelper.PrintColoredLine("""
 AgentSession session1 = await motorsAgentWithFullPipeline.CreateSessionAsync();
 session1.StateBag.SetValue("OperatorName", "driver");
 session1.StateBag.SetValue("MissionTag", "MISSION-42 | PERIMETER-SCAN");
-session1.StateBag.SetValue("Environment", "production");
 
 string query1 = "Navigate to original position. Contact me at john.doe@example.com for updates.";
 ColorHelper.PrintColoredLine($"QUERY: {query1}", ConsoleColor.Yellow);

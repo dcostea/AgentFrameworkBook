@@ -8,38 +8,35 @@ namespace Microsoft.Extensions.Hosting;
 
 public static class Extensions
 {
-    public static TBuilder AddServiceDefaults<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
+  public static TBuilder AddServiceDefaults<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
+  {
+    builder.ConfigureOpenTelemetry();
+    return builder;
+  }
+
+  public static TBuilder ConfigureOpenTelemetry<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
+  {
+    builder.Logging.AddOpenTelemetry(logging =>
     {
-        builder.ConfigureOpenTelemetry();
-        return builder;
-    }
+      logging.IncludeFormattedMessage = true;
+      logging.IncludeScopes = true;
+    });
 
-    public static TBuilder ConfigureOpenTelemetry<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
-    {
-        builder.Logging.AddOpenTelemetry(logging =>
-        {
-            logging.IncludeFormattedMessage = true;
-            logging.IncludeScopes = true;
-        });
+    builder.Services.AddOpenTelemetry()
+        .WithTracing(tracing => tracing
+            .AddHttpClientInstrumentation());
 
-        builder.Services.AddOpenTelemetry()
-            .WithMetrics(metrics => metrics
-                .AddHttpClientInstrumentation()
-                .AddRuntimeInstrumentation())
-            .WithTracing(tracing => tracing
-                .AddHttpClientInstrumentation());
+    builder.AddOpenTelemetryExporters();
 
-        builder.AddOpenTelemetryExporters();
+    return builder;
+  }
 
-        return builder;
-    }
+  private static TBuilder AddOpenTelemetryExporters<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
+  {
+    if (!string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]))
+      builder.Services.AddOpenTelemetry().UseOtlpExporter();
 
-    private static TBuilder AddOpenTelemetryExporters<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
-    {
-        if (!string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]))
-            builder.Services.AddOpenTelemetry().UseOtlpExporter();
-
-        return builder;
-    }
+    return builder;
+  }
 }
 

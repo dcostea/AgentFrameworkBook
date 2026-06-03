@@ -21,14 +21,14 @@ public class AgentResponses
 {
   /// <summary>
   /// Prepends a "Captain's log" journal entry to every agent response, including
-  /// agent name, session id, timestamp, and optional session flags.
+  /// agent name, timestamp, and tool call count.
   ///
   /// Evolved from <c>ChatClientResponses.AddTimestamp</c>: that version stamps with a
   /// bare UTC datetime. This version produces a persona-aware journal entry tied to
-  /// an agent and a session — a true "board journal entry" for that specific agent instance.
+  /// an agent — a true "board journal entry" for that specific agent instance.
   ///
-  /// Why Agent layer: can include agent.Name, session id, and per-session StateBag values
-  /// in the prefix. ChatClient only has an anonymous transport-level stamp.
+  /// Why Agent layer: can include agent.Name and tool call count from the completed run.
+  /// ChatClient only has an anonymous transport-level stamp.
   /// </summary>
   public static async Task<AgentResponse> CaptainsLog(
     IEnumerable<ChatMessage> messages,
@@ -40,16 +40,11 @@ public class AgentResponses
     AgentResponse response = await innerAgent.RunAsync(messages, session, options, cancellationToken);
 
     string timestamp = DateTimeOffset.UtcNow.ToString("o");
-    string sessionId = session?.GetHashCode().ToString("X8") ?? "no-session";
-
-    string? environment = null;
-    session?.StateBag.TryGetValue<string>("Environment", out environment);
-    string envTag = !string.IsNullOrWhiteSpace(environment) ? $" Env {environment}." : string.Empty;
-
     int toolCallCount = response.Messages.Sum(m => m.Contents.OfType<FunctionCallContent>().Count());
     string toolTag = toolCallCount > 0 ? $" Tools fired: {toolCallCount}." : string.Empty;
-
-    string journalPrefix = $"Stardate {timestamp}. Agent {innerAgent.Name}. Session {sessionId}.{envTag}{toolTag} ";
+    string? missionTag = null;
+    session?.StateBag.TryGetValue("MissionTag", out missionTag);
+    string journalPrefix = $"Stardate {timestamp}. Mission {missionTag}. Agent {innerAgent.Name}.{toolTag} ";
 
     ColorHelper.PrintColoredLine($"[Agent] [Response] [CaptainsLog] {journalPrefix}", ConsoleColor.Yellow);
 

@@ -86,8 +86,10 @@ AIAgent motorsAgentWithMiddleware = motorsAgent
 // TEST 1: Captain's Log — persona-aware journal entry
 // =============================================================================
 
-AgentSession session1 = await motorsAgent.CreateSessionAsync();
-session1.StateBag.SetValue("Environment", "production");
+AgentSession session = await motorsAgent.CreateSessionAsync();
+
+// Pre-populate session state for AgentGuardrails
+session.StateBag.SetValue("MissionTag", "MISSION-45 | EXPLORATION");
 
 ColorHelper.PrintColoredLine("""
   --- TEST 1: Captain's Log ---
@@ -96,7 +98,7 @@ ColorHelper.PrintColoredLine("""
 
 var query1 = "Move forward 5 meters";
 ColorHelper.PrintColoredLine($"QUERY: {query1}", ConsoleColor.Yellow);
-var result1 = await motorsAgentWithMiddleware.RunAsync(query1, session1);
+var result1 = await motorsAgentWithMiddleware.RunAsync(query1, session);
 ColorHelper.PrintColoredLine($"\nRESULT: {result1}\n", ConsoleColor.Yellow);
 
 // =============================================================================
@@ -104,15 +106,13 @@ ColorHelper.PrintColoredLine($"\nRESULT: {result1}\n", ConsoleColor.Yellow);
 // =============================================================================
 
 ColorHelper.PrintColoredLine("""
-  --- TEST 2: No Environment tag ---
-  (Journal entry omits the Env tag when StateBag has no Environment)
+  --- TEST 2: Movement sequence auditor ---
+  (Illegal direction reversal triggers a warning footer on the response)
   """, ConsoleColor.DarkGray);
 
-AgentSession session2 = await motorsAgent.CreateSessionAsync();
-
-var query2 = "Turn left 90 degrees";
+var query2 = "Move forward 2 meters and immediatelly move backward 2 meters.";
 ColorHelper.PrintColoredLine($"QUERY: {query2}", ConsoleColor.Yellow);
-var result2 = await motorsAgentWithMiddleware.RunAsync(query2, session2);
+var result2 = await motorsAgentWithMiddleware.RunAsync(query2, session);
 ColorHelper.PrintColoredLine($"\nRESULT: {result2}\n", ConsoleColor.Yellow);
 
 // =============================================================================
@@ -122,10 +122,10 @@ ColorHelper.PrintColoredLine("""
   --- COMPARISON: ChatClient vs Agent Response Middleware ---
 
   ChatClient.AddTimestamp  →  anonymous bare UTC stamp on every response
-  Agent.CaptainsLog        →  persona-aware journal entry with agent name,
-                               session id, and per-session StateBag context
+  Agent.CaptainsLog        →  persona-aware journal entry with agent name
+                               and completed tool call count
 
-  ChatClient has no agent identity or session — it is transport-level only.
+  ChatClient has no agent identity — it is transport-level only.
   Agent Response middleware operates at the run level with full context.
   """, ConsoleColor.DarkGray);
 

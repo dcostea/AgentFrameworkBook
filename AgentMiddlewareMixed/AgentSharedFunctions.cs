@@ -90,27 +90,26 @@ public static class AgentSharedFunctions
     Func<IEnumerable<ChatMessage>, AgentSession?, AgentRunOptions?, CancellationToken, Task> next,
     CancellationToken cancellationToken)
   {
-    // OperatorName: authorisation gate — only "driver" may proceed.
+    // OperatorName: authorisation gate — only authorized may proceed.
     string? operatorName = null;
     session?.StateBag.TryGetValue("OperatorName", out operatorName);
-    operatorName ??= "unknown";
 
     // MissionTag: prefixed onto user messages to anchor the LLM to the active mission.
     string? missionTag = null;
     session?.StateBag.TryGetValue("MissionTag", out missionTag);
+    
+    ColorHelper.PrintColoredLine($"[Agent] [SharedFunction] [Guardrails] PRE: operator='{operatorName ?? "none"}', mission='{missionTag ?? "none"}'", ConsoleColor.Yellow);
 
-    ColorHelper.PrintColoredLine($"[Agent] [SharedFunction] [Guardrails] PRE: operator='{operatorName}', mission='{missionTag ?? "none"}'", ConsoleColor.Yellow);
-
-    if (!operatorName.Equals(AuthorisedOperatorRole, StringComparison.OrdinalIgnoreCase))
+    if (!string.Equals(operatorName, AuthorisedOperatorRole))
     {
-      throw new OperationDeniedException(operatorName);
+      throw new OperationDeniedException(operatorName ?? "none");
     }
 
     ChatMessage[] enrichedMessages = [.. messages];
 
     // Prefix only the last message (always the new user command) with the mission tag.
     if (missionTag is not null)
-      enrichedMessages[^1] = new ChatMessage(ChatRole.User, $"[{missionTag}] {enrichedMessages[^1].Text}");
+      enrichedMessages[^1] = new ChatMessage(ChatRole.User, $"[{missionTag}] {enrichedMessages[^1].Text ?? string.Empty}");
 
     ColorHelper.PrintColoredLine($"[Agent] [SharedFunction] [Guardrails] Mission tag: '{missionTag ?? "none"}'", ConsoleColor.Yellow);
 

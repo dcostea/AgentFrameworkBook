@@ -50,7 +50,6 @@
   </Folder>
   <Folder Name="/07. Memories/">
     <Project Path="AgentWithCustomFileBasedContextProvider/AgentWithCustomFileBasedContextProvider.csproj" Id="13d91e87-b323-4cb1-86df-72ef08e8f311" />
-    <Project Path="AgentWithDataIngestion/AgentWithDataIngestion.csproj" Id="104a7c2b-2d89-4b54-839f-a702861377be" />
     <Project Path="AgentWithFileBasedChatHistoryProvider/AgentWithFileBasedChatHistoryProvider.csproj" Id="0b75af6f-310d-4163-a2c7-b331545323a5" />
     <Project Path="AgentWithInMemoryChatHistoryProvider/AgentWithInMemoryChatHistoryProvider.csproj" Id="75cf3aa0-4a46-4a80-9dbf-b130680be66f" />
     <Project Path="AgentWithInMemoryChatMessagesAndInMemoryContextProvider/AgentWithInMemoryChatMessagesAndInMemoryContextProvider.csproj" Id="6d9df092-fc46-4190-9b89-40e16cf34170" />
@@ -81,7 +80,6 @@
   <Folder Name="/11. ObservabilityAndEvaluations/">
     <Project Path="Evaluators/Evaluators.csproj" />
     <Project Path="Observations.AppHost/Observations.AppHost.csproj" />
-    <Project Path="Observations.ServiceDefaults/Observations.ServiceDefaults.csproj" />
     <Project Path="Observations/Observations.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
