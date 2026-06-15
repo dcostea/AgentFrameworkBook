@@ -21,10 +21,12 @@ var query = """
 
 Console.WriteLine($"USER: {query}");
 
-//var modelPath = @"c:\Temp\LLMs\ONNX\phi-3.5-mini-instruct\cpu_and_mobile\cpu-int4-awq-block-128-acc-level-4";
+// CPU ONNX models
+var modelPath = @"c:\Temp\LLMs\ONNX\phi-3.5-mini-instruct\cpu_and_mobile\cpu-int4-awq-block-128-acc-level-4";
 //var modelPath = @"c:\Temp\LLMs\ONNX\phi-4-mini-instruct\cpu_and_mobile\cpu-int4-rtn-block-32-acc-level-4";
 
-var modelPath = @"c:\Temp\LLMs\ONNX\phi-4-multimodal-instruct-onnx\gpu\gpu-int4-rtn-block-32";
+// GPU (CUDA) ONNX models
+//var modelPath = @"c:\Temp\LLMs\ONNX\phi-4-multimodal-instruct-onnx\gpu\gpu-int4-rtn-block-32";
 //var modelPath = @"c:\Temp\LLMs\ONNX\phi-3.5-mini-instruct\gpu\gpu-int4-awq-block-128";
 //var modelPath = @"c:\Temp\LLMs\ONNX\phi-4-mini-instruct\gpu\gpu-int4-rtn-block-32";
 
@@ -34,10 +36,10 @@ sw.Start();
 var config = new Config(modelPath);
 
 // this is for GPU
-config.ClearProviders();
-config.AppendProvider("cuda");
-config.SetProviderOption("cuda", "device_id", "0");
-config.SetProviderOption("cuda", "enable_cuda_graph", "0");
+////config.ClearProviders();
+////config.AppendProvider("cuda");
+////config.SetProviderOption("cuda", "device_id", "0");
+////config.SetProviderOption("cuda", "enable_cuda_graph", "0");
 
 var model = new Model(config);
 

@@ -1,6 +1,6 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 builder.AddProject<Projects.Observations>("observations")
-    .WithExplicitStart();
+  .WithExplicitStart();
 
 builder.Build().Run();

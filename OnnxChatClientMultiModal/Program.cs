@@ -2,6 +2,7 @@
 using Microsoft.ML.OnnxRuntimeGenAI;
 using System.Diagnostics;
 
+// ONNX models
 //var modelPath = @"c:\Temp\LLMs\ONNX\phi-3.5-mini-instruct\cpu_and_mobile\cpu-int4-awq-block-128-acc-level-4";
 var modelPath = @"c:\Temp\LLMs\ONNX\phi-4-mini-instruct\cpu_and_mobile\cpu-int4-rtn-block-32-acc-level-4";
 //var modelPath = @"c:\Temp\LLMs\ONNX\phi-4-multimodal-instruct-onnx\gpu\gpu-int4-rtn-block-32";

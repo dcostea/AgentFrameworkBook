@@ -27,7 +27,8 @@ var apiKey = configuration["OpenAI:ApiKey"];
 
 IChatClient chatClient = new OpenAIClient(apiKey)
   .GetChatClient(model)
-  .AsIChatClient().AsBuilder()
+  .AsIChatClient()
+  .AsBuilder()
   // SharedFunction — Prepare layer (outermost)
   .Use(ChatClientSharedFunctions.LimitRequests)
   .Use(ChatClientSharedFunctions.RemoveEmail)    // Story 2: GDPR Nightmare — sanitize input

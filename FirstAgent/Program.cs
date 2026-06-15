@@ -24,5 +24,5 @@ var query = """
   Complex command: 
   "There is a tree directly in front of the car. Avoid it and then come back to the original path."  
   """;
-var result = await agent.RunAsync(query);
+AgentResponse result = await agent.RunAsync(query);
 Console.WriteLine(result.Text);

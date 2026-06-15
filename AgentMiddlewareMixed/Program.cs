@@ -80,8 +80,8 @@ AIAgent motorsAgentWithFullPipeline = motorsAgent
   .Use(runFunc: AgentResponses.MovementSequenceAuditor, runStreamingFunc: null)
   .Use(runFunc: AgentResponses.CaptainsLog, runStreamingFunc: null)
   // FunctionCalling — Invoke layer (innermost)
-  .Use(AgentFunctionCallings.AuditAgentFunctionCalls)
   .Use(AgentFunctionCallings.PreventDangerousMoves)
+  .Use(AgentFunctionCallings.AuditAgentFunctionCalls)
   .Build();
 
 // =============================================================================
