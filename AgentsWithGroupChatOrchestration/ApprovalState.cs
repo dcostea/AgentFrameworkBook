@@ -2,7 +2,7 @@ namespace AgentsWithGroupChatOrchestration;
 
 public enum ApprovalState
 {
-  Approved,
-  Denied,
-  Executed
+  APPROVED,
+  DENIED,
+  EXECUTED
 }
