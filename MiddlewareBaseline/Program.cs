@@ -99,7 +99,7 @@ ColorHelper.PrintColoredLine("""
   ChatClientSharedFunctionMiddleware would redact the address.
   """);
 
-var query1 = "Navigate to original position. Contact me at john.doe@example.com for updates.";
+var query1 = "Advance 100 meters, turn right and go 9 meters, then contact me at john.doe@example.com for the updates.";
 ColorHelper.PrintColoredLine($"QUERY: {query1}", ConsoleColor.Yellow);
 AgentResponse result1 = await motorsAgent.RunAsync(query1, session);
 ColorHelper.PrintColoredLine($"\nRESULT: {result1}\n", ConsoleColor.Yellow);

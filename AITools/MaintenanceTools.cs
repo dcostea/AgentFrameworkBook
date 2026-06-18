@@ -7,7 +7,7 @@ public static class MaintenanceTools
 {
   private const int Delay = 500; // milliseconds delay for mocking an action
 
-  [/*KernelFunction("calibrate_sensors"), */Description("Calibrates all sensors on the robot car.")]
+  [Description("Calibrates all sensors on the robot car.")]
   public static async Task<string> CalibrateSensorsAsync()
   {
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] MAINTENANCE: CALIBRATING sensors...");
@@ -15,7 +15,7 @@ public static class MaintenanceTools
     return "All sensors have been calibrated.";
   }
 
-  [/*KernelFunction("check_motors"), */Description("Checks the motors of the robot car.")]
+  [Description("Checks the motors of the robot car.")]
   public static async Task<string> CheckMotorsAsync()
   {
     var random = new Random();
@@ -25,7 +25,7 @@ public static class MaintenanceTools
     return $"Motors checked. Status: {motorStatus}% efficiency.";
   }
 
-  [/*KernelFunction("check_tire_pressure"), */Description("Checks the tire pressure of the robot car.")]
+  [Description("Checks the tire pressure of the robot car.")]
   public static async Task<string> CheckTirePressureAsync()
   {
     var random = new Random();
@@ -35,7 +35,7 @@ public static class MaintenanceTools
     return $"Tire pressure is {pressure} PSI.";
   }
 
-  [/*KernelFunction("clean_solar_panels"), */Description("Cleans the solar panels of the robot car.")]
+  [Description("Cleans the solar panels of the robot car.")]
   public static async Task<string> CleanSolarPanelsAsync()
   {
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] MAINTENANCE: CLEANING solar panels...");
@@ -43,7 +43,7 @@ public static class MaintenanceTools
     return "Solar panels have been cleaned.";
   }
 
-  [/*KernelFunction("check_battery_health"), */Description("Checks the battery health of the robot car.")]
+  [Description("Checks the battery health of the robot car.")]
   public static async Task<string> CheckBatteryHealthAsync()
   {
     var random = new Random();
@@ -53,7 +53,7 @@ public static class MaintenanceTools
     return $"Battery health is at {batteryHealth}%.";
   }
 
-  [/*KernelFunction("update_firmware"), */Description("Updates the firmware of the robot car.")]
+  [Description("Updates the firmware of the robot car.")]
   public static async Task<string> UpdateFirmwareAsync()
   {
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] MAINTENANCE: UPDATING firmware...");

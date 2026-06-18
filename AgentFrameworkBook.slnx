@@ -82,6 +82,14 @@
     <Project Path="Observations.AppHost/Observations.AppHost.csproj" />
     <Project Path="Observations/Observations.csproj" />
   </Folder>
+  <Folder Name="/12. Agents Orchestration/">
+    <Project Path="AgentsWithConcurrentOrchestration/AgentsWithConcurrentOrchestration.csproj" Id="0b3adea0-6344-4a27-8347-4d9355b0ffd8" />
+    <Project Path="AgentsWithGroupChatOrchestration/AgentsWithGroupChatOrchestration.csproj" Id="642c8c2b-5c08-4181-a6e4-3ba133c467e1" />
+    <Project Path="AgentsWithHandoffOrchestration/AgentsWithHandoffOrchestration.csproj" Id="ad6b2b8f-32dc-46bc-b3f3-916849672b16" />
+    <Project Path="AgentsWithHandoffOrchestrationAndHandoffReasons/AgentsWithHandoffOrchestrationAndHandoffReasons.csproj" Id="9ec66722-c9ad-4c2b-b3b9-89f0e212ff03" />
+    <Project Path="AgentsWithSequentialOrchestration/AgentsWithSequentialOrchestration.csproj" Id="7269037f-31be-4e62-a5f0-b3e8cbd15a54" />
+    <Project Path="WorkflowWithNonAgents/WorkflowWithNonAgents.csproj" Id="400db1dc-e470-488d-b984-f7b69a748e51" />
+  </Folder>  
   <Folder Name="/Solution Items/">
     <File Path="README.md" />
   </Folder>
