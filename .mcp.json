@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "maf-doctor": {
+      "command": "maf-doctor",
+      "args": [],
+      "env": {}
+    }
+  }
+}
