@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<UserSecretsId>03178d60-8dbc-4f22-89c5-60d2cd1718b8</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Fluid.Core" Version="3.0.0-beta.5" />
+		<PackageReference Include="Handlebars.Net" Version="2.1.6" />
+		
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.9" />
+
+		<PackageReference Include="Azure.AI.OpenAI" Version="2.9.0-beta.1" />
+		<PackageReference Include="Microsoft.Extensions.AI" Version="10.7.0" />
+		<PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="10.7.0" />
+
+		<PackageReference Include="OllamaSharp" Version="5.4.25" />
+
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\00.Shared\AITools\AITools.csproj" />
+	</ItemGroup>
+
+</Project>
