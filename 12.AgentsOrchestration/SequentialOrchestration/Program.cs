@@ -77,8 +77,11 @@ var query = """
   There is a tree directly in front of the car. Avoid it and then come back to the original path.
   """;
 
-var workflow = AgentWorkflowBuilder.BuildSequential(environmentAgent, safetyAgent, motorsAgent);
-
+var workflow = AgentWorkflowBuilder.BuildSequential("SafeExecution", environmentAgent, safetyAgent, motorsAgent);
+////var workflow = AgentWorkflowBuilder.CreateSequentialBuilderWith(environmentAgent, safetyAgent, motorsAgent)
+////  .WithIntermediateOutputFrom([environmentAgent, safetyAgent])
+////  .WithOutputFrom(motorsAgent)
+////  .Build();
 await WorkflowsHelper.PrintToMarkdownAsync(workflow);
 
 // Use this for streaming execution to see the events as they happen (observability)

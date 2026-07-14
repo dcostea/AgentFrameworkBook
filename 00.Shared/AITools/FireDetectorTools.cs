@@ -10,7 +10,9 @@ public static class FireDetectorTools
   [Description("Trigger an audible or visual alarm to warn nearby humans or systems.")]
   public static async Task<string> SoundAlarmAsync()
   {
+    Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] FIRE DETECTOR: Sounding fire alarm!");
+    Console.ResetColor();
     await Task.Delay(Delay);
     return "Fire alarm sounded.";
   }
@@ -18,7 +20,9 @@ public static class FireDetectorTools
   [Description("Activate sprinklers to suppress the fire.")]
   public static async Task<string> StartWaterSprinkleAsync()
   {
+    Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] FIRE DETECTOR: Starting water sprinkle.");
+    Console.ResetColor();
     await Task.Delay(Delay);
     return "Water sprinkler started — fire suppression in progress.";
   }
@@ -26,7 +30,9 @@ public static class FireDetectorTools
   [Description("Stop sprinklers when fire is extinguished.")]
   public static async Task<string> StopWaterSprinkleAsync()
   {
+    Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] FIRE DETECTOR: Stopping water sprinkle.");
+    Console.ResetColor();
     await Task.Delay(Delay);
     return "Water sprinkler stopped.";
   }

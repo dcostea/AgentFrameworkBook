@@ -9,9 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-		<!--<PackageReference Include="Anthropic.Foundry" Version="0.4.2" />-->
-		
-		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.9" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.10" />
 		<PackageReference Include="Microsoft.Agents.AI.Anthropic" Version="1.13.0-preview.260703.1" />
 	</ItemGroup>
 

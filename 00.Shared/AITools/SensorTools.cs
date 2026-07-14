@@ -13,7 +13,9 @@ public class SensorTools
   {
     var random = new Random();
     var temperature = random.Next(-20, 100); // Simulate temperature reading
+    Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] SENSORS: READING Temperature: {temperature} Celsius degrees.");
+    Console.ResetColor();
     await Task.Delay(Delay);
     return temperature;
   }
@@ -23,7 +25,9 @@ public class SensorTools
   {
     var random = new Random();
     var irLevel = random.Next(0, 100); // Simulate IR reading
+    Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] SENSORS: READING Infrared Radiation: {irLevel}");
+    Console.ResetColor();
     await Task.Delay(Delay);
     return irLevel;
   }
@@ -33,7 +37,9 @@ public class SensorTools
   {
     var random = new Random();
     var humidity = random.Next(0, 100); // Simulate humidity reading
+    Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] SENSORS: READING Humidity: {humidity} %");
+    Console.ResetColor();
     await Task.Delay(Delay);
     return humidity;
   }
@@ -44,7 +50,9 @@ public class SensorTools
     var random = new Random();
     var values = Enum.GetValues<DropletLevel>();
     var dropletLevel = (DropletLevel)values.GetValue(random.Next(values.Length))!; // Simulate droplet level reading
+    Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] SENSORS: READING Droplet Level: {dropletLevel}");
+    Console.ResetColor();
     await Task.Delay(Delay);
     return dropletLevel;
   }
@@ -54,7 +62,9 @@ public class SensorTools
   {
     var random = new Random();
     var speed = random.Next(0, 100);
+    Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] SENSORS: READING Wind speed: {speed} kmph"); // Simulate wind speed reading
+    Console.ResetColor();
     await Task.Delay(Delay);
     return speed;
   }
@@ -65,7 +75,9 @@ public class SensorTools
     var random = new Random();
     var values = Enum.GetValues<Direction>();
     var direction = (Direction)values.GetValue(random.Next(values.Length))!;
+    Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] SENSORS: READING Wind direction: {direction}"); // Simulate wind direction reading
+    Console.ResetColor();
     await Task.Delay(Delay);
     return direction;
   }

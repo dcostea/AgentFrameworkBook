@@ -38,7 +38,6 @@
     <Project Path="05.Agents/AgentWithSession/AgentWithSession.csproj" Id="c8c611b0-91e1-414b-be22-715edae76a52" />
     <Project Path="05.Agents/AgentWithStreaming/AgentWithStreaming.csproj" Id="46e0e8cc-cca7-4299-ae34-9962ee48e9d9" />
     <Project Path="05.Agents/AgentWithStructuredOutput/AgentWithStructuredOutput.csproj" Id="49800875-db92-4293-bc4e-fdec091e7388" />
-    <Project Path="05.Agents/DeclarativeAgent/DeclarativeAgent.csproj" />
     <Project Path="05.Agents/MultipleAgentsWithSameSession/MultipleAgentsWithSameSession.csproj" Id="f05259fd-d151-46f9-96d7-8426c6da7627" />
   </Folder>
   <Folder Name="/06.Tools/">
@@ -84,15 +83,23 @@
   </Folder>
   <Folder Name="/12.AgentsOrchestration/">
     <Project Path="12.AgentsOrchestration/ConcurrentOrchestration/ConcurrentOrchestration.csproj" Id="0b3adea0-6344-4a27-8347-4d9355b0ffd8" />
-    <Project Path="12.AgentsOrchestration/GroupChatOrchestration/GroupChatOrchestration.csproj" Id="642c8c2b-5c08-4181-a6e4-3ba133c467e1" />
-    <Project Path="12.AgentsOrchestration/HandoffOrchestration/HandoffOrchestration.csproj" Id="ad6b2b8f-32dc-46bc-b3f3-916849672b16" />
-    <Project Path="12.AgentsOrchestration/HandoffOrchestrationAndHandoffReasons/HandoffOrchestrationAndHandoffReasons.csproj" Id="9ec66722-c9ad-4c2b-b3b9-89f0e212ff03" />
     <Project Path="12.AgentsOrchestration/SequenceOfConcurrentOrchestration/SequenceOfConcurrentOrchestration.csproj" />
     <Project Path="12.AgentsOrchestration/SequentialOrchestration/SequentialOrchestration.csproj" Id="7269037f-31be-4e62-a5f0-b3e8cbd15a54" />
-    <Project Path="12.AgentsOrchestration/WorkflowWithNonAgents/WorkflowWithNonAgents.csproj" Id="400db1dc-e470-488d-b984-f7b69a748e51" />
-  </Folder>  
+    <Project Path="12.AgentsOrchestration/SequentialOrchestrationWithCheckpoints/SequentialOrchestrationWithCheckpoints.csproj" Id="9eec4505-71b7-4cae-bee8-74b312655242" />
+  </Folder>
+  <Folder Name="/13.AgentsOrchestration/">
+    <Project Path="13.AgentsOrchestration/GroupChatOrchestration/GroupChatOrchestration.csproj" Id="642c8c2b-5c08-4181-a6e4-3ba133c467e1" />
+    <Project Path="13.AgentsOrchestration/GroupChatOrchestrationWithHitl/GroupChatOrchestrationWithHitl.csproj" Id="8d62b8a1-3fa7-4625-bc9f-1f966a53d27c" />
+  </Folder>
+  <Folder Name="/14.AgentsOrchestration/">
+    <Project Path="14.AgentsOrchestration/HandoffOrchestration/HandoffOrchestration.csproj" Id="ad6b2b8f-32dc-46bc-b3f3-916849672b16" />
+    <Project Path="14.AgentsOrchestration/HandoffOrchestrationAndHandoffReasons/HandoffOrchestrationAndHandoffReasons.csproj" Id="9ec66722-c9ad-4c2b-b3b9-89f0e212ff03" />
+  </Folder>
+  <Folder Name="/15.AgentsOrchestration/">
+    <Project Path="15.AgentsOrchestration/WorkflowWithNonAgents/WorkflowWithNonAgents.csproj" Id="400db1dc-e470-488d-b984-f7b69a748e51" />
+  </Folder>
+  <Folder Name="/16.Skills/" />  
   <Folder Name="/Solution Items/">
     <File Path="README.md" />
-    <File Path="Robby.md" />
   </Folder>
 </Solution>

@@ -10,7 +10,9 @@ public static class MaintenanceTools
   [Description("Calibrates all sensors on the robot car.")]
   public static async Task<string> CalibrateSensorsAsync()
   {
+    Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] MAINTENANCE: CALIBRATING sensors...");
+    Console.ResetColor();
     await Task.Delay(Delay);
     return "All sensors have been calibrated.";
   }
@@ -20,7 +22,9 @@ public static class MaintenanceTools
   {
     var random = new Random();
     var motorStatus = random.Next(0, 100);
+    Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] MAINTENANCE: CHECKING motors. Status: {motorStatus}%");
+    Console.ResetColor();
     await Task.Delay(Delay);
     return $"Motors checked. Status: {motorStatus}% efficiency.";
   }
@@ -30,7 +34,9 @@ public static class MaintenanceTools
   {
     var random = new Random();
     var pressure = random.Next(30, 35);
+    Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] MAINTENANCE: CHECKING tire pressure: {pressure} PSI");
+    Console.ResetColor();
     await Task.Delay(Delay);
     return $"Tire pressure is {pressure} PSI.";
   }
@@ -38,7 +44,9 @@ public static class MaintenanceTools
   [Description("Cleans the solar panels of the robot car.")]
   public static async Task<string> CleanSolarPanelsAsync()
   {
+    Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] MAINTENANCE: CLEANING solar panels...");
+    Console.ResetColor();
     await Task.Delay(Delay * 3);
     return "Solar panels have been cleaned.";
   }
@@ -48,7 +56,9 @@ public static class MaintenanceTools
   {
     var random = new Random();
     var batteryHealth = random.Next(0, 100);
+    Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] MAINTENANCE: CHECKING battery health: {batteryHealth}%");
+    Console.ResetColor();
     await Task.Delay(Delay);
     return $"Battery health is at {batteryHealth}%.";
   }
@@ -56,7 +66,9 @@ public static class MaintenanceTools
   [Description("Updates the firmware of the robot car.")]
   public static async Task<string> UpdateFirmwareAsync()
   {
+    Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] MAINTENANCE: UPDATING firmware...");
+    Console.ResetColor();
     await Task.Delay(Delay * 5);
     return "Firmware has been updated to the latest version.";
   }

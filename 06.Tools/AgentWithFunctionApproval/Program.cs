@@ -12,9 +12,9 @@ var apiKey = configuration["OpenAI:ApiKey"];
 ChatClientAgent agent = new OpenAIClient(apiKey)
   .GetChatClient(model)
   .AsAIAgent(instructions: """
-  You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
-  You have to break down the provided complex commands into the basic moves you know.
-  """,
+    You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
+    You have to break down the provided complex commands into the basic moves you know.
+    """,
   name: "RobotCarAgent",
   tools: [
     // Backward AI Tool requires approval

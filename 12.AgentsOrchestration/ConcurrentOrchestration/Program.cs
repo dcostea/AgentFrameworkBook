@@ -84,7 +84,7 @@ var query = """
   Assess the environment conditions and ensure safety clearance.
   """;
 
-var workflow = AgentWorkflowBuilder.BuildConcurrent([maintenanceAgent, environmentAgent],
+var workflow = AgentWorkflowBuilder.BuildConcurrent("SafetyAssessment", [maintenanceAgent, environmentAgent],
   SafetyAggregator.AggregateClearances);
 
 await WorkflowsHelper.PrintToMarkdownAsync(workflow);

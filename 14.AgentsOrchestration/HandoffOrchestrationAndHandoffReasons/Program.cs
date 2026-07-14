@@ -5,7 +5,6 @@ using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using OpenAI;
 using OpenAI.Chat;
-using System.Text;
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
 var model = configuration["OpenAI:ModelId"];

@@ -95,7 +95,7 @@ var motorsAgent = new OpenAIClient(apiKey)
 });
 
 // Inner stage: MaintenanceAgent and EnvironmentAgent run concurrently; SafetyAggregator merges their clearances.
-Workflow safetyWorkflow = AgentWorkflowBuilder.BuildConcurrent([maintenanceAgent, environmentAgent],
+Workflow safetyWorkflow = AgentWorkflowBuilder.BuildConcurrent("SafetyAssessment", [maintenanceAgent, environmentAgent],
   SafetyAggregator.AggregateClearances);
 
 // Include the aggregated clearance summary (the workflow output) in the SafetyStage response,
@@ -114,7 +114,7 @@ AIAgent safetyStage = safetyWorkflow.AsAIAgent("SafetyStage", includeWorkflowOut
 
 // This is the composition with the motorsAgent directly,
 // which will leak tool messages into the downstream conversation and cause HTTP 400 errors.
-Workflow workflow = AgentWorkflowBuilder.BuildSequential(safetyStage, motorsAgent);
+Workflow workflow = AgentWorkflowBuilder.BuildSequential("SafeExecution", safetyStage, motorsAgent);
 
 await WorkflowsHelper.PrintToMarkdownAsync(workflow);
 

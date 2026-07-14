@@ -34,11 +34,13 @@ var motorsAgent = new OpenAIClient(apiKey)
     You are the MotorsAgent. Permitted moves: forward, backward, turn left, turn right, stop.
 
     # ACTIONS
-    Break the mission into a move sequence and submit to NavigatorAgent for approval.
+    Break the mission into a move sequence and submit it to NavigatorAgent for approval, then end your turn.
+    NavigatorAgent's verdict is the ONLY one that matters for execution:
     If DENIED, revise based on feedback and resubmit.
     If APPROVED, execute the sequence using MotorTools, then respond with: EXECUTED: <one-line summary>.
 
     # CONSTRAINTS
+    - NEVER execute a sequence you proposed, revised, or assume approval for, only if NavigatorAgent's message literally contains "APPROVED".
     - NEVER execute a DENIED sequence.
     """,
     "MotorsAgent",
@@ -52,8 +54,10 @@ var query = """
   """;
 
 var workflow = AgentWorkflowBuilder.CreateGroupChatBuilderWith(agents =>
-  new ApprovedTerminationManager(agents) { MaximumIterationCount = 10 })
+    new ApprovedTerminationManager(agents) { MaximumIterationCount = 10 })
   .AddParticipants(motorsAgent, navigatorAgent)
+  .WithOutputFrom(motorsAgent)
+  .WithName("RefinedExecution")
   .Build();
 
 await WorkflowsHelper.PrintToMarkdownAsync(workflow);
@@ -62,36 +66,41 @@ await WorkflowsHelper.PrintToMarkdownAsync(workflow);
 await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, input: query);
 await run.TrySendMessageAsync(new TurnToken(emitEvents: true));
 
-await foreach (WorkflowEvent evt in run.WatchStreamAsync())
+await PrintAsync(run);
 
-////await using Run run = await InProcessExecution.RunAsync(workflow, input: query);
-////foreach (WorkflowEvent evt in run.NewEvents)
+
+static async Task PrintAsync(StreamingRun run)
 {
-  switch (evt)
+  await foreach (WorkflowEvent evt in run.WatchStreamAsync())
   {
-    case ExecutorCompletedEvent completed:
-      Console.WriteLine($"[EXECUTOR] {completed.ExecutorId} completed.");
-      break;
+    switch (evt)
+    {
+      case ExecutorCompletedEvent completed:
+        Console.WriteLine($"[EXECUTOR] {completed.ExecutorId} completed.");
+        break;
 
-    case AgentResponseEvent response:
-      Console.WriteLine(response.Response.Text);
-      break;
+      case AgentResponseEvent response:
+        Console.WriteLine(response.Response.Text);
+        break;
 
-    case AgentResponseUpdateEvent update:
-      Console.Write(update.Update.Text);
-      break;
+      case AgentResponseUpdateEvent update:
+        Console.Write(update.Update.Text);
+        break;
 
-    case WorkflowOutputEvent output:
-      List<Microsoft.Extensions.AI.ChatMessage>? messages = output.As<List<Microsoft.Extensions.AI.ChatMessage>>();
-      Console.WriteLine($"\n[WORKFLOW OUTPUT] {messages?.LastOrDefault()?.Text}");
-      break;
+      case WorkflowOutputEvent output:
+        string? summary = output
+          .As<List<Microsoft.Extensions.AI.ChatMessage>>()?
+          .LastOrDefault(m => !string.IsNullOrWhiteSpace(m.Text))?.Text;
+        Console.WriteLine($"\n[WORKFLOW OUTPUT] {summary}");
+        break;
 
-    case WorkflowErrorEvent error:
-      Console.WriteLine($"\n[WORKFLOW ERROR] {error.Exception?.InnerException?.Message ?? error.Exception?.Message ?? "unknown"}");
-      break;
+      case WorkflowErrorEvent error:
+        Console.WriteLine($"\n[WORKFLOW ERROR] {error.Exception?.InnerException?.Message ?? error.Exception?.Message ?? "unknown"}");
+        break;
 
-    case ExecutorFailedEvent failed:
-      Console.Error.WriteLine($"\n[EXECUTOR FAILED] {failed.Data?.Message}");
-      break;
+      case ExecutorFailedEvent failed:
+        Console.Error.WriteLine($"\n[EXECUTOR FAILED] {failed.Data?.Message}");
+        break;
+    }
   }
 }

@@ -11,7 +11,9 @@ public static class RainDetectorTools
   [Description("Start wipers for the droplet level detected by the sensor (e.g., light drizzle vs heavy rain).")]
   public static async Task<string> StartWipersAsync(DropletLevel dropletLevel)
   {
+    Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] RAIN DETECTOR: Starting wipers for droplet level: {dropletLevel}.");
+    Console.ResetColor();
     await Task.Delay(Delay);
     return $"Wipers have started for droplet level: {dropletLevel}.";
   }
@@ -19,7 +21,9 @@ public static class RainDetectorTools
   [Description("Turn off wipers once no droplets are detected for a predefined duration (e.g., 10 seconds).")]
   public static async Task<string> StopWipersAsync()
   {
+    Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] RAIN DETECTOR: Stopping wipers.");
+    Console.ResetColor();
     await Task.Delay(Delay);
     return "Wipers have stopped.";
   }

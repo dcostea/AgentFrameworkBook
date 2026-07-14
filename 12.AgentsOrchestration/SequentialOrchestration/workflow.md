@@ -2,11 +2,11 @@
 
 ```mermaid
 flowchart TD
-  EnvironmentAgent_33522dec08994f83b61bf6f2b87096b8["EnvironmentAgent_33522dec08994f83b61bf6f2b87096b8 (Start)"];
-  SafetyAgent_78c35fff62b04c48a7cf20005a864f07["SafetyAgent_78c35fff62b04c48a7cf20005a864f07"];
-  MotorsAgent_211b54dd8ad64d3f97834cab6e48a5c1["MotorsAgent_211b54dd8ad64d3f97834cab6e48a5c1"];
+  EnvironmentAgent_928799838a3a49d1a31b691f3104813e["EnvironmentAgent_928799838a3a49d1a31b691f3104813e (Start)"];
+  SafetyAgent_1659d260e3134427bc65c003a5504a43["SafetyAgent_1659d260e3134427bc65c003a5504a43"];
+  MotorsAgent_bbf44cfe99b648d9b7ebce5616fecccf["MotorsAgent_bbf44cfe99b648d9b7ebce5616fecccf"];
   OutputMessages["OutputMessages"];
-  EnvironmentAgent_33522dec08994f83b61bf6f2b87096b8 --> SafetyAgent_78c35fff62b04c48a7cf20005a864f07;
-  SafetyAgent_78c35fff62b04c48a7cf20005a864f07 --> MotorsAgent_211b54dd8ad64d3f97834cab6e48a5c1;
-  MotorsAgent_211b54dd8ad64d3f97834cab6e48a5c1 --> OutputMessages;
+  EnvironmentAgent_928799838a3a49d1a31b691f3104813e --> SafetyAgent_1659d260e3134427bc65c003a5504a43;
+  SafetyAgent_1659d260e3134427bc65c003a5504a43 --> MotorsAgent_bbf44cfe99b648d9b7ebce5616fecccf;
+  MotorsAgent_bbf44cfe99b648d9b7ebce5616fecccf --> OutputMessages;
 ```
