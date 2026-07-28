@@ -28,6 +28,7 @@ Console.WriteLine($"USER: {query}");
 
 // Using OpenAIClient directly
 #pragma warning disable OPENAI001
+
 ResponsesClient azureOpenAIChatClient = new AzureOpenAIClient(
   new Uri(endpoint),
   new ApiKeyCredential(apiKey))
