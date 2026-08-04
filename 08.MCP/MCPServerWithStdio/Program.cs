@@ -14,9 +14,6 @@ HostApplicationBuilder builder = Host.CreateEmptyApplicationBuilder(null);
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
 
-#pragma warning disable MCPEXP001 // Tasks are experimental in MCP SDK v1.0
-InMemoryMcpTaskStore taskStore = new();
-
 builder.Services
   .AddMcpServer(options =>
   {
@@ -26,7 +23,6 @@ builder.Services
       Version = "1.0.0",
     };
     options.InitializationTimeout = TimeSpan.FromSeconds(10);
-    options.TaskStore = taskStore;
   })
   .WithStdioServerTransport()
   // Registering tools, prompts and resources in the server

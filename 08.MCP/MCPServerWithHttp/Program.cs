@@ -14,9 +14,6 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
 
-#pragma warning disable MCPEXP001
-InMemoryMcpTaskStore taskStore = new();
-
 builder.Services
   .AddMcpServer(options =>
   {
@@ -26,7 +23,6 @@ builder.Services
       Version = "1.0.0",
     };
     options.InitializationTimeout = TimeSpan.FromSeconds(10);
-    options.TaskStore = taskStore;
   })
   .WithHttpTransport(o => o.Stateless = true)
   .WithTools<MotorTools>()

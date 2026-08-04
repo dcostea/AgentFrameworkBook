@@ -110,40 +110,26 @@ Console.WriteLine(response);
 
 Console.WriteLine();
 
-// --- TASKS DEMO ---
-#pragma warning disable MCPEXP001 // Tasks are experimental in MCP SDK v1.0
+// --- LONG-RUNNING TOOLS WITH PROGRESS DEMO ---
+// The experimental Tasks API (MCPEXP001) was removed in MCP SDK v2.0.
+// Long-running tools are now invoked as regular tool calls; the server streams
+// progress updates via "notifications/progress", surfaced through IProgress<T>.
 
-// Must be registered BEFORE the call and kept alive until PollTaskUntilCompleteAsync returns.
-// The SDK's internal handler (inside CallToolAsTaskAsync) is disposed as soon as the initial
-// tools/call response returns (~instant for tasks), before the background task runs.
-await using IAsyncDisposable progressReg = mcpClient.RegisterNotificationHandler(
-  "notifications/progress",
-  (notification, ct) =>
-  {
-    double prog = notification.Params?["progress"]?.GetValue<double>() ?? 0;
-    double? total = notification.Params?["total"]?.GetValue<double>();
-    Console.WriteLine($"  PROGRESS: {prog}/{total} motors checked");
-    return ValueTask.CompletedTask;
-  });
-
-// run_diagnostics is a long-running task.
+// run_diagnostics is a long-running tool without progress reporting.
 // Either run_diagnostics or run_diagnostics_with_progress can be used, but not both.
 // Remember to comment out one of them.
-////McpTask task = await mcpClient.CallToolAsTaskAsync(
-////  "run_diagnostics",
-////  arguments: new Dictionary<string, object?> { { "detailed", true } });
-////Console.WriteLine($"TASK STARTED: {task.TaskId} | Status: {task.Status}");
+////Console.WriteLine("DIAGNOSTICS STARTED (no progress)...");
+////var diagnosticsResult = await mcpClient.CallToolAsync("run_diagnostics");
+////var diagnosticsText = diagnosticsResult.Content.FirstOrDefault() as TextContentBlock;
+////Console.WriteLine($"DIAGNOSTICS DONE | RESULT: {diagnosticsText?.Text}");
 
-// run_diagnostics_with_progress is a long-running task that sends progress updates.
+// run_diagnostics_with_progress is a long-running tool that sends progress updates.
 // Either run_diagnostics or run_diagnostics_with_progress can be used, but not both.
 // Remember to comment out one of them.
-McpTask task = await mcpClient.CallToolAsTaskAsync(
+Console.WriteLine("DIAGNOSTICS STARTED (with progress)...");
+var diagnosticsWithProgressResult = await mcpClient.CallToolAsync(
   "run_diagnostics_with_progress",
-  arguments: new Dictionary<string, object?> { { "detailed", true } },
-  progress: new Progress<ProgressNotificationValue>(_ => { }));
-Console.WriteLine($"TASK STARTED: {task.TaskId} | Status: {task.Status}");
-
-// Poll until Completed / Failed / Cancelled, then retrieve the result
-McpTask completed = await mcpClient.PollTaskUntilCompleteAsync(task.TaskId);
-JsonElement result = await mcpClient.GetTaskResultAsync(task.TaskId);
-Console.WriteLine($"TASK DONE: {completed.Status} | RESULT: {result}");
+  progress: new Progress<ProgressNotificationValue>(value =>
+    Console.WriteLine($"  PROGRESS: {value.Progress}/{value.Total} motors checked")));
+var diagnosticsWithProgressText = diagnosticsWithProgressResult.Content.FirstOrDefault() as TextContentBlock;
+Console.WriteLine($"DIAGNOSTICS DONE | RESULT: {diagnosticsWithProgressText?.Text}");
