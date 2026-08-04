@@ -99,11 +99,11 @@ AgentSession session1 = await motorsAgentWithFullPipeline.CreateSessionAsync();
 session1.StateBag.SetValue("OperatorName", "driver");
 session1.StateBag.SetValue("MissionTag", "MISSION-42 | PERIMETER-SCAN");
 
-string query1 = "Navigate to original position. Contact me at john.doe@example.com for updates.";
-ColorHelper.PrintColoredLine($"QUERY: {query1}", ConsoleColor.Yellow);
+string prompt1 = "Navigate to original position. Contact me at john.doe@example.com for updates.";
+ColorHelper.PrintColoredLine($"QUERY: {prompt1}", ConsoleColor.Yellow);
 try
 {
-  AgentResponse result1 = await motorsAgentWithFullPipeline.RunAsync(query1, session1);
+  AgentResponse result1 = await motorsAgentWithFullPipeline.RunAsync(prompt1, session1);
   ColorHelper.PrintColoredLine($"\nRESULT: {result1}\n", ConsoleColor.Yellow);
 }
 catch (OperationDeniedException ex)
@@ -121,11 +121,11 @@ ColorHelper.PrintColoredLine("""
   AuditAgentFunctionCalls still logs the invocation and blocked result.
   """);
 
-string query2 = "Move forward 10 meters then go backward 10 meters";
-ColorHelper.PrintColoredLine($"QUERY: {query2}", ConsoleColor.Yellow);
+string prompt2 = "Move forward 10 meters then go backward 10 meters";
+ColorHelper.PrintColoredLine($"QUERY: {prompt2}", ConsoleColor.Yellow);
 try
 {
-  AgentResponse result2 = await motorsAgentWithFullPipeline.RunAsync(query2, session1);
+  AgentResponse result2 = await motorsAgentWithFullPipeline.RunAsync(prompt2, session1);
   ColorHelper.PrintColoredLine($"\nRESULT: {result2}\n", ConsoleColor.Yellow);
 }
 catch (OperationDeniedException ex)
@@ -147,11 +147,11 @@ AgentSession session2 = await motorsAgentWithFullPipeline.CreateSessionAsync();
 session2.StateBag.SetValue("OperatorName", "observer");
 session2.StateBag.SetValue("MissionTag", "MISSION-99 | INSPECTION");
 
-string query3 = "Move forward 3 meters";
-ColorHelper.PrintColoredLine($"QUERY: {query3}", ConsoleColor.Yellow);
+string prompt3 = "Move forward 3 meters";
+ColorHelper.PrintColoredLine($"QUERY: {prompt3}", ConsoleColor.Yellow);
 try
 {
-  AgentResponse result3 = await motorsAgentWithFullPipeline.RunAsync(query3, session2);
+  AgentResponse result3 = await motorsAgentWithFullPipeline.RunAsync(prompt3, session2);
   ColorHelper.PrintColoredLine($"\nRESULT: {result3}\n", ConsoleColor.Yellow);
 }
 catch (OperationDeniedException ex)

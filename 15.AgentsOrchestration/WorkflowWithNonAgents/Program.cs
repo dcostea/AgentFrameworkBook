@@ -10,14 +10,14 @@ WorkflowBuilder builder = new(safety);
 builder.AddEdge(safety, motors).WithOutputFrom(motors);
 Workflow workflow = builder.Build();
 
-string mission = $"""
+string prompt = $"""
   ## Weather Report: {weather}.
 
   ## Mission Command:
   There is a tree ahead. Avoid it and return to original path.
   """;
 
-await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, input: mission);
+await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, input: prompt);
 
 await foreach (WorkflowEvent evt in run.WatchStreamAsync())
 {

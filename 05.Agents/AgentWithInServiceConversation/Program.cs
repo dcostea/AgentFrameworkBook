@@ -29,17 +29,17 @@ ChatClientAgent agent = chatClient.AsAIAgent("""
 
 AgentSession session = await agent.CreateSessionAsync(conversationId);
 
-var query = $"""  
+var prompt = """  
   Complex command: 
   "There is a tree directly in front of the car. Avoid it and then return to the original path."
   """;
-ColorHelper.PrintColoredLine($"USER: {query}", ConsoleColor.Yellow);
-AgentResponse response = await agent.RunAsync(query, session);
+ColorHelper.PrintColoredLine($"USER: {prompt}", ConsoleColor.Yellow);
+AgentResponse response = await agent.RunAsync(prompt, session);
 ColorHelper.PrintColoredLine($"ASSISTANT: {response.Text}", ConsoleColor.Green);
 
-var followUpQuery = "What was your second last basic move?";
-ColorHelper.PrintColoredLine($"USER: {followUpQuery}", ConsoleColor.Yellow);
-AgentResponse followUpResponse = await agent.RunAsync(followUpQuery, session);
+var followUpPrompt = "What was your second last basic move?";
+ColorHelper.PrintColoredLine($"USER: {followUpPrompt}", ConsoleColor.Yellow);
+AgentResponse followUpResponse = await agent.RunAsync(followUpPrompt, session);
 ColorHelper.PrintColoredLine($"ASSISTANT: {followUpResponse.Text}", ConsoleColor.Green);
 
 Console.WriteLine("HISTORY:");

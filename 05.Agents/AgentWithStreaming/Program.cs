@@ -19,12 +19,12 @@ ChatClientAgent agent = new OpenAIClient(apiKey)
     """
   );
 
-var query = """  
+var prompt = """  
   Complex command: 
   "There is a tree directly in front of the car. Avoid it and then return to the original path."
   """;
 
-await foreach (AgentResponseUpdate update in agent.RunStreamingAsync(query))
+await foreach (AgentResponseUpdate update in agent.RunStreamingAsync(prompt))
 {
   Console.Write(update.Text);
 

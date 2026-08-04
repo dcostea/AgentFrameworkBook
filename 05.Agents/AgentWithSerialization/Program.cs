@@ -22,12 +22,12 @@ ChatClientAgent agent = new OpenAIClient(apiKey)
 
 AgentSession session = await agent.CreateSessionAsync();
 
-var query = $"""  
+var prompt = """  
   Complex command: 
   "There is a tree directly in front of the car. Avoid it and then return to the original path."
   """;
-ColorHelper.PrintColoredLine($"USER: {query}", ConsoleColor.Yellow);
-AgentResponse response = await agent.RunAsync(query, session);
+ColorHelper.PrintColoredLine($"USER: {prompt}", ConsoleColor.Yellow);
+AgentResponse response = await agent.RunAsync(prompt, session);
 ColorHelper.PrintColoredLine($"ASSISTANT: {response.Text}", ConsoleColor.Green);
 
 Console.WriteLine("\nSerializing session...");

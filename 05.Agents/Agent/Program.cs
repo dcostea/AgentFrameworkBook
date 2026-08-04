@@ -20,17 +20,17 @@ ChatClientAgent agent = new OpenAIClient(apiKey)
     description: "An AI agent that controls a robot car."
   );
 
-var query = """  
+var prompt = """  
   Complex command: 
   "There is a tree directly in front of the car. Avoid it and then return to the original path."
   """;
-AgentResponse response = await agent.RunAsync(query);
+AgentResponse response = await agent.RunAsync(prompt);
 Console.WriteLine(response.Text);
 
 // because the agent doesn't have a session, it doesn't remember the previous moves.
-var followupQuery = """  
+var followupPrompt = """  
   Complex command: 
   "What was your second last move?"
   """;
-AgentResponse followupResponse = await agent.RunAsync(followupQuery);
+AgentResponse followupResponse = await agent.RunAsync(followupPrompt);
 Console.WriteLine(followupResponse.Text);

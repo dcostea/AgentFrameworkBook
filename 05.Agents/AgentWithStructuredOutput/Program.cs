@@ -28,11 +28,11 @@ ChatClientAgent agent = new OpenAIClient(apiKey)
     }
   });
 
-var query = """  
+var prompt = """  
   Complex command: 
   "There is a tree directly in front of the car. Avoid it and then return to the original path."
   """;
-AgentResponse<StepsResponse> response = await agent.RunAsync<StepsResponse>(query);
+AgentResponse<StepsResponse> response = await agent.RunAsync<StepsResponse>(prompt);
 Console.WriteLine(JsonSerializer.Serialize(response.Result));
 
 record StepsResponse(StepItem[] Steps);

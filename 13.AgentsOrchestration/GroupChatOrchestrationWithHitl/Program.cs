@@ -51,7 +51,7 @@ var motorsAgent = new OpenAIClient(apiKey)
 
 AIAgent humanApprover = new HumanAgent();
 
-var query = """
+var prompt = """
   # MISSION COMMAND: Exploration Trip
 
   "There is a tree directly in front of the car. Avoid it and then come back to the original path. The distance to the tree is 50 meters."
@@ -64,7 +64,7 @@ var workflow = AgentWorkflowBuilder.CreateGroupChatBuilderWith(agents =>
 
 await WorkflowsHelper.PrintToMarkdownAsync(workflow);
 
-await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, input: query);
+await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, input: prompt);
 await run.TrySendMessageAsync(new TurnToken(emitEvents: true));
 
 await foreach (WorkflowEvent evt in run.WatchStreamAsync())

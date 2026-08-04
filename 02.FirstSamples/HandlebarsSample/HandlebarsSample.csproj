@@ -9,7 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Fluid.Core" Version="3.0.0-beta.5" />
+		<PackageReference Include="Fluid.Core" Version="3.0.0-beta.6" />
 		<PackageReference Include="Handlebars.Net" Version="2.1.6" />
 		
 		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.10" />

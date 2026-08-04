@@ -71,7 +71,7 @@ var motorsAgent = new OpenAIClient(apiKey)
     tools: [.. MotorTools.AsAITools()]
   );
 
-var query = """
+var prompt = """
   # MISSION COMMAND: Exploration Trip
 
   There is a tree directly in front of the car. Avoid it and then come back to the original path.
@@ -90,7 +90,7 @@ await WorkflowsHelper.PrintToMarkdownAsync(workflow);
 
 ////await foreach (WorkflowEvent evt in run.WatchStreamAsync())
 
-await using Run run = await InProcessExecution.RunAsync(workflow, input: query);
+await using Run run = await InProcessExecution.RunAsync(workflow, input: prompt);
 foreach (WorkflowEvent evt in run.NewEvents)
 {
   switch (evt)

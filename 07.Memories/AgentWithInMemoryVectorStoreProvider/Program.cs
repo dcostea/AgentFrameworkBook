@@ -81,22 +81,22 @@ ChatClientAgent motorsAgent = chatClient.AsAIAgent(new ChatClientAgentOptions
   AIContextProviders = [chatHistoryMemoryProvider],
 });
 
-var query = $"""  
+var prompt = """
   Complex command: 
   "There is a tree directly in front of the car. Avoid it and then return to the original path."
   """;
-ColorHelper.PrintColoredLine($"USER: {query}", ConsoleColor.Yellow);
-AgentResponse response = await motorsAgent.RunAsync(query, session);
+ColorHelper.PrintColoredLine($"USER: {prompt}", ConsoleColor.Yellow);
+AgentResponse response = await motorsAgent.RunAsync(prompt, session);
 ColorHelper.PrintColoredLine($"ASSISTANT: {response.Text}", ConsoleColor.Green);
 
-var followUpQuery = "What was your second last basic move?";
-ColorHelper.PrintColoredLine($"USER: {followUpQuery}", ConsoleColor.Yellow);
-AgentResponse followUpResponse = await motorsAgent.RunAsync(followUpQuery, session);
+var followUpPrompt = "What was your second last basic move?";
+ColorHelper.PrintColoredLine($"USER: {followUpPrompt}", ConsoleColor.Yellow);
+AgentResponse followUpResponse = await motorsAgent.RunAsync(followUpPrompt, session);
 ColorHelper.PrintColoredLine($"ASSISTANT: {followUpResponse.Text}", ConsoleColor.Green);
 
-var anotherFollowUpQuery = "Today is 2nd of June, 2PM. What is the temperature?";
-ColorHelper.PrintColoredLine($"USER: {anotherFollowUpQuery}", ConsoleColor.Yellow);
-AgentResponse anotherFollowUpResponse = await motorsAgent.RunAsync(anotherFollowUpQuery, session);
+var anotherFollowUpPrompt = "Today is 2nd of June, 2PM. What is the temperature?";
+ColorHelper.PrintColoredLine($"USER: {anotherFollowUpPrompt}", ConsoleColor.Yellow);
+AgentResponse anotherFollowUpResponse = await motorsAgent.RunAsync(anotherFollowUpPrompt, session);
 ColorHelper.PrintColoredLine($"ASSISTANT: {anotherFollowUpResponse.Text}", ConsoleColor.Green);
 
 Console.WriteLine("HISTORY:");

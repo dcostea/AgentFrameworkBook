@@ -18,8 +18,8 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.Logging.AddOpenTelemetry(logging =>
 {
-    logging.IncludeFormattedMessage = true;
-    logging.IncludeScopes = true;
+  logging.IncludeFormattedMessage = true;
+  logging.IncludeScopes = true;
 });
 
 const string SourceName = "OpenTelemetry.RobbyAgent";

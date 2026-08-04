@@ -38,9 +38,12 @@ ChatClientAgent agent = new OpenAIClient(apiKey)
 
 AgentSession session = await agent.CreateSessionAsync();
 
-var query = @"Complex command: ""Go left and right then stop.""";
+var prompt = """
+  Complex command: 
+  "Go left and right then stop."
+  """;
 
-AgentResponse response = await agent.RunAsync(query, session);
+AgentResponse response = await agent.RunAsync(prompt, session);
 
 // Manual tool-calling loop: intercept tool calls, invoke them, send results back
 while (response.FinishReason == Microsoft.Extensions.AI.ChatFinishReason.ToolCalls)

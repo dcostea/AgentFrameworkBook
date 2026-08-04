@@ -69,9 +69,9 @@ ColorHelper.PrintColoredLine("""
   (Without middleware: The email was NOT redacted — sent directly to the LLM provider, GDPR violation)
   (With middleware: The email was redacted — GDPR compliance)
   """);
-var query1 = "Navigate to original position. Contact me at john.doe@example.com for updates.";
-ColorHelper.PrintColoredLine($"QUERY: {query1}", ConsoleColor.Yellow);
-AgentResponse result1 = await motorsAgent.RunAsync(query1, session);
+var prompt1 = "Navigate to original position. Contact me at john.doe@example.com for updates.";
+ColorHelper.PrintColoredLine($"QUERY: {prompt1}", ConsoleColor.Yellow);
+AgentResponse result1 = await motorsAgent.RunAsync(prompt1, session);
 ColorHelper.PrintColoredLine($"\nRESULT: {result1}\n", ConsoleColor.Yellow);
 
 ColorHelper.PrintColoredLine("""
@@ -79,9 +79,9 @@ ColorHelper.PrintColoredLine("""
   (Without middleware: Backward ran the full 10 m — no distance constraint, the robot could hit a wall)
   (With middleware: Backward constrained to 5 m max — safer default for obstacle avoidance)
   """);
-var query2 = "Move forward 10 meters then go backward 10 meters";
-ColorHelper.PrintColoredLine($"QUERY: {query2}", ConsoleColor.Yellow);
-AgentResponse result2 = await motorsAgent.RunAsync(query2, session);
+var prompt2 = "Move forward 10 meters then go backward 10 meters";
+ColorHelper.PrintColoredLine($"QUERY: {prompt2}", ConsoleColor.Yellow);
+AgentResponse result2 = await motorsAgent.RunAsync(prompt2, session);
 ColorHelper.PrintColoredLine($"\nRESULT: {result2}\n", ConsoleColor.Yellow);
 
 ColorHelper.PrintColoredLine("""
@@ -89,7 +89,7 @@ ColorHelper.PrintColoredLine("""
   (Without middleware: No token budget enforced — costs accumulate silently)
   (With middleware: Token budget enforced — costs controlled)
   """);
-var query3 = "Move forward 3 meters, turn right 90 degrees, move forward 3 meters";
-ColorHelper.PrintColoredLine($"QUERY: {query3}", ConsoleColor.Yellow);
-AgentResponse result3 = await motorsAgent.RunAsync(query3, session);
+var prompt3 = "Move forward 3 meters, turn right 90 degrees, move forward 3 meters";
+ColorHelper.PrintColoredLine($"QUERY: {prompt3}", ConsoleColor.Yellow);
+AgentResponse result3 = await motorsAgent.RunAsync(prompt3, session);
 ColorHelper.PrintColoredLine($"\nRESULT: {result3}\n", ConsoleColor.Yellow);

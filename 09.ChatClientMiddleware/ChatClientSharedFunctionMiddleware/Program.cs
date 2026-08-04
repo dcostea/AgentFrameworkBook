@@ -95,11 +95,11 @@ AgentSession session = await motorsAgent.CreateSessionAsync();
 // =============================================================================
 // TEST 1: Email Removal (Story 2)
 // =============================================================================
-var query1 = "There is a tree directly in front of the car. Avoid it and then return to the original path.";
-ColorHelper.PrintColoredLine($"QUERY: {query1}", ConsoleColor.Yellow);
+var prompt1 = "There is a tree directly in front of the car. Avoid it and then return to the original path.";
+ColorHelper.PrintColoredLine($"QUERY: {prompt1}", ConsoleColor.Yellow);
 try
 {
-  var result1 = await motorsAgent.RunAsync(query1, session);
+  var result1 = await motorsAgent.RunAsync(prompt1, session);
   ColorHelper.PrintColoredLine($"RESULT: {result1}\n", ConsoleColor.Green);
 }
 catch (LimitExceededException ex)
@@ -110,11 +110,11 @@ catch (LimitExceededException ex)
 // =============================================================================
 // TEST 2: Request Budget (Story 1)
 // =============================================================================
-var query2 = "Navigate to original position. Contact me at john.doe@example.com for updates.";
-ColorHelper.PrintColoredLine($"QUERY: {query2}", ConsoleColor.Yellow);
+var prompt2 = "Navigate to original position. Contact me at john.doe@example.com for updates.";
+ColorHelper.PrintColoredLine($"QUERY: {prompt2}", ConsoleColor.Yellow);
 try
 {
-  var result2 = await motorsAgent.RunAsync(query2, session);
+  var result2 = await motorsAgent.RunAsync(prompt2, session);
   ColorHelper.PrintColoredLine($"RESULT: {result2}\n", ConsoleColor.Green);
 }
 catch (LimitExceededException ex)
@@ -125,11 +125,11 @@ catch (LimitExceededException ex)
 // =============================================================================
 // TEST 3: Request Limit (Story 1)
 // =============================================================================
-var query3 = "Stop and email me at sara.doe@example.com for further instructions.";
-ColorHelper.PrintColoredLine($"QUERY: {query3}", ConsoleColor.Yellow);
+var prompt3 = "Stop and email me at sara.doe@example.com for further instructions.";
+ColorHelper.PrintColoredLine($"QUERY: {prompt3}", ConsoleColor.Yellow);
 try
 {
-  var result3 = await motorsAgent.RunAsync(query3, session);
+  var result3 = await motorsAgent.RunAsync(prompt3, session);
   ColorHelper.PrintColoredLine($"RESULT: {result3}\n", ConsoleColor.Green);
 }
 catch (LimitExceededException ex)

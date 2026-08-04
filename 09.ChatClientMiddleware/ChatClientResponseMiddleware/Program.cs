@@ -99,17 +99,17 @@ AgentSession session = await motorsAgent.CreateSessionAsync();
 // =============================================================================
 // TEST 1: LLM Audit and Metrics
 // =============================================================================
-var query1 = "Move forward 3 meters";
-ColorHelper.PrintColoredLine($"QUERY: {query1}", ConsoleColor.Yellow);
-var result1 = await motorsAgent.RunAsync(query1, session);
+var prompt1 = "Move forward 3 meters";
+ColorHelper.PrintColoredLine($"QUERY: {prompt1}", ConsoleColor.Yellow);
+var result1 = await motorsAgent.RunAsync(prompt1, session);
 ColorHelper.PrintColoredLine($"\nRESULT: {result1}\n", ConsoleColor.Yellow);
 
 // =============================================================================
 // TEST 2: Pure LLM Latency vs Agent Execution Time
 // =============================================================================
-var query2 = "Turn right 45 degrees";
-ColorHelper.PrintColoredLine($"QUERY: {query2}", ConsoleColor.Yellow);
-var result2 = await motorsAgent.RunAsync(query2, session);
+var prompt2 = "Turn right 45 degrees";
+ColorHelper.PrintColoredLine($"QUERY: {prompt2}", ConsoleColor.Yellow);
+var result2 = await motorsAgent.RunAsync(prompt2, session);
 ColorHelper.PrintColoredLine($"\nRESULT: {result2}\n", ConsoleColor.Yellow);
 
 // =============================================================================

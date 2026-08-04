@@ -30,16 +30,16 @@ ChatClientAgent agent = new OpenAIClient(apiKey)
     }
   });
 
-var firstQuery = "Go left and right then stop.";
-Console.WriteLine($"USER: {firstQuery}");
-AgentResponse firstResponse = await agent.RunAsync(firstQuery);
+var firstPrompt = "Go left and right then stop.";
+Console.WriteLine($"USER: {firstPrompt}");
+AgentResponse firstResponse = await agent.RunAsync(firstPrompt);
 Console.WriteLine("RESPONSE:");
 Console.WriteLine(firstResponse.Text);
 
 Console.WriteLine();
 
-var secondQuery = "What movements can you perform?";
-Console.WriteLine($"USER: {secondQuery}");
-AgentResponse secondResponse = await agent.RunAsync(secondQuery);
+var secondPrompt = "What movements can you perform?";
+Console.WriteLine($"USER: {secondPrompt}");
+AgentResponse secondResponse = await agent.RunAsync(secondPrompt);
 Console.WriteLine("RESPONSE:");
 Console.WriteLine(secondResponse.Text);

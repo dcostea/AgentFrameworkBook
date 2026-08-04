@@ -27,11 +27,11 @@ ChatClientAgent agent = new OpenAIClient(apiKey)
   ]
 );
 
-var query = "Complex command: Danger ahead! Stop! Full back!";
+var prompt = "Complex command: Danger ahead! Stop! Full back!";
 
 // Create a new conversation session and send the initial command
 AgentSession session = await agent.CreateSessionAsync();
-AgentResponse response = await agent.RunAsync(query, session);
+AgentResponse response = await agent.RunAsync(prompt, session);
 
 // Loop until the agent has no more pending approval requests
 List<ToolApprovalRequestContent> approvalRequests = GetToolApprovalRequests(response);

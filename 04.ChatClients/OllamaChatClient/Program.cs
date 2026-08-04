@@ -1,22 +1,21 @@
 ﻿using Microsoft.Extensions.AI;
 using OllamaSharp;
-using OllamaSharp.Models;
 
 var systemMessage = """
-    ### Persona  
-    You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.  
+  ### Persona  
+  You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.  
 
-    ### Action  
-    You have to break down the provided complex commands into basic moves you know.  
+  ### Action  
+  You have to break down the provided complex commands into basic moves you know.  
 
-    ### Template  
-    Respond only with the permitted moves, without any additional explanations.  
-    """;
+  ### Template  
+  Respond only with the permitted moves, without any additional explanations.  
+  """;
 
 var userMessage = """  
-    Complex command: 
-    "There is a tree directly in front of the car. Avoid it and then come back to the original path."  
-    """;
+  Complex command: 
+  "There is a tree directly in front of the car. Avoid it and then come back to the original path."  
+  """;
 
 var modelName = "gemma4:e4b";
 //var modelName = "ministral-3";
@@ -40,8 +39,8 @@ var ollamaApiClient = new OllamaApiClient(new Uri(ollamaServer), modelName);
 ////}
 
 List<ChatMessage> messages = [
-    new(ChatRole.System, systemMessage),
-    new(ChatRole.User, userMessage)
+  new(ChatRole.System, systemMessage),
+  new(ChatRole.User, userMessage)
 ];
 
 ChatResponse response = await ((IChatClient)ollamaApiClient).GetResponseAsync(messages);

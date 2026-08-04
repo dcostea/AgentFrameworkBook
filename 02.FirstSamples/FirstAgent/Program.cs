@@ -15,14 +15,15 @@ var chatClient = new OpenAIClient(apiKey)
 //.AsIChatClient();
 
 AIAgent agent = chatClient.AsAIAgent("""
-  You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
+  You are an AI assistant controlling a robot car capable of performing 
+  basic moves: forward, backward, turn left, turn right, and stop.
   You have to break down the provided complex commands into basic moves you know.
   """
 );
 
-var query = """  
+var prompt = """  
   Complex command: 
   "There is a tree directly in front of the car. Avoid it and then come back to the original path."  
   """;
-AgentResponse result = await agent.RunAsync(query);
+AgentResponse result = await agent.RunAsync(prompt);
 Console.WriteLine(result.Text);

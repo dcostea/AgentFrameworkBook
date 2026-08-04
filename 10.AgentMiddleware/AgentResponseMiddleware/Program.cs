@@ -96,9 +96,9 @@ ColorHelper.PrintColoredLine("""
   (Watch the Captain's log "Stardate..." prefix on the response)
   """, ConsoleColor.DarkGray);
 
-var query1 = "Move forward 5 meters";
-ColorHelper.PrintColoredLine($"QUERY: {query1}", ConsoleColor.Yellow);
-var result1 = await motorsAgentWithMiddleware.RunAsync(query1, session);
+var prompt1 = "Move forward 5 meters";
+ColorHelper.PrintColoredLine($"QUERY: {prompt1}", ConsoleColor.Yellow);
+var result1 = await motorsAgentWithMiddleware.RunAsync(prompt1, session);
 ColorHelper.PrintColoredLine($"\nRESULT: {result1}\n", ConsoleColor.Yellow);
 
 // =============================================================================
@@ -110,9 +110,9 @@ ColorHelper.PrintColoredLine("""
   (Illegal direction reversal triggers a warning footer on the response)
   """, ConsoleColor.DarkGray);
 
-var query2 = "Move forward 2 meters and immediatelly move backward 2 meters.";
-ColorHelper.PrintColoredLine($"QUERY: {query2}", ConsoleColor.Yellow);
-var result2 = await motorsAgentWithMiddleware.RunAsync(query2, session);
+var prompt2 = "Move forward 2 meters and immediatelly move backward 2 meters.";
+ColorHelper.PrintColoredLine($"QUERY: {prompt2}", ConsoleColor.Yellow);
+var result2 = await motorsAgentWithMiddleware.RunAsync(prompt2, session);
 ColorHelper.PrintColoredLine($"\nRESULT: {result2}\n", ConsoleColor.Yellow);
 
 // =============================================================================

@@ -118,7 +118,7 @@ Workflow workflow = AgentWorkflowBuilder.BuildSequential("SafeExecution", safety
 
 await WorkflowsHelper.PrintToMarkdownAsync(workflow);
 
-var query = """
+var prompt = """
   MISSION COMMAND: Exploration Trip
   There is a tree directly in front of the car. Avoid the tree and continue the exploration.
   """;
@@ -129,7 +129,7 @@ var query = """
 
 ////await foreach (WorkflowEvent evt in run.WatchStreamAsync())
 
-await using Run run = await InProcessExecution.RunAsync(workflow, input: query);
+await using Run run = await InProcessExecution.RunAsync(workflow, input: prompt);
 foreach (WorkflowEvent evt in run.NewEvents)
 {
   switch (evt)

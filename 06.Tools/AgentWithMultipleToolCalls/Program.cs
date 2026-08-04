@@ -28,11 +28,11 @@ ChatClientAgent agent = new OpenAIClient(apiKey)
     }
   });
 
-var query = """  
+var prompt = """  
   Complex command: 
   "There is a tree directly in front of the car. Avoid it and then return to the original path."
   """;
 
-AgentResponse response = await agent.RunAsync(query);
+AgentResponse response = await agent.RunAsync(prompt);
 
 AgentsHelper.PrintTools(response.Messages);

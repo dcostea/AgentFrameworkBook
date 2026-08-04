@@ -7,7 +7,7 @@ var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build()
 var model = configuration["OpenAI:ModelId"];
 var apiKey = configuration["OpenAI:ApiKey"];
 
-var query = """
+var prompt = """
   You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
   You have to break down the provided complex commands into the basic moves you know.
   Respond only with the moves and their parameters (angle or distance), and provide additional explanations. Get into details.
@@ -18,7 +18,7 @@ var query = """
 Console.ForegroundColor = ConsoleColor.Yellow;
 Console.WriteLine("User:");
 Console.ResetColor();
-Console.WriteLine(query);
+Console.WriteLine(prompt);
 
 // GetOpenAIResponseClient is for evaluation purposes only and is subject to change or removal in future updates.
 #pragma warning disable OPENAI001
@@ -28,10 +28,8 @@ IChatClient chatClient = new OpenAIClient(apiKey)
 
 try
 {
-  // AllowBackgroundResponses and ContinuationToken are for evaluation purposes only and is subject to change or removal in future updates.
-#pragma warning disable MEAI001
   ChatOptions options = new() { AllowBackgroundResponses = true };
-  ChatResponse chatResponse = await chatClient.GetResponseAsync(query, options);
+  ChatResponse chatResponse = await chatClient.GetResponseAsync(prompt, options);
   Console.ForegroundColor = ConsoleColor.Yellow;
   Console.WriteLine($"\n[INITIAL] Assistant:");
   Console.WriteLine($"Finish Reason: {chatResponse.FinishReason?.Value ?? "(null)"}");

@@ -30,30 +30,30 @@ Console.WriteLine();
 // List discovered MCP prompts
 IList<McpClientPrompt> mcpPrompts = await mcpClient.ListPromptsAsync();
 Console.WriteLine("PROMPTS AVAILABLE:");
-foreach (var prompt in mcpPrompts)
+foreach (var mcpPrompt in mcpPrompts)
 {
-  var arguments = string.Join(",", JsonSerializer.Serialize(prompt.ProtocolPrompt.Arguments));
-  Console.WriteLine($"  {prompt.Name} {arguments}");
+  var arguments = string.Join(",", JsonSerializer.Serialize(mcpPrompt.ProtocolPrompt.Arguments));
+  Console.WriteLine($"  {mcpPrompt.Name} {arguments}");
 }
 Console.WriteLine();
 
 // List discovered MCP resources
 IList<McpClientResource> mcpResources = await mcpClient.ListResourcesAsync();
 Console.WriteLine("RESOURCES AVAILABLE:");
-foreach (var resource in mcpResources)
+foreach (var mcpResource in mcpResources)
 {
-  var arguments = string.Join(",", JsonSerializer.Serialize(resource.ProtocolResource));
-  Console.WriteLine($"  {resource.Name} {arguments}");
+  var arguments = string.Join(",", JsonSerializer.Serialize(mcpResource.ProtocolResource));
+  Console.WriteLine($"  {mcpResource.Name} {arguments}");
 }
 Console.WriteLine();
 
 // List discovered MCP resource templates
 IList<McpClientResourceTemplate> mcpResourceTemplates = await mcpClient.ListResourceTemplatesAsync();
 Console.WriteLine("RESOURCE TEMPLATES AVAILABLE:");
-foreach (var template in mcpResourceTemplates)
+foreach (var mcpResourceTemplate in mcpResourceTemplates)
 {
-  var details = JsonSerializer.Serialize(template.ProtocolResourceTemplate);
-  Console.WriteLine($"  {template.Name} {details}");
+  var details = JsonSerializer.Serialize(mcpResourceTemplate.ProtocolResourceTemplate);
+  Console.WriteLine($"  {mcpResourceTemplate.Name} {details}");
 }
 Console.WriteLine();
 
@@ -66,19 +66,19 @@ Console.WriteLine($"TOOL RESPONSE: {toolResponse?.Text}");
 Console.WriteLine();
 
 // Fetch prompts and extract user messages
-var mcpPrompt = await mcpClient.GetPromptAsync("message_prompt");
-var userPrompt = mcpPrompt.Messages.SingleOrDefault(m => m.Role == Role.User)?.Content as TextContentBlock;
-var parametrizedMcpPrompt = await mcpClient.GetPromptAsync("parametrized_message_prompt",
+var mcpClientPrompt = await mcpClient.GetPromptAsync("message_prompt");
+var userPrompt = mcpClientPrompt.Messages.SingleOrDefault(m => m.Role == Role.User)?.Content as TextContentBlock;
+var parametrizedMcpClientPrompt = await mcpClient.GetPromptAsync("parametrized_message_prompt",
   arguments: new Dictionary<string, object?> { { "action", "There is a tree directly in front of the car. Avoid it and then return to the original path." } }
 );
-var userParametrizedPrompt = parametrizedMcpPrompt.Messages.SingleOrDefault(m => m.Role == Role.User)?.Content as TextContentBlock;
+var userParametrizedPrompt = parametrizedMcpClientPrompt.Messages.SingleOrDefault(m => m.Role == Role.User)?.Content as TextContentBlock;
 Console.WriteLine($"SIMPLE PROMPT RESPONSE: {userPrompt?.Text}");
 Console.WriteLine($"PROMPT TEMPLATE (PARAMETRIZED) RESPONSE: {userParametrizedPrompt?.Text}");
 Console.WriteLine();
 
 // Fetch a static resource
-var mcpResource = await mcpClient.ReadResourceAsync("resource://mcp/bio");
-var mcpResourceResponse = mcpResource.Contents.FirstOrDefault() as TextResourceContents;
+var mcpClientResource = await mcpClient.ReadResourceAsync("resource://mcp/bio");
+var mcpResourceResponse = mcpClientResource.Contents.FirstOrDefault() as TextResourceContents;
 Console.WriteLine($"RESOURCE RESPONSE: {mcpResourceResponse?.Text}");
 
 // Fetch a template resource (dynamic) with a concrete argument
@@ -102,10 +102,10 @@ ChatClientAgent agent = new OpenAIClient(apiKey)
     tools: [.. mcpTools.Cast<AITool>()]
   );
 
-var query = userParametrizedPrompt!.Text;
+var prompt = userParametrizedPrompt!.Text;
 
 Console.WriteLine("AGENT RESPONSE:");
-AgentResponse response = await agent.RunAsync(query);
+AgentResponse response = await agent.RunAsync(prompt);
 Console.WriteLine(response);
 
 Console.WriteLine();

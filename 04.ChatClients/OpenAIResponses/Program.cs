@@ -9,7 +9,7 @@ var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build()
 var model = configuration["OpenAI:ModelId"];
 var apiKey = configuration["OpenAI:ApiKey"];
 
-var query = """
+var prompt = """
   ## Persona
   You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
     
@@ -23,19 +23,19 @@ var query = """
   Respond with a JSON array like [move1, move2, move3].
   Do not respond with reasoning, comments, or any additional text.
   """;
-Console.WriteLine($"User: {query}");
+Console.WriteLine($"User: {prompt}");
 
 #pragma warning disable OPENAI001
 
 // Using OpenAIClient directly with Responses API
 ResponsesClient responsesClient = new OpenAIClient(apiKey)
   .GetResponsesClient();
-ClientResult<ResponseResult> response = responsesClient.CreateResponse(model, query);
+ClientResult<ResponseResult> response = responsesClient.CreateResponse(model, prompt);
 Console.WriteLine($"\nAssistant (OpenAI Responses): {response.Value.GetOutputText()}");
 
 // Using IChatClient interface
 IChatClient chatClient = new OpenAIClient(apiKey)
   .GetResponsesClient()
   .AsIChatClient(model);
-ChatResponse chatResponse = await chatClient.GetResponseAsync(query);
+ChatResponse chatResponse = await chatClient.GetResponseAsync(prompt);
 Console.WriteLine($"\nAssistant (IChatClient): {chatResponse.Text}");

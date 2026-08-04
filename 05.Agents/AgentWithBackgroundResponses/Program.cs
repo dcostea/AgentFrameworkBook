@@ -18,19 +18,18 @@ ChatClientAgent agent = new OpenAIClient(apiKey)
     Respond with the moves and their parameters (angle or distance), and provide additional explanations.
     """);
 
-var query = """  
+var prompt = """  
   Complex command: 
   "There is a tree directly in front of the car. Avoid it and then return to the original path."
   """;
 ColorHelper.PrintColoredLine("User:", ConsoleColor.Yellow);
-ColorHelper.PrintColoredLine(query, ConsoleColor.White);
+ColorHelper.PrintColoredLine(prompt, ConsoleColor.White);
 
 // Create a session for the agent to maintain conversation context
 AgentSession session = await agent.CreateSessionAsync();
 
-// AllowBackgroundResponses and ContinuationToken are for evaluation purposes only and is subject to change or removal in future updates.
 AgentRunOptions options = new() { AllowBackgroundResponses = true };
-AgentResponse response = await agent.RunAsync(query, session, options);
+AgentResponse response = await agent.RunAsync(prompt, session, options);
 
 ResponseStatus? initialStatus = (response.AsChatResponse().RawRepresentation as ResponseResult)?.Status;
 ColorHelper.PrintColoredLine($"\n[INITIAL] Assistant:", ConsoleColor.Yellow);

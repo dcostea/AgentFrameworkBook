@@ -78,7 +78,7 @@ var environmentAgent = new OpenAIClient(apiKey)
     .Use(AgentResponses.MissionAbort, null)
   .Build();
 
-var query = """
+var prompt = """
   MISSION COMMAND: Exploration Trip
     
   Assess the environment conditions and ensure safety clearance.
@@ -95,7 +95,7 @@ await WorkflowsHelper.PrintToMarkdownAsync(workflow);
 
 ////await foreach (WorkflowEvent evt in run.WatchStreamAsync())
 
-await using Run run = await InProcessExecution.RunAsync(workflow, input: query);
+await using Run run = await InProcessExecution.RunAsync(workflow, input: prompt);
 foreach (WorkflowEvent evt in run.NewEvents)
 {
   switch (evt)

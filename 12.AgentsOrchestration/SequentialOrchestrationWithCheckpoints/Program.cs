@@ -71,7 +71,7 @@ var motorsAgent = new OpenAIClient(apiKey)
     tools: [.. MotorTools.AsAITools()]
   );
 
-var query = """
+var prompt = """
   # MISSION COMMAND: Exploration Trip
 
   There is a tree directly in front of the car. Avoid it and then come back to the original path.
@@ -87,7 +87,7 @@ var workflow = AgentWorkflowBuilder.BuildSequential("SafeExecutionWithCheckpoint
 await WorkflowsHelper.PrintToMarkdownAsync(workflow);
 
 // Use this for streaming execution to see the events as they happen (observability)
-await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, input: query, checkpointManager: checkpointManager);
+await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, input: prompt, checkpointManager: checkpointManager);
 await run.TrySendMessageAsync(new TurnToken(emitEvents: true));
 
 CheckpointInfo? fromCheckpoint = null;

@@ -40,12 +40,12 @@ while (true)
   Console.Write("User: ");
   var input = Console.ReadLine();
   if (string.IsNullOrEmpty(input)) break;
-  var query = $"""  
+  var prompt = $"""  
     ## Complex command: 
     "{input}"
     """;
 
-  conversation.Add(new ChatMessage(ChatRole.User, query));
+  conversation.Add(new ChatMessage(ChatRole.User, prompt));
 
   ChatOptions options = new()
   {

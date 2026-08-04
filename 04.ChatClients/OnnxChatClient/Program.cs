@@ -2,7 +2,7 @@
 using Microsoft.ML.OnnxRuntimeGenAI;
 using System.Diagnostics;
 
-////var query = """
+////var prompt = """
 ////    You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
 ////    You have to break down the provided complex commands into the basic moves you know.
 ////    There is a tree in front of the car. Avoid it and resume the original path.
@@ -10,7 +10,7 @@ using System.Diagnostics;
 ////    Do not respond with reasoning, comments, or any additional text.
 ////    """;
 
-var query = """
+var prompt = """
   You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.  
   You have to break down the provided complex commands into basic moves you know.
   Respond only with the permitted moves, without any additional explanations.
@@ -19,7 +19,7 @@ var query = """
   "There is a tree directly in front of the car. Avoid it and then come back to the original path."  
   """;
 
-Console.WriteLine($"USER: {query}");
+Console.WriteLine($"USER: {prompt}");
 
 // CPU ONNX models
 var modelPath = @"c:\Temp\LLMs\ONNX\phi-3.5-mini-instruct\cpu_and_mobile\cpu-int4-awq-block-128-acc-level-4";
@@ -45,7 +45,7 @@ var model = new Model(config);
 
 // Using ONNX Client directly
 using var onnxChatClient = new OnnxRuntimeGenAIChatClient(model);
-ChatMessage message = new(ChatRole.User, query);
+ChatMessage message = new(ChatRole.User, prompt);
 
 ////ChatResponse response = await onnxChatClient.GetResponseAsync(message);
 ////Console.WriteLine($"\nAssistant (ONNX ChatClient): {response.Text}");

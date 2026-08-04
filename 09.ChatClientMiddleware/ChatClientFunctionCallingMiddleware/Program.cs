@@ -119,9 +119,9 @@ ColorHelper.PrintColoredLine("""
   Backward: constrained to 5m max
   """);
 
-string query = "Move forward 10 meters then go backward 8 meters";
-ColorHelper.PrintColoredLine($"QUERY: {query}", ConsoleColor.Yellow);
-AgentResponse result = await motorsAgent.RunAsync(query, session);
+string prompt = "Move forward 10 meters then go backward 8 meters";
+ColorHelper.PrintColoredLine($"QUERY: {prompt}", ConsoleColor.Yellow);
+AgentResponse result = await motorsAgent.RunAsync(prompt, session);
 ColorHelper.PrintColoredLine($"\nRESULT: {result}\n", ConsoleColor.Yellow);
 
 // =============================================================================

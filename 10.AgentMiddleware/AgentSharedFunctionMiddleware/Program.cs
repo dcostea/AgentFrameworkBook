@@ -97,11 +97,11 @@ ColorHelper.PrintColoredLine("""
   --- TEST 1: Authorised operator, mission tag prefixed ---
   operator='driver' passes the gate; '[MISSION-42 | PERIMETER-SCAN]' prefixed to query.
   """);
-var query1 = "Navigate forward 5 meters. My email is john.doe@example.com if needed.";
-ColorHelper.PrintColoredLine($"QUERY: {query1}", ConsoleColor.Yellow);
+var prompt1 = "Navigate forward 5 meters. My email is john.doe@example.com if needed.";
+ColorHelper.PrintColoredLine($"QUERY: {prompt1}", ConsoleColor.Yellow);
 try
 {
-  var result1 = await motorsAgent.RunAsync(query1, session);
+  var result1 = await motorsAgent.RunAsync(prompt1, session);
   ColorHelper.PrintColoredLine($"\nRESULT: {result1}\n", ConsoleColor.Yellow);
 }
 catch (OperationDeniedException ex)
@@ -113,11 +113,11 @@ catch (OperationDeniedException ex)
 ColorHelper.PrintColoredLine("""
   --- TEST 2: Second Run (session counter = 2, same operator and mission) ---
   """);
-var query2 = "Turn left 90 degrees.";
-ColorHelper.PrintColoredLine($"QUERY: {query2}", ConsoleColor.Yellow);
+var prompt2 = "Turn left 90 degrees.";
+ColorHelper.PrintColoredLine($"QUERY: {prompt2}", ConsoleColor.Yellow);
 try
 {
-  var result2 = await motorsAgent.RunAsync(query2, session);
+  var result2 = await motorsAgent.RunAsync(prompt2, session);
   ColorHelper.PrintColoredLine($"\nRESULT: {result2}\n", ConsoleColor.Yellow);
 }
 catch (OperationDeniedException ex)
@@ -135,11 +135,11 @@ ColorHelper.PrintColoredLine("""
 
 session.StateBag.SetValue("OperatorName", "observer");
 
-var query3 = "Move forward 3 meters.";
-ColorHelper.PrintColoredLine($"QUERY: {query3}", ConsoleColor.Yellow);
+var prompt3 = "Move forward 3 meters.";
+ColorHelper.PrintColoredLine($"QUERY: {prompt3}", ConsoleColor.Yellow);
 try
 {
-  var result3 = await motorsAgent.RunAsync(query3, session);
+  var result3 = await motorsAgent.RunAsync(prompt3, session);
   ColorHelper.PrintColoredLine($"\nRESULT: {result3}\n", ConsoleColor.Yellow);
 }
 catch (OperationDeniedException ex)

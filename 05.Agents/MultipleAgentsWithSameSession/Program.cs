@@ -20,13 +20,13 @@ ChatClientAgent motorsAgent = new OpenAIClient(apiKey)
 
 AgentSession session = await motorsAgent.CreateSessionAsync();
 
-var query = $"""  
+var prompt = """  
   Complex command: 
   "There is a tree directly in front of the car. Avoid it and then return to the original path."
   """;
-ColorHelper.PrintColoredLine($"USER (MOTORS): {query}", ConsoleColor.Yellow);
+ColorHelper.PrintColoredLine($"USER (MOTORS): {prompt}", ConsoleColor.Yellow);
 
-AgentResponse response = await motorsAgent.RunAsync(query, session);
+AgentResponse response = await motorsAgent.RunAsync(prompt, session);
 ColorHelper.PrintColoredLine($"ASSISTANT (MOTORS): {response.Text}", ConsoleColor.Green);
 
 ChatClientAgent auditorAgent = new OpenAIClient(apiKey)
@@ -37,11 +37,11 @@ ChatClientAgent auditorAgent = new OpenAIClient(apiKey)
     """
   );
 
-var auditQuery = $"""  
+var auditPrompt = """  
   Audit request: 
   "Please explain the reasons for the last moves in less than 50 words."
   """;
-ColorHelper.PrintColoredLine($"USER (AUDITOR): {auditQuery}", ConsoleColor.Yellow);
+ColorHelper.PrintColoredLine($"USER (AUDITOR): {auditPrompt}", ConsoleColor.Yellow);
 
-response = await auditorAgent.RunAsync(auditQuery, session);
+response = await auditorAgent.RunAsync(auditPrompt, session);
 ColorHelper.PrintColoredLine($"ASSISTANT (AUDITOR): {response.Text}", ConsoleColor.Green);

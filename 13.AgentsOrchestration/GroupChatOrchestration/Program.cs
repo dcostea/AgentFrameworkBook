@@ -47,7 +47,7 @@ var motorsAgent = new OpenAIClient(apiKey)
     tools: [.. MotorTools.AsAITools()]
   );
 
-var query = """
+var prompt = """
   # MISSION COMMAND: Exploration Trip
 
   "There is a tree directly in front of the car. Avoid it and then come back to the original path. The distance to the tree is 50 meters."
@@ -63,7 +63,7 @@ var workflow = AgentWorkflowBuilder.CreateGroupChatBuilderWith(agents =>
 await WorkflowsHelper.PrintToMarkdownAsync(workflow);
 
 // Use this for streaming execution to see the events as they happen (observability)
-await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, input: query);
+await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, input: prompt);
 await run.TrySendMessageAsync(new TurnToken(emitEvents: true));
 
 await PrintAsync(run);

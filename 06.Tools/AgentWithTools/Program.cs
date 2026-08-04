@@ -28,10 +28,10 @@ ChatClientAgent agent = new OpenAIClient(apiKey)
     }
   });
 
-var query = $"""  
+var prompt = """  
   Complex command: 
   "There is a tree directly in front of the car. Avoid it and then return to the original path."
   """;
-ColorHelper.PrintColoredLine($"USER: {query}", ConsoleColor.Yellow);
-AgentResponse response = await agent.RunAsync(query);
+ColorHelper.PrintColoredLine($"USER: {prompt}", ConsoleColor.Yellow);
+AgentResponse response = await agent.RunAsync(prompt);
 ColorHelper.PrintColoredLine($"ASSISTANT: {response.Text}", ConsoleColor.Green);

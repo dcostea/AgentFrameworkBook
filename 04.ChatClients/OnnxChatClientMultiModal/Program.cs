@@ -42,14 +42,14 @@ byte[] imageBytes = File.ReadAllBytes(@"Data/path.jpg");
 //////var namedTensors = mmProcessor.ProcessImages("Look at the image and tell what you see.", images);
 
 ChatMessage message =
-    ////new(ChatRole.User, [
-    ////    new TextContent("Look at the image and tell what you see."),
-    ////    new UriContent(@"http://apexcode.ro/path.jpg", "image/jpeg")
-    ////])
-    new(ChatRole.User, [
-        new TextContent("Look at the image and tell what you see."),
-        new DataContent(imageBytes, "image/jpeg")
-    ])
+  ////new(ChatRole.User, [
+  ////    new TextContent("Look at the image and tell what you see."),
+  ////    new UriContent(@"http://apexcode.ro/path.jpg", "image/jpeg")
+  ////])
+  new(ChatRole.User, [
+    new TextContent("Look at the image and tell what you see."),
+    new DataContent(imageBytes, "image/jpeg")
+  ])
 //////new(ChatRole.User, query)
 //new(ChatRole.User, [
 //    new TextContent(query),
@@ -71,7 +71,7 @@ TimeSpan ltElapsed = sw.Elapsed;
 Console.WriteLine($"Load time: {ltElapsed.TotalMilliseconds:#} ms");
 ChatOptions options = new()
 {
-    MaxOutputTokens = 512,
+  MaxOutputTokens = 512,
 };
 
 bool firstRun = true;
@@ -79,15 +79,15 @@ var tokenCount = 0;
 TimeSpan ttftElapsed = sw.Elapsed;
 await foreach (var update in onnxChatClient.GetStreamingResponseAsync([message], options))
 {
-    if (firstRun)
-    {
-        firstRun = false;
-        ttftElapsed = sw.Elapsed;
-        Console.WriteLine($"First token time: {ttftElapsed.TotalMilliseconds:#} ms");
-    }
+  if (firstRun)
+  {
+    firstRun = false;
+    ttftElapsed = sw.Elapsed;
+    Console.WriteLine($"First token time: {ttftElapsed.TotalMilliseconds:#} ms");
+  }
 
-    Console.Write(update);
-    tokenCount++;
+  Console.Write(update);
+  tokenCount++;
 }
 sw.Stop();
 Console.WriteLine();
