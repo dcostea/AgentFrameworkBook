@@ -8,7 +8,12 @@ public static class MotorTools
   private const int Delay = 1000; // x milliseconds delay for mocking an action
 
   [Description("Basic command: Moves the robot car backward.")]
-  public static async Task<string> BackwardAsync([Description("The distance (in meters) to move the robot car backward.")] int distance)
+  #pragma warning disable MEAI001
+  [AIFunctionName("backward")]
+  public static async Task<string> BackwardAsync(
+    [Description("The distance (in meters) to move the robot car backward.")] 
+    [AIParameterName("distance")] 
+    int distance)
   {
     Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine($"[{DateTime.Now:hh:mm:ss:fff}] MOTORS: Backward: {distance}m");
