@@ -7,6 +7,8 @@
     <Project Path="02.FirstSamples/FirstAgent/FirstAgent.csproj" Id="2f23be50-11bb-41e7-8da6-629fbd615d18" />
     <Project Path="02.FirstSamples/FirstSample/FirstSample.csproj" />
     <Project Path="02.FirstSamples/HandlebarsSample/HandlebarsSample.csproj" Id="04646a79-d806-427f-baa0-042836530d28" />
+    <Project Path="FirstAgentWithHistory/FirstAgentWithHistory.csproj" Id="4e60be5d-ec56-45cc-8129-1ea68f4113de" />
+    <Project Path="FirstAgentWithTools/FirstAgentWithTools.csproj" Id="ebd65ccc-7df6-4dde-b86e-5933684e5209" />
   </Folder>
   <Folder Name="/03.ChatClients/">
     <Project Path="03.ChatClients/AnthropicChatClient/AnthropicChatClient.csproj" Id="338800d7-80cc-49fd-819c-33146a236e6f" />
