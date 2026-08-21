@@ -4,7 +4,7 @@ This repository contains the code samples for:
 
 > **Microsoft Agent Framework in .NET: Build production-grade AI agents and multi-agent systems in C#**
 
-formerly known as **Microsoft Semantic Kernel in Action** and **Building AI Agents in .NET**.
+formerly known as **Microsoft Semantic Kernel in Action** and **Building AI Agents in .NET** published with Manning.
 
 The book is now available independently on Leanpub:
 

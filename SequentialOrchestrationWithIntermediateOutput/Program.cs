@@ -11,14 +11,17 @@ var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build()
 var model = configuration["OpenAI:ModelId"];
 var apiKey = configuration["OpenAI:ApiKey"];
 
+// Enable agent response output tagging and filtering to allow for intermediate outputs to be captured and displayed.
+Futures.EnableAgentResponseOutputTaggingAndFiltering = true;
+
 ChatClientAgent environmentAgent = new OpenAIClient(apiKey)
   .GetChatClient(model)
   .AsAIAgent(new ChatClientAgentOptions
-{
-  Name = "EnvironmentAgent",
-  ChatOptions = new ChatOptions
   {
-    Instructions = """
+    Name = "EnvironmentAgent",
+    ChatOptions = new ChatOptions
+    {
+      Instructions = """
       ## PERSONA
       You are the EnvironmentAgent that reads sensors.
 
@@ -28,9 +31,9 @@ ChatClientAgent environmentAgent = new OpenAIClient(apiKey)
       ## OUTPUT TEMPLATE
       Respond only with the environment report, and make the rain status easy to identify.
       """,
-    Tools = [.. SensorTools.AsAITools()],
-  }
-});
+      Tools = [.. SensorTools.AsAITools()],
+    }
+  });
 
 var safetyAgent = new OpenAIClient(apiKey)
   .GetChatClient(model)
@@ -69,7 +72,10 @@ var prompt = """
   There is a tree directly in front of the car. Avoid it and then come back to the original path.
   """;
 
-var workflow = AgentWorkflowBuilder.BuildSequential("SafeExecutionWithCheckpoints", chainOnlyAgentResponses: false, environmentAgent, safetyAgent, motorsAgent);
+var workflow = AgentWorkflowBuilder.CreateSequentialBuilderWith(environmentAgent, safetyAgent, motorsAgent)
+  .WithIntermediateOutputFrom([environmentAgent, safetyAgent])
+  .WithOutputFrom(motorsAgent)
+  .Build();
 
 await WorkflowsHelper.PrintToMarkdownAsync(workflow);
 
@@ -90,14 +96,14 @@ foreach (WorkflowEvent evt in run.NewEvents)
       break;
 
     case AgentResponseUpdateEvent update:
-      ColorHelper.PrintColored(update.Update.Text, ConsoleColor.Green);
+      ColorHelper.PrintColored(update.Update.Text, update.IsIntermediate() ? ConsoleColor.Green : ConsoleColor.Yellow);
       break;
 
     // this event for workflow output is already handled by the AgentResponseUpdateEvent case above when it is 'intermediate', so we can ignore it here
-    case WorkflowOutputEvent output:
-      List<Microsoft.Extensions.AI.ChatMessage>? messages = output.As<List<Microsoft.Extensions.AI.ChatMessage>>();
-      ColorHelper.PrintColoredLine($"\n[WORKFLOW OUTPUT] {messages?.LastOrDefault()?.Text}", ConsoleColor.Yellow);
-      break;
+    ////case WorkflowOutputEvent output:
+    ////  List<Microsoft.Extensions.AI.ChatMessage>? messages = output.As<List<Microsoft.Extensions.AI.ChatMessage>>();
+    ////  ColorHelper.PrintColoredLine($"\n[WORKFLOW OUTPUT] {messages?.LastOrDefault()?.Text}", ConsoleColor.Yellow);
+    ////  break;
 
     case WorkflowErrorEvent error:
       Console.WriteLine($"\n[WORKFLOW ERROR] {error.Exception?.InnerException?.Message ?? error.Exception?.Message ?? "unknown"}");

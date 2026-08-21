@@ -1,5 +1,4 @@
-﻿using AgentsWithSequentialOrchestration;
-using AITools;
+﻿using AITools;
 using Helpers;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
@@ -35,10 +34,6 @@ ChatClientAgent environmentAgent = new OpenAIClient(apiKey)
 
 var safetyAgent = new OpenAIClient(apiKey)
   .GetChatClient(model)
-  //.AsIChatClient()
-  //.AsBuilder()
-  //  .Use(ChatClientResponses.MissionAbort, null)
-  //.Build()
   .AsAIAgent("""
     ## PERSONA
     You are the SafetyAgent that grants or denies mission clearance.
@@ -49,10 +44,7 @@ var safetyAgent = new OpenAIClient(apiKey)
     ## OUTPUT TEMPLATE
     Respond with GRANTED or DENIED and a brief reason.
     """,
-    "SafetyAgent")
-  .AsBuilder()
-    .Use(AgentResponses.MissionAbort, null)
-  .Build();
+    "SafetyAgent");
 
 var motorsAgent = new OpenAIClient(apiKey)
   .GetChatClient(model)
@@ -80,49 +72,46 @@ var prompt = """
 CheckpointManager checkpointManager = CheckpointManager.Default;
 
 var workflow = AgentWorkflowBuilder.BuildSequential("SafeExecutionWithCheckpoints", environmentAgent, safetyAgent, motorsAgent);
-////var workflow = AgentWorkflowBuilder.CreateSequentialBuilderWith(environmentAgent, safetyAgent, motorsAgent)
-////  .WithIntermediateOutputFrom([environmentAgent, safetyAgent])
-////  .WithOutputFrom(motorsAgent)
-////  .Build();
 await WorkflowsHelper.PrintToMarkdownAsync(workflow);
 
 // Use this for streaming execution to see the events as they happen (observability)
 await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, input: prompt, checkpointManager: checkpointManager);
 await run.TrySendMessageAsync(new TurnToken(emitEvents: true));
 
-CheckpointInfo? fromCheckpoint = null;
-fromCheckpoint = await PrintAsync(run);
+CheckpointInfo? checkpoint = await ProcessWorkflowAsync(run);
 
-Console.ForegroundColor = ConsoleColor.Yellow;
-Console.WriteLine("*** RESUMING FROM CHECKPOINT (BEFORE MOTORS EXECUTION) ***");
-Console.ResetColor();
-
-if (fromCheckpoint is not null) 
+if (checkpoint is not null) 
 {
+  Console.ForegroundColor = ConsoleColor.Yellow;
+  Console.WriteLine("*** RESUMING FROM CHECKPOINT ***");
+  Console.ResetColor();
+
   // Resume from the saved checkpoint on a fresh run instance instead of restoring
   // state in-place on the run that just finished (which still has queued, unpublished
   // state updates from its final superstep).
-  var newWorkflow = AgentWorkflowBuilder.BuildSequential("SafeExecutionFromCheckpoint", environmentAgent, safetyAgent, motorsAgent);
-  await using StreamingRun resumedRun = await InProcessExecution.ResumeStreamingAsync(newWorkflow, fromCheckpoint, checkpointManager, CancellationToken.None);
-  _ = await PrintAsync(resumedRun);
+  var resumedWorkflow = AgentWorkflowBuilder.BuildSequential("SafeExecutionFromCheckpoint", environmentAgent, safetyAgent, motorsAgent);
+  await using StreamingRun resumedRun = await InProcessExecution.ResumeStreamingAsync(resumedWorkflow, checkpoint, checkpointManager, CancellationToken.None);
+  _ = await ProcessWorkflowAsync(resumedRun, captureCheckpoint: false);
 }
 
 
-async Task<CheckpointInfo?> PrintAsync(StreamingRun run)
+async Task<CheckpointInfo?> ProcessWorkflowAsync(StreamingRun run, bool captureCheckpoint = true)
 {
+  CheckpointInfo? checkpoint = null;
   await foreach (WorkflowEvent evt in run.WatchStreamAsync())
   {
     switch (evt)
     {
       case SuperStepCompletedEvent superStep:
         Console.WriteLine($"[SUPER STEP] {superStep.StepNumber} completed.");
-        if (fromCheckpoint is null)
+        if (captureCheckpoint && checkpoint is null)
         {
-          if (superStep.CompletionInfo!.ActivatedExecutors.Any(id => id.StartsWith("SafetyAgent", StringComparison.Ordinal)))
+          if (superStep.CompletionInfo!.ActivatedExecutors.Any(id => id.StartsWith("MotorsAgent", StringComparison.Ordinal)))
           {
-            fromCheckpoint = superStep.CompletionInfo?.Checkpoint ?? throw new InvalidOperationException("Checkpoint is null.");
+            checkpoint = superStep.CompletionInfo?.Checkpoint 
+              ?? throw new InvalidOperationException("Checkpoint is null.");
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"*** CHECKPOINT CREATED BEFORE MOTORS EXECUTION ***");
+            Console.WriteLine($"*** CHECKPOINT CREATED ***");
             Console.ResetColor();
           }
         }
@@ -155,5 +144,5 @@ async Task<CheckpointInfo?> PrintAsync(StreamingRun run)
     }
   }
 
-  return fromCheckpoint;
+  return checkpoint;
 }

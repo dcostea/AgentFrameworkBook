@@ -27,7 +27,7 @@ var maintenanceAgent = new OpenAIClient(apiKey)
         You are the MaintenanceAgent that monitors maintenance conditions.
 
         ## ACTIONS
-        Call MaintenanceTools to activate maintenance protocols for dangerous conditions detection.
+        Activate maintenance protocols for dangerous conditions detection.
 
         ## SAFETY THRESHOLDS
         Grant clearance unless ANY of the following hard limits are exceeded:
@@ -43,7 +43,8 @@ var maintenanceAgent = new OpenAIClient(apiKey)
     }
   })
   .AsBuilder()
-    .Use(AgentResponses.MissionAbort, null)
+    // Uncomment Use the MissionAbort handler to check for DENIED clearance and abort the mission if necessary.  
+    ////.Use(AgentResponses.MissionAbort, null)
   .Build();
 
 var environmentAgent = new OpenAIClient(apiKey)
@@ -58,10 +59,10 @@ var environmentAgent = new OpenAIClient(apiKey)
         You are the EnvironmentAgent that reads sensors.
 
         ## ACTIONS
-        Call SensorTools to read sensors for temperature, humidity, rain drops, and wind speed.
+        Read sensors for temperature, humidity, rain drops, and wind speed.
 
         ## SAFETY THRESHOLDS
-        Grant clearance unless ANY of the following hard limits are exceeded:
+        Grant clearance unless ANY of the following hard limits are false:
         - Temperature above 100 Celsius
         - Humidity above 80%
         - Droplet level is Extreme
@@ -75,7 +76,8 @@ var environmentAgent = new OpenAIClient(apiKey)
     }
   })
   .AsBuilder()
-    .Use(AgentResponses.MissionAbort, null)
+    // Uncomment Use the MissionAbort handler to check for DENIED clearance and abort the mission if necessary.
+    ////.Use(AgentResponses.MissionAbort, null)
   .Build();
 
 var prompt = """
@@ -90,7 +92,7 @@ var workflow = AgentWorkflowBuilder.BuildConcurrent("SafetyAssessment", [mainten
 await WorkflowsHelper.PrintToMarkdownAsync(workflow);
 
 // Use this for streaming execution to see the events as they happen (observability)
-////await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, input: query);
+////await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, input: prompt);
 ////await run.TrySendMessageAsync(new TurnToken(emitEvents: true));
 
 ////await foreach (WorkflowEvent evt in run.WatchStreamAsync())

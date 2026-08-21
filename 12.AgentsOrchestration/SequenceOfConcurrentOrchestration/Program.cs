@@ -124,7 +124,7 @@ var prompt = """
   """;
 
 // Use this for streaming execution to see the events as they happen (observability)
-////await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, input: query);
+////await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, input: prompt);
 ////await run.TrySendMessageAsync(new TurnToken(emitEvents: true));
 
 ////await foreach (WorkflowEvent evt in run.WatchStreamAsync())

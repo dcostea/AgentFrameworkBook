@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\00.Shared\Helpers\Helpers.csproj" />
-    <ProjectReference Include="..\..\00.Shared\AITools\AITools.csproj" />
+    <ProjectReference Include="..\00.Shared\Helpers\Helpers.csproj" />
+    <ProjectReference Include="..\00.Shared\AITools\AITools.csproj" />
   </ItemGroup>
 </Project>

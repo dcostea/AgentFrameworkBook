@@ -1,4 +1,5 @@
-﻿using AITools;
+﻿using AgentsWithSequentialOrchestration;
+using AITools;
 using Helpers;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
@@ -34,6 +35,10 @@ ChatClientAgent environmentAgent = new OpenAIClient(apiKey)
 
 var safetyAgent = new OpenAIClient(apiKey)
   .GetChatClient(model)
+  .AsIChatClient()
+  .AsBuilder()
+    .Use(ChatClientResponses.MissionAbort, null)
+  .Build()
   .AsAIAgent("""
     ## PERSONA
     You are the SafetyAgent that grants or denies mission clearance.
@@ -44,7 +49,10 @@ var safetyAgent = new OpenAIClient(apiKey)
     ## OUTPUT TEMPLATE
     Respond with GRANTED or DENIED and a brief reason.
     """,
-    "SafetyAgent");
+    "SafetyAgent")
+  .AsBuilder()
+    .Use(AgentResponses.MissionAbort, null)
+  .Build();
 
 var motorsAgent = new OpenAIClient(apiKey)
   .GetChatClient(model)
@@ -69,8 +77,7 @@ var prompt = """
   There is a tree directly in front of the car. Avoid it and then come back to the original path.
   """;
 
-var workflow = AgentWorkflowBuilder.BuildSequential("SafeExecutionWithCheckpoints", chainOnlyAgentResponses: false, environmentAgent, safetyAgent, motorsAgent);
-
+var workflow = AgentWorkflowBuilder.BuildSequential("SafeExecution", environmentAgent, safetyAgent, motorsAgent);
 await WorkflowsHelper.PrintToMarkdownAsync(workflow);
 
 // Use this for streaming execution to see the events as they happen (observability)
@@ -79,7 +86,6 @@ await WorkflowsHelper.PrintToMarkdownAsync(workflow);
 
 ////await foreach (WorkflowEvent evt in run.WatchStreamAsync())
 
-// Use this for non-streaming execution to see the events after the workflow completes
 await using Run run = await InProcessExecution.RunAsync(workflow, input: prompt);
 foreach (WorkflowEvent evt in run.NewEvents)
 {
@@ -89,14 +95,17 @@ foreach (WorkflowEvent evt in run.NewEvents)
       Console.WriteLine($"[EXECUTOR] {completed.ExecutorId} completed.");
       break;
 
-    case AgentResponseUpdateEvent update:
-      ColorHelper.PrintColored(update.Update.Text, ConsoleColor.Green);
+    case AgentResponseEvent response:
+      Console.WriteLine(response.Response.Text);
       break;
 
-    // this event for workflow output is already handled by the AgentResponseUpdateEvent case above when it is 'intermediate', so we can ignore it here
+    case AgentResponseUpdateEvent update:
+      Console.Write(update.Update.Text);
+      break;
+
     case WorkflowOutputEvent output:
       List<Microsoft.Extensions.AI.ChatMessage>? messages = output.As<List<Microsoft.Extensions.AI.ChatMessage>>();
-      ColorHelper.PrintColoredLine($"\n[WORKFLOW OUTPUT] {messages?.LastOrDefault()?.Text}", ConsoleColor.Yellow);
+      Console.WriteLine($"\n[WORKFLOW OUTPUT] {messages?.LastOrDefault()?.Text}");
       break;
 
     case WorkflowErrorEvent error:
