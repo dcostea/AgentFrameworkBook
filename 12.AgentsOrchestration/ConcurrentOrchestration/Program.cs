@@ -62,7 +62,7 @@ var environmentAgent = new OpenAIClient(apiKey)
         Read sensors for temperature, humidity, rain drops, and wind speed.
 
         ## SAFETY THRESHOLDS
-        Grant clearance unless ANY of the following hard limits are false:
+        Grant clearance unless ANY of the following hard limits are exceeded:
         - Temperature above 100 Celsius
         - Humidity above 80%
         - Droplet level is Extreme

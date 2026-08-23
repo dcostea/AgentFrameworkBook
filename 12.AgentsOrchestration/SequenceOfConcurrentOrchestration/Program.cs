@@ -109,12 +109,12 @@ AIAgent safetyStage = safetyWorkflow.AsAIAgent("SafetyStage", includeWorkflowOut
 // conversation. Every downstream agent at that boundary must strip FunctionCallContent and
 // FunctionResultContent from incoming messages before execution; otherwise the provider
 // rejects the conversation with HTTP 400. See ToolCallFilteringAgent.
-////AIAgent sanitizedMotorsAgent = new ToolCallFilteringAgent(motorsAgent);
-////Workflow workflow = AgentWorkflowBuilder.BuildSequential(safetyStage, sanitizedMotorsAgent);
+AIAgent sanitizedMotorsAgent = new ToolCallFilteringAgent(motorsAgent);
+Workflow workflow = AgentWorkflowBuilder.BuildSequential("SanitizedSequentialExecution", safetyStage, sanitizedMotorsAgent);
 
 // This is the composition with the motorsAgent directly,
 // which will leak tool messages into the downstream conversation and cause HTTP 400 errors.
-Workflow workflow = AgentWorkflowBuilder.BuildSequential("SafeExecution", safetyStage, motorsAgent);
+////Workflow workflow = AgentWorkflowBuilder.BuildSequential("SequentialExecution", safetyStage, motorsAgent);
 
 await WorkflowsHelper.PrintToMarkdownAsync(workflow);
 

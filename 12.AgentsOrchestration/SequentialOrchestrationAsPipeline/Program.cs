@@ -1,4 +1,4 @@
-﻿using AITools;
+using AITools;
 using Helpers;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
@@ -20,41 +20,51 @@ ChatClientAgent environmentAgent = new OpenAIClient(apiKey)
   {
     Instructions = """
       ## PERSONA
-      You are the EnvironmentAgent that reads sensors.
+      You are the EnvironmentAgent that starts a mission by reading sensors and interpreting the mission command.
 
       ## ACTIONS
       Call SensorTools to read temperature, humidity, rain drops, and wind speed.
+      Extract the destination, obstacles, and required outcome from the mission command.
+      Include all mission details in your report, including the original command, because the next agent receives only your response.
 
       ## OUTPUT TEMPLATE
-      Respond only with the environment report, and make the rain status easy to identify.
+      Respond only with a self-contained report containing:
+      - Mission objective
+      - Known obstacles
+      - Temperature
+      - Humidity
+      - Rain droplet level
+      - Wind speed
       """,
     Tools = [.. SensorTools.AsAITools()],
   }
 });
 
-var safetyAgent = new OpenAIClient(apiKey)
+var navigatorAgent = new OpenAIClient(apiKey)
   .GetChatClient(model)
   .AsAIAgent("""
     ## PERSONA
-    You are the SafetyAgent that grants or denies mission clearance.
+    You are the NavigatorAgent that transforms an environment report into a route plan.
 
     ## ACTIONS
-    Grant clearance unless the droplet level is Medium or High (rain detected), otherwise deny.
+    Use only the received environment report.
+    Plan a safe route that completes the mission objective and avoids every known obstacle.
+    Express the route as an ordered list using only: forward, backward, turn left, turn right, and stop.
 
     ## OUTPUT TEMPLATE
-    Respond with GRANTED or DENIED and a brief reason.
+    Respond only with the ordered movement plan, with one movement per line.
     """,
-    "SafetyAgent");
+    "NavigatorAgent");
 
 var motorsAgent = new OpenAIClient(apiKey)
   .GetChatClient(model)
   .AsAIAgent("""
     ## PERSONA
-    You are the MotorsAgent that executes movement commands.
+    You are the MotorsAgent that executes an ordered movement plan.
 
     ## ACTIONS
-    If clearance is DENIED, call the Stop tool and then respond with "Mission stopped due to unsafe conditions."
-    Otherwise, break the mission into moves (forward, backward, turn left, turn right, stop) and execute them using MotorTools.
+    Execute each received movement in order using MotorTools.
+    Do not reinterpret the mission or alter the route plan.
 
     ## OUTPUT TEMPLATE
     Respond only with the executed movement sequence.
@@ -69,19 +79,16 @@ var prompt = """
   There is a tree directly in front of the car. Avoid it and then come back to the original path.
   """;
 
-var workflow = AgentWorkflowBuilder.BuildSequential(environmentAgent, safetyAgent, motorsAgent);
+// In a processing pipeline, each agent receives only the response produced by the previous agent.
+var workflow = AgentWorkflowBuilder.BuildSequential("ProcessingPipeline", chainOnlyAgentResponses: true, 
+  environmentAgent, navigatorAgent, motorsAgent);
 
 await WorkflowsHelper.PrintToMarkdownAsync(workflow);
 
-// Use this for streaming execution to see the events as they happen (observability)
-////await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, input: prompt);
-////await run.TrySendMessageAsync(new TurnToken(emitEvents: true));
+await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, input: prompt);
+await run.TrySendMessageAsync(new TurnToken(emitEvents: true));
 
-////await foreach (WorkflowEvent evt in run.WatchStreamAsync())
-
-// Use this for non-streaming execution to see the events after the workflow completes
-await using Run run = await InProcessExecution.RunAsync(workflow, input: prompt);
-foreach (WorkflowEvent evt in run.NewEvents)
+await foreach (WorkflowEvent evt in run.WatchStreamAsync())
 {
   switch (evt)
   {
@@ -93,7 +100,6 @@ foreach (WorkflowEvent evt in run.NewEvents)
       ColorHelper.PrintColored(update.Update.Text, ConsoleColor.Green);
       break;
 
-    // this event for workflow output is already handled by the AgentResponseUpdateEvent case above when it is 'intermediate', so we can ignore it here
     case WorkflowOutputEvent output:
       List<Microsoft.Extensions.AI.ChatMessage>? messages = output.As<List<Microsoft.Extensions.AI.ChatMessage>>();
       ColorHelper.PrintColoredLine($"\n[WORKFLOW OUTPUT] {messages?.LastOrDefault()?.Text}", ConsoleColor.Yellow);

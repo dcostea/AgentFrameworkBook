@@ -87,6 +87,7 @@
     <Project Path="12.AgentsOrchestration/ConcurrentOrchestration/ConcurrentOrchestration.csproj" Id="0b3adea0-6344-4a27-8347-4d9355b0ffd8" />
     <Project Path="12.AgentsOrchestration/SequenceOfConcurrentOrchestration/SequenceOfConcurrentOrchestration.csproj" />
     <Project Path="12.AgentsOrchestration/SequentialOrchestration/SequentialOrchestration.csproj" Id="7269037f-31be-4e62-a5f0-b3e8cbd15a54" />
+    <Project Path="12.AgentsOrchestration/SequentialOrchestrationAsPipeline/SequentialOrchestrationAsPipeline.csproj" />
     <Project Path="12.AgentsOrchestration/SequentialOrchestrationWithCheckpoints/SequentialOrchestrationWithCheckpoints.csproj" Id="9eec4505-71b7-4cae-bee8-74b312655242" />
     <Project Path="12.AgentsOrchestration/SequentialOrchestrationWithIntermediateOutput/SequentialOrchestrationWithIntermediateOutput.csproj" Id="d4256867-6fa8-414a-a453-84579353e1d2" />
     <Project Path="12.AgentsOrchestration/SequentialOrchestrationWithMiddleware/SequentialOrchestrationWithMiddleware.csproj" Id="f8ffad9c-59cf-48ff-9f4e-c09ee663b7ef" />
