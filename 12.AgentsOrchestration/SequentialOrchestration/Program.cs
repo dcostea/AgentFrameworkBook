@@ -11,14 +11,9 @@ var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build()
 var model = configuration["OpenAI:ModelId"];
 var apiKey = configuration["OpenAI:ApiKey"];
 
-ChatClientAgent environmentAgent = new OpenAIClient(apiKey)
+var environmentAgent = new OpenAIClient(apiKey)
   .GetChatClient(model)
-  .AsAIAgent(new ChatClientAgentOptions
-{
-  Name = "EnvironmentAgent",
-  ChatOptions = new ChatOptions
-  {
-    Instructions = """
+  .AsAIAgent("""
       ## PERSONA
       You are the EnvironmentAgent that reads sensors.
 
@@ -28,9 +23,9 @@ ChatClientAgent environmentAgent = new OpenAIClient(apiKey)
       ## OUTPUT TEMPLATE
       Respond only with the environment report, and make the rain status easy to identify.
       """,
-    Tools = [.. SensorTools.AsAITools()],
-  }
-});
+    name:  "EnvironmentAgent",
+    tools: [.. SensorTools.AsAITools()]
+  );
 
 var safetyAgent = new OpenAIClient(apiKey)
   .GetChatClient(model)

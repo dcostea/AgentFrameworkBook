@@ -1,6 +1,5 @@
 using AITools;
 using Helpers;
-using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
@@ -11,14 +10,9 @@ var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build()
 var model = configuration["OpenAI:ModelId"];
 var apiKey = configuration["OpenAI:ApiKey"];
 
-ChatClientAgent environmentAgent = new OpenAIClient(apiKey)
+var environmentAgent = new OpenAIClient(apiKey)
   .GetChatClient(model)
-  .AsAIAgent(new ChatClientAgentOptions
-{
-  Name = "EnvironmentAgent",
-  ChatOptions = new ChatOptions
-  {
-    Instructions = """
+  .AsAIAgent("""
       ## PERSONA
       You are the EnvironmentAgent that starts a mission by reading sensors and interpreting the mission command.
 
@@ -36,9 +30,9 @@ ChatClientAgent environmentAgent = new OpenAIClient(apiKey)
       - Rain droplet level
       - Wind speed
       """,
-    Tools = [.. SensorTools.AsAITools()],
-  }
-});
+    "EnvironmentAgent",
+    tools: [.. SensorTools.AsAITools()]
+);
 
 var navigatorAgent = new OpenAIClient(apiKey)
   .GetChatClient(model)
@@ -79,8 +73,8 @@ var prompt = """
   There is a tree directly in front of the car. Avoid it and then come back to the original path.
   """;
 
-// In a processing pipeline, each agent receives only the response produced by the previous agent.
-var workflow = AgentWorkflowBuilder.BuildSequential("ProcessingPipeline", chainOnlyAgentResponses: true, 
+var workflow = AgentWorkflowBuilder.BuildSequential("ProcessingPipeline", 
+  chainOnlyAgentResponses: true, // each agent receives only the response produced by the previous agent
   environmentAgent, navigatorAgent, motorsAgent);
 
 await WorkflowsHelper.PrintToMarkdownAsync(workflow);
@@ -93,7 +87,7 @@ await foreach (WorkflowEvent evt in run.WatchStreamAsync())
   switch (evt)
   {
     case ExecutorCompletedEvent completed:
-      Console.WriteLine($"[EXECUTOR] {completed.ExecutorId} completed.");
+      ColorHelper.PrintColoredLine($"[EXECUTOR] {completed.ExecutorId} completed.", ConsoleColor.White);
       break;
 
     case AgentResponseUpdateEvent update:
@@ -102,15 +96,19 @@ await foreach (WorkflowEvent evt in run.WatchStreamAsync())
 
     case WorkflowOutputEvent output:
       List<Microsoft.Extensions.AI.ChatMessage>? messages = output.As<List<Microsoft.Extensions.AI.ChatMessage>>();
-      ColorHelper.PrintColoredLine($"\n[WORKFLOW OUTPUT] {messages?.LastOrDefault()?.Text}", ConsoleColor.Yellow);
+      // Print all messages from all agents in the workflow output.
+      // When `chainOnlyAgentResponses` is true, the workflow output will contain only the last agent's response,
+      // but when it is false, the workflow output will contain all agents' responses.
+      var allAgentsMessages = messages?.Where(m => m.Role != ChatRole.Tool && !string.IsNullOrEmpty(m.Text)).Select(m => $"{m.Role}: {m.Text}");
+      ColorHelper.PrintColoredLine($"\n[WORKFLOW OUTPUT] {string.Join("\n", allAgentsMessages!)}", ConsoleColor.Yellow);
       break;
 
     case WorkflowErrorEvent error:
-      Console.WriteLine($"\n[WORKFLOW ERROR] {error.Exception?.InnerException?.Message ?? error.Exception?.Message ?? "unknown"}");
+      ColorHelper.PrintColoredLine($"\n[WORKFLOW ERROR] {error.Exception?.InnerException?.Message ?? error.Exception?.Message ?? "unknown"}", ConsoleColor.Red);
       break;
 
     case ExecutorFailedEvent failed:
-      Console.Error.WriteLine($"\n[EXECUTOR FAILED] {failed.Data?.Message}");
+      ColorHelper.PrintColoredLine($"\n[EXECUTOR FAILED] {failed.Data?.Message}", ConsoleColor.Red);
       break;
   }
 }
