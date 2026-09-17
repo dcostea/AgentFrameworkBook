@@ -41,9 +41,6 @@ public static class AgentFunctionCallings
   ///
   /// Why Agent layer: <c>agent.Name</c> is available here, making it possible to
   /// scope this safety rule to a specific agent.
-  ///
-  /// To audit the full sequence after the run completes, use Response middleware
-  /// (<c>MovementSequenceAuditor</c>), which sees all tool calls at once.
   /// </summary>
   public static async ValueTask<object?> PreventDangerousMoves(
     AIAgent agent,

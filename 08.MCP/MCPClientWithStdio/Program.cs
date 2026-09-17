@@ -3,6 +3,7 @@ using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using ModelContextProtocol;
 using ModelContextProtocol.Client;
+using ModelContextProtocol.Extensions.Tasks;
 using ModelContextProtocol.Protocol;
 using OpenAI;
 using OpenAI.Chat;
@@ -12,10 +13,12 @@ IClientTransport stdioTransport = new StdioClientTransport(new StdioClientTransp
 {
   Name = "Motors Client",
   Command = "dotnet",
-  Arguments = ["run", "--project", @"..\..\..\..\MCPServerWithStdio\MCPServerWithStdio.csproj"],
+  WorkingDirectory = AppContext.BaseDirectory,
+  Arguments = ["run", "--no-launch-profile", "--project", @"..\..\..\..\MCPServerWithStdio\MCPServerWithStdio.csproj"],
 });
 
-await using var mcpClient = await McpClient.CreateAsync(stdioTransport);
+await using var mcpClient = await McpClient
+  .CreateAsync(stdioTransport);
 
 // List discovered MCP tools
 IList<McpClientTool> mcpTools = await mcpClient.ListToolsAsync();
@@ -58,11 +61,31 @@ foreach (var mcpResourceTemplate in mcpResourceTemplates)
 Console.WriteLine();
 
 // Fetch a tool to use its definition
-var mcpTool = await mcpClient.CallToolAsync("turn_left",
-  arguments: new Dictionary<string, object?> { { "angle", 99 } }
-);
-var toolResponse = mcpTool.Content.FirstOrDefault() as TextContentBlock;
-Console.WriteLine($"TOOL RESPONSE: {toolResponse?.Text}");
+Console.WriteLine("1. SIMPLE CALL: turn_left");
+var simpleResult = await mcpClient.CallToolAsync("turn_left",
+  arguments: new Dictionary<string, object?> { { "angle", 99 } });
+var simpleText = simpleResult.Content.FirstOrDefault() as TextContentBlock;
+Console.WriteLine($"SIMPLE CALL RESULT: {simpleText?.Text}");
+Console.WriteLine();
+
+Console.WriteLine("2. CALL WITH PROGRESS: run_diagnostics_with_progress");
+// One request stays open while the server sends progress notifications.
+var progressResult = await mcpClient.CallToolAsync(
+  "run_diagnostics_with_progress",
+  progress: new Progress<ProgressNotificationValue>(value =>
+    Console.WriteLine($"  PROGRESS: {value.Progress}/{value.Total} motors checked")));
+var progressText = progressResult.Content.FirstOrDefault() as TextContentBlock;
+Console.WriteLine($"PROGRESS CALL RESULT: {progressText?.Text}");
+Console.WriteLine();
+
+Console.WriteLine("3. CALL WITH POLLING: run_diagnostics");
+// Opt into a background MCP task. The SDK polls tasks/get until it completes.
+using var pollingTimeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+var pollingResult = await mcpClient.CallToolWithPollingAsync(
+  new CallToolRequestParams { Name = "run_diagnostics" },
+  cancellationToken: pollingTimeout.Token);
+var pollingText = pollingResult.Content.FirstOrDefault() as TextContentBlock;
+Console.WriteLine($"POLLING CALL RESULT: {pollingText?.Text}");
 Console.WriteLine();
 
 // Fetch prompts and extract user messages
@@ -87,6 +110,16 @@ var mcpGreetResourceResponse = mcpGreetResource.Contents.FirstOrDefault() as Tex
 Console.WriteLine($"TEMPLATE RESOURCE RESPONSE: {mcpGreetResourceResponse?.Text}");
 Console.WriteLine();
 
+Console.Write("Run the AI agent? [y/N] ");
+var answer = Console.ReadLine();
+if (!string.Equals(answer?.Trim(), "y", StringComparison.OrdinalIgnoreCase))
+{
+  Console.WriteLine("MCP demos complete; skipping the LLM agent.");
+  return;
+}
+
+// *** Create an AI agent with OpenAI and MCP tools ***
+
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
 var model = configuration["OpenAI:ModelId"];
 var apiKey = configuration["OpenAI:ApiKey"];
@@ -107,29 +140,3 @@ var prompt = userParametrizedPrompt!.Text;
 Console.WriteLine("AGENT RESPONSE:");
 AgentResponse response = await agent.RunAsync(prompt);
 Console.WriteLine(response);
-
-Console.WriteLine();
-
-// --- LONG-RUNNING TOOLS WITH PROGRESS DEMO ---
-// The experimental Tasks API (MCPEXP001) was removed in MCP SDK v2.0.
-// Long-running tools are now invoked as regular tool calls; the server streams
-// progress updates via "notifications/progress", surfaced through IProgress<T>.
-
-// run_diagnostics is a long-running tool without progress reporting.
-// Either run_diagnostics or run_diagnostics_with_progress can be used, but not both.
-// Remember to comment out one of them.
-////Console.WriteLine("DIAGNOSTICS STARTED (no progress)...");
-////var diagnosticsResult = await mcpClient.CallToolAsync("run_diagnostics");
-////var diagnosticsText = diagnosticsResult.Content.FirstOrDefault() as TextContentBlock;
-////Console.WriteLine($"DIAGNOSTICS DONE | RESULT: {diagnosticsText?.Text}");
-
-// run_diagnostics_with_progress is a long-running tool that sends progress updates.
-// Either run_diagnostics or run_diagnostics_with_progress can be used, but not both.
-// Remember to comment out one of them.
-Console.WriteLine("DIAGNOSTICS STARTED (with progress)...");
-var diagnosticsWithProgressResult = await mcpClient.CallToolAsync(
-  "run_diagnostics_with_progress",
-  progress: new Progress<ProgressNotificationValue>(value =>
-    Console.WriteLine($"  PROGRESS: {value.Progress}/{value.Total} motors checked")));
-var diagnosticsWithProgressText = diagnosticsWithProgressResult.Content.FirstOrDefault() as TextContentBlock;
-Console.WriteLine($"DIAGNOSTICS DONE | RESULT: {diagnosticsWithProgressText?.Text}");

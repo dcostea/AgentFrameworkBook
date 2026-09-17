@@ -13,9 +13,6 @@ namespace Middleware;
 ///
 /// Key characteristics:
 /// - Fires once per GetResponseAsync call — entry and exit are a single activation.
-/// - Sees ChatResponse exclusively: response.Usage (token counts) is available here
-///   and nowhere else. Agent Response middleware returns AgentResponse, which does
-///   not expose token counts. This makes EnforceTokenBudget a ChatClient-only capability.
 /// - No session context, no agent identity (no innerAgent.Name).
 ///
 /// Recommended position: AFTER SharedFunction, BEFORE FunctionCalling.
@@ -42,10 +39,6 @@ public static class ChatClientResponses
   /// ChatResponse immediately — innerClient is never called, no tokens are consumed.
   /// Otherwise calls innerClient, silently accumulates the round-trip token cost,
   /// and returns the response unmodified.
-  ///
-  /// ChatClient-exclusive capability: response.Usage is present on ChatResponse
-  /// (returned by the LLM provider) but is NOT available on AgentResponse (returned
-  /// by the Agent layer). Token budget capping must therefore live at this layer.
   /// </summary>
   public static async Task<ChatResponse> EnforceTokenBudget(
     IEnumerable<ChatMessage> messages,

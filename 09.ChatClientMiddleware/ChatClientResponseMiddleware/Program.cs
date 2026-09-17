@@ -41,7 +41,6 @@ var apiKey = configuration["OpenAI:ApiKey"];
 // Response goes AFTER SharedFunction because:
 //   ✓ Receives already-sanitized messages — Response sees clean input
 //   ✓ Measures only LLM work — SharedFunction preprocessing time is excluded
-//   ✓ Sees ChatResponse: exclusive access to response.Usage (token counts)
 //   ✓ Fires once per LLM round-trip — wraps the full LLM exchange entry-to-exit
 //
 // Registration order within Response:

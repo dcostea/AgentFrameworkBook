@@ -1,5 +1,9 @@
-﻿using OpenAI.Conversations;
+﻿using OpenAI.Chat;
+using OpenAI.Conversations;
+using OpenAI.Responses;
 using System.ClientModel;
+using System.ClientModel.Primitives;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace Helpers;
@@ -8,39 +12,45 @@ namespace Helpers;
 
 public static class ConversationsHelper
 {
-  public static async Task<string> CreateAndGetConversationIdAsync(ConversationClient conversationClient)
+  public static async Task<string> CreateAndGetIdAsync(ConversationClient conversationClient)
   {
-    ClientResult result = await conversationClient.CreateConversationAsync(BinaryContent.Create(BinaryData.FromString("{}")));
-    return JsonNode.Parse(result.GetRawResponse().Content)!["id"]!.GetValue<string>();
+    ConversationResource conversation = await conversationClient
+      .CreateConversationAsync(new ConversationCreationOptions());
+    return conversation.Id;
   }
 
-  public static async Task PrintConversationAsync(ConversationClient conversationClient, string conversationId)
+  // This method prints the conversation items for a given conversation ID using the provided ConversationClient.
+  public static async Task PrintAsync(ConversationClient conversationClient, string conversationId)
   {
     var pages = conversationClient.GetConversationItemsAsync(conversationId);
 
     await foreach (ClientResult result in pages.GetRawPagesAsync())
     {
-      if (JsonNode.Parse(result.GetRawResponse().Content)?["data"] is not JsonArray data) 
-        continue;
-
-      foreach (var message in data)
+      var page = result.GetRawResponse().Content.ToObjectFromJson<ConversationItemsPage>(SerializerOptions)!;
+      
+      foreach (MessageResponseItem message in page.Data.OfType<MessageResponseItem>())
       {
-        ColorHelper.PrintColoredLine($"  {message!["role"]!.GetValue<string>()} [{message["id"]!.GetValue<string>()}]:", ConsoleColor.White);
-
-        if (message["content"] is JsonArray content)
-          foreach (var contentItem in content)
-            if (contentItem?["text"] is JsonNode text)
-              ColorHelper.PrintColoredLine($"{text.GetValue<string>()}", ConsoleColor.Yellow);
-
+        ColorHelper.PrintColoredLine($"  {message.Role} [{message.Id}]:", ConsoleColor.White);
+        foreach (ResponseContentPart content in message.Content)
+          ColorHelper.PrintColoredLine(content.Text, ConsoleColor.Yellow);
         Console.WriteLine();
       }
     }
   }
 
-  public static async Task DeleteConversationAsync(ConversationClient conversationClient, string conversationId)
+  public static async Task DeleteAsync(ConversationClient conversationClient, string conversationId)
   {
-    ClientResult result = await conversationClient.DeleteConversationAsync(conversationId);
-    bool deleted = JsonNode.Parse(result.GetRawResponse().Content)?["deleted"] is JsonValue;
-    ColorHelper.PrintColoredLine($"  Deleted: {deleted}", ConsoleColor.Yellow);
+    ClientResult<ConversationDeletionResult> result = await conversationClient.DeleteConversationAsync(conversationId);
+    ColorHelper.PrintColoredLine($"  Deleted: {result.Value?.Deleted}", ConsoleColor.Yellow);
+  }
+
+  private static readonly JsonSerializerOptions SerializerOptions = new(JsonSerializerDefaults.Web)
+  {
+    Converters = { new JsonModelConverter() }
+  };
+
+  private sealed class ConversationItemsPage
+  {
+    public required List<ResponseItem> Data { get; init; }
   }
 }

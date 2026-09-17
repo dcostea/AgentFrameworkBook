@@ -1,6 +1,4 @@
-﻿using ModelContextProtocol;
-using ModelContextProtocol.Protocol;
-using ModelContextProtocol.Server;
+﻿using ModelContextProtocol.Server;
 using Serilog;
 using System.ComponentModel;
 
@@ -57,28 +55,5 @@ public class MotorTools
     Log.Information("MOTORS: TurnRight: {Angle}°", angle);
     await Task.Delay(Delay);
     return $"turned clockwise {angle}°.";
-  }
-
-  [McpServerTool(Name = "run_diagnostics", Title = "Run Diagnostics", ReadOnly = true, Destructive = false, Idempotent = true, OpenWorld = false)]
-  [Description("Runs a full diagnostics check on all robot car motors. This is a long-running operation.")]
-  public static async Task<string> RunDiagnosticsAsync()
-  {
-    await Task.Delay(TimeSpan.FromSeconds(2));
-
-    return "Diagnostics complete. All 4 motors passed.";
-  }
-
-  [McpServerTool(Name = "run_diagnostics_with_progress", Title = "Run Diagnostics with Progress", ReadOnly = true, Destructive = false, Idempotent = true, OpenWorld = false)]
-  [Description("Runs a full diagnostics check with progress on all robot car motors. This is a long-running operation that reports progress notifications.")]
-  public static async Task<string> RunDiagnosticsWithProgressAsync(
-    IProgress<ProgressNotificationValue> progress)
-  {
-    for (int i = 1; i <= 4; i++)
-    {
-      await Task.Delay(TimeSpan.FromSeconds(2));
-      progress.Report(new() { Progress = i, Total = 4 });
-    }
-
-    return "Diagnostics complete. All 4 motors passed.";
   }
 }

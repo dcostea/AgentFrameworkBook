@@ -1,7 +1,6 @@
 ﻿using MCPServerWithHttp.Prompts;
 using MCPServerWithHttp.Resources;
 using MCPServerWithHttp.Tools;
-using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using Serilog;
 
@@ -10,10 +9,10 @@ Log.Logger = new LoggerConfiguration()
   .CreateLogger();
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
 
+// Add MCP server with HTTP transport, tools, prompts, and resources
 builder.Services
   .AddMcpServer(options =>
   {

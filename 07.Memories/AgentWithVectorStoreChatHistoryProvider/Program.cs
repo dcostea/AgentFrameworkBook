@@ -1,8 +1,8 @@
-﻿using Helpers;
+﻿using CommunityToolkit.VectorData.InMemory;
+using Helpers;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
-using Microsoft.SemanticKernel.Connectors.InMemory;
 using OpenAI;
 using OpenAI.Chat;
 using Providers;

@@ -1,15 +1,18 @@
-﻿using Azure.AI.OpenAI;
-using Microsoft.Extensions.AI;
+﻿using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
+using OpenAI;
 using System.ClientModel;
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-
 var endpoint = configuration["AzureOpenAI:AudioEndpoint"]!;
 var apiKey = configuration["AzureOpenAI:AudioApiKey"]!;
 var deploymentName = configuration["AzureOpenAI:AudioDeploymentName"]!;
 
-IChatClient chatClient = new AzureOpenAIClient(new Uri(endpoint), new ApiKeyCredential(apiKey))
+OpenAIClient client = new(
+  new ApiKeyCredential(apiKey),
+  new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
+
+IChatClient chatClient = client
   .GetChatClient(deploymentName)
   .AsIChatClient();
 
@@ -61,7 +64,6 @@ M4A (.m4a) → audio/m4a
 WAV (.wav) → audio/wav
 WEBM (.webm) → audio/webm
  */
-
 
 ChatResponse response = await chatClient.GetResponseAsync(conversation);
 Console.WriteLine($"\nAssistant (Azure ChatClient): {response.Text}");

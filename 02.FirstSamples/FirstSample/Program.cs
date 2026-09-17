@@ -34,9 +34,9 @@ var modelName = "ministral-3";
 var ollamaServer = "http://localhost:11434";
 
 IChatClient ollamaApiClient = new OllamaApiClient(new Uri(ollamaServer));
-////var chatClient = new AzureOpenAIClient(new Uri(endpoint), new ApiKeyCredential(apiKey))
+////var chatClient = new OpenAIClient(new Uri(endpoint), new ApiKeyCredential(apiKey))
 ////  //.GetChatClient(deploymentName)
-////  .GetOpenAIResponseClient(deploymentName)
+////  .GetResponseClient(deploymentName)
 var chatClient = ollamaApiClient
   .AsBuilder()
   .UseFunctionInvocation()

@@ -1,7 +1,7 @@
-﻿using Azure.AI.OpenAI;
+﻿using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
+using OpenAI;
 using System.ClientModel;
-using Microsoft.Extensions.AI;
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
 
@@ -22,10 +22,13 @@ Console.WriteLine("User:");
 Console.ResetColor();
 Console.WriteLine(prompt);
 
+OpenAIClient client = new (
+  new ApiKeyCredential(apiKey),
+  new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
 
-// GetOpenAIResponseClient is for evaluation purposes only and is subject to change or removal in future updates.
+// GetResponsesClient is for evaluation purposes only and is subject to change or removal in future updates.
 #pragma warning disable OPENAI001
-IChatClient chatClient = new AzureOpenAIClient(new Uri(endpoint), new ApiKeyCredential(apiKey))
+IChatClient chatClient = client
   .GetResponsesClient()
   .AsIChatClient();
 

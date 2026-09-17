@@ -5,10 +5,10 @@
   </Folder>
   <Folder Name="/02.FirstSamples/">
     <Project Path="02.FirstSamples/FirstAgent/FirstAgent.csproj" Id="2f23be50-11bb-41e7-8da6-629fbd615d18" />
-    <Project Path="02.FirstSamples/FirstSample/FirstSample.csproj" />
-    <Project Path="02.FirstSamples/HandlebarsSample/HandlebarsSample.csproj" Id="04646a79-d806-427f-baa0-042836530d28" />
     <Project Path="02.FirstSamples/FirstAgentWithHistory/FirstAgentWithHistory.csproj" Id="4e60be5d-ec56-45cc-8129-1ea68f4113de" />
     <Project Path="02.FirstSamples/FirstAgentWithTools/FirstAgentWithTools.csproj" Id="ebd65ccc-7df6-4dde-b86e-5933684e5209" />
+    <Project Path="02.FirstSamples/FirstSample/FirstSample.csproj" />
+    <Project Path="02.FirstSamples/HandlebarsSample/HandlebarsSample.csproj" Id="04646a79-d806-427f-baa0-042836530d28" />
   </Folder>
   <Folder Name="/03.ChatClients/">
     <Project Path="03.ChatClients/AnthropicChatClient/AnthropicChatClient.csproj" Id="338800d7-80cc-49fd-819c-33146a236e6f" />
@@ -82,26 +82,29 @@
     <Project Path="11.ObservabilityAndEvaluations/Evaluators/Evaluators.csproj" />
     <Project Path="11.ObservabilityAndEvaluations/Observations.AppHost/Observations.AppHost.csproj" />
     <Project Path="11.ObservabilityAndEvaluations/Observations/Observations.csproj" />
+    <Project Path="11.ObservabilityAndEvaluations/ObservationsWithAgent365/ObservationsWithAgent365.csproj" Id="e0516c34-5b5c-4786-bbe5-f909dfb6fc35" />
   </Folder>
-  <Folder Name="/12.AgentsOrchestration/">
-    <Project Path="12.AgentsOrchestration/ConcurrentOrchestration/ConcurrentOrchestration.csproj" Id="0b3adea0-6344-4a27-8347-4d9355b0ffd8" />
-    <Project Path="12.AgentsOrchestration/SequenceOfConcurrentOrchestration/SequenceOfConcurrentOrchestration.csproj" />
-    <Project Path="12.AgentsOrchestration/SequentialOrchestration/SequentialOrchestration.csproj" Id="7269037f-31be-4e62-a5f0-b3e8cbd15a54" />
-    <Project Path="12.AgentsOrchestration/SequentialOrchestrationAsPipeline/SequentialOrchestrationAsPipeline.csproj" />
-    <Project Path="12.AgentsOrchestration/SequentialOrchestrationWithCheckpoints/SequentialOrchestrationWithCheckpoints.csproj" Id="9eec4505-71b7-4cae-bee8-74b312655242" />
-    <Project Path="12.AgentsOrchestration/SequentialOrchestrationWithIntermediateOutput/SequentialOrchestrationWithIntermediateOutput.csproj" Id="d4256867-6fa8-414a-a453-84579353e1d2" />
-    <Project Path="12.AgentsOrchestration/SequentialOrchestrationWithMiddleware/SequentialOrchestrationWithMiddleware.csproj" Id="f8ffad9c-59cf-48ff-9f4e-c09ee663b7ef" />
+  <Folder Name="/12.SequentialAndConcurrent/">
+    <Project Path="12.SequentialAndConcurrent/ConcurrentOrchestration/ConcurrentOrchestration.csproj" Id="0b3adea0-6344-4a27-8347-4d9355b0ffd8" />
+    <Project Path="12.SequentialAndConcurrent/SequenceOfConcurrentOrchestration/SequenceOfConcurrentOrchestration.csproj" />
+    <Project Path="12.SequentialAndConcurrent/SequentialOrchestration/SequentialOrchestration.csproj" Id="7269037f-31be-4e62-a5f0-b3e8cbd15a54" />
+    <Project Path="12.SequentialAndConcurrent/SequentialOrchestrationAsPipeline/SequentialOrchestrationAsPipeline.csproj" />
+    <Project Path="12.SequentialAndConcurrent/SequentialOrchestrationWithBuilder/SequentialOrchestrationWithBuilder.csproj" Id="4cf11dd7-d4c7-4717-a13b-af89387c30ad" />
+    <Project Path="12.SequentialAndConcurrent/SequentialOrchestrationWithCheckpoints/SequentialOrchestrationWithCheckpoints.csproj" Id="9eec4505-71b7-4cae-bee8-74b312655242" />
+    <Project Path="12.SequentialAndConcurrent/SequentialOrchestrationWithIntermediateOutput/SequentialOrchestrationWithIntermediateOutput.csproj" Id="d4256867-6fa8-414a-a453-84579353e1d2" />
+    <Project Path="12.SequentialAndConcurrent/SequentialOrchestrationWithMiddleware/SequentialOrchestrationWithMiddleware.csproj" Id="f8ffad9c-59cf-48ff-9f4e-c09ee663b7ef" />
   </Folder>
-  <Folder Name="/13.AgentsOrchestration/">
-    <Project Path="13.AgentsOrchestration/GroupChatOrchestration/GroupChatOrchestration.csproj" Id="642c8c2b-5c08-4181-a6e4-3ba133c467e1" />
-    <Project Path="13.AgentsOrchestration/GroupChatOrchestrationWithHitl/GroupChatOrchestrationWithHitl.csproj" Id="8d62b8a1-3fa7-4625-bc9f-1f966a53d27c" />
+  <Folder Name="/13.GroupChat/">
+    <Project Path="13.GroupChat/GroupChatOrchestration/GroupChatOrchestration.csproj" Id="642c8c2b-5c08-4181-a6e4-3ba133c467e1" />
+    <Project Path="13.GroupChat/GroupChatOrchestrationWithCustomManager/GroupChatOrchestrationWithCustomManager.csproj" />
+    <Project Path="13.GroupChat/GroupChatOrchestrationWithHitl/GroupChatOrchestrationWithHitl.csproj" Id="8d62b8a1-3fa7-4625-bc9f-1f966a53d27c" />
   </Folder>
-  <Folder Name="/14.AgentsOrchestration/">
-    <Project Path="14.AgentsOrchestration/HandoffOrchestration/HandoffOrchestration.csproj" Id="ad6b2b8f-32dc-46bc-b3f3-916849672b16" />
-    <Project Path="14.AgentsOrchestration/HandoffOrchestrationAndHandoffReasons/HandoffOrchestrationAndHandoffReasons.csproj" Id="9ec66722-c9ad-4c2b-b3b9-89f0e212ff03" />
+  <Folder Name="/14.Handoff/">
+    <Project Path="14.Handoff/HandoffOrchestration/HandoffOrchestration.csproj" Id="ad6b2b8f-32dc-46bc-b3f3-916849672b16" />
+    <Project Path="14.Handoff/HandoffOrchestrationAndHandoffReasons/HandoffOrchestrationAndHandoffReasons.csproj" Id="9ec66722-c9ad-4c2b-b3b9-89f0e212ff03" />
   </Folder>
-  <Folder Name="/15.AgentsOrchestration/">
-    <Project Path="15.AgentsOrchestration/WorkflowWithNonAgents/WorkflowWithNonAgents.csproj" Id="400db1dc-e470-488d-b984-f7b69a748e51" />
+  <Folder Name="/15.Workflows/">
+    <Project Path="15.Workflows/WorkflowWithNonAgents/WorkflowWithNonAgents.csproj" Id="400db1dc-e470-488d-b984-f7b69a748e51" />
   </Folder>
   <Folder Name="/16.Skills/" />  
   <Folder Name="/Solution Items/">

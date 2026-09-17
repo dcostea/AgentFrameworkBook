@@ -1,8 +1,8 @@
-﻿using Azure.AI.OpenAI;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using System.ClientModel;
 using Microsoft.Extensions.AI;
 using OpenAI.Responses;
+using OpenAI;
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
 
@@ -26,21 +26,17 @@ var prompt = """
   """;
 Console.WriteLine($"USER: {prompt}");
 
-// Using OpenAIClient directly
+OpenAIClient client = new (
+  new ApiKeyCredential(apiKey), 
+  new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
+
 #pragma warning disable OPENAI001
-
-ResponsesClient azureOpenAIChatClient = new AzureOpenAIClient(
-  new Uri(endpoint),
-  new ApiKeyCredential(apiKey))
-  .GetResponsesClient();
-
+ResponsesClient azureOpenAIChatClient = client.GetResponsesClient();
 ClientResult<ResponseResult> response = azureOpenAIChatClient.CreateResponse(deploymentName, prompt);
 Console.WriteLine($"\nAssistant (Azure Responses): {response.Value.GetOutputText()}");
 
 // Using IChatClient interface
-IChatClient chatClient = new AzureOpenAIClient(new Uri(endpoint), new ApiKeyCredential(apiKey))
-  .GetResponsesClient()
-  .AsIChatClient(deploymentName);
+IChatClient chatClient = client.GetResponsesClient().AsIChatClient(deploymentName);
 ChatResponse chatResponse = await chatClient.GetResponseAsync(prompt);
 
 Console.WriteLine($"\nAssistant (IChatClient): {chatResponse.Text}");

@@ -1,9 +1,9 @@
-﻿using Helpers;
+﻿using CommunityToolkit.VectorData.InMemory;
+using Helpers;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.VectorData;
-using Microsoft.SemanticKernel.Connectors.InMemory;
 using OpenAI;
 using OpenAI.Chat;
 
@@ -101,3 +101,24 @@ ColorHelper.PrintColoredLine($"ASSISTANT: {anotherFollowUpResponse.Text}", Conso
 
 Console.WriteLine("HISTORY:");
 await AgentsHelper.PrintChatMessagesAsync(session);
+
+
+
+
+
+
+ChatClientAgent auditorAgent = chatClient.AsAIAgent(new ChatClientAgentOptions
+{
+  Name = "RobotCarAgent",
+  Description = "An auditor agent that observes the robot car moves.",
+  ChatOptions = new ChatOptions
+  {
+    Instructions = """
+      You are an AI auditor observing the robot car moves.
+      You resume explaining briefly the robot car moves.
+      """
+  },
+  AIContextProviders = [chatHistoryMemoryProvider],
+});
+AgentResponse auditorResponse = await auditorAgent.RunAsync("Audit the actions performed by the agents.", session);
+ColorHelper.PrintColoredLine($"AUDITOR: {auditorResponse.Text}", ConsoleColor.Cyan);

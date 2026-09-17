@@ -13,7 +13,7 @@
 // Key Concepts:
 // - Per-invocation: Runs each time a tool is called
 // - Agent identity: Knows which agent is calling the function
-// - Reads context.Messages: Full chat history including prior tool calls
+// - Reads context.Messages: Chat contents associated with the operation that is calling the function
 // - Chainable: Has `next` delegate to continue the pipeline
 //
 // Middleware in this project:
@@ -115,11 +115,10 @@ ColorHelper.PrintColoredLine($"\nRESULT: {result2}\n", ConsoleColor.Yellow);
 ColorHelper.PrintColoredLine("""
   --- CRITICAL DIFFERENCE: Agent vs ChatClient FunctionCalling ---
 
-  Aspect              | Agent FunctionCall    | ChatClient FuncCall
-  --------------------|---------------------- |--------------------
+  Aspect              | Agent FunctionCall    | ChatClient FunctionCall
+  --------------------|---------------------- |------------------------
   Has `next` delegate | YES (chainable)       | NO (terminal)
   Access to agent     | Yes (agent.Name)      | No
-  context.Messages    | Full chat history     | No
   Multiple middlewares| Chain many via .Use() | Single FunctionInvoker
   Execution           | await next(...)       | await InvokeAsync
 
@@ -127,7 +126,6 @@ ColorHelper.PrintColoredLine("""
     .Use(PreventDangerousMoves)     // read context.Messages, block reversal, call next
     .Use(AuditAgentFunctionCalls)   // log timing, call next
 
-  "context.Messages gives FunctionCalling middleware the full chat history,
-   including all prior tool calls — no need to track state manually."
+  "context.Messages gives FunctionCalling middleware the chat contents associated with 
+  the operation that is calling the function."
   """, ConsoleColor.DarkGray);
-

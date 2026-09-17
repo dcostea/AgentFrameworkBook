@@ -5,14 +5,11 @@ using OpenAI;
 using OpenAI.Chat;
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-
 var model = configuration["OpenAI:ModelId"];
 var apiKey = configuration["OpenAI:ApiKey"];
-//#pragma warning disable OPENAI001
-var chatClient = new OpenAIClient(apiKey)
-  .GetChatClient(model);
-//.GetResponsesClient(model);
-//.AsIChatClient();
+IChatClient chatClient = new OpenAIClient(apiKey)
+  .GetChatClient(model)
+  .AsIChatClient();
 
 AIAgent agent = chatClient.AsAIAgent("""
   You are an AI assistant controlling a robot car capable of performing 

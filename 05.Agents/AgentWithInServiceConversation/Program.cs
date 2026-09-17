@@ -18,7 +18,7 @@ IChatClient chatClient = openAIClient.GetResponsesClient().AsIChatClient(model);
 
 // Create a new conversation (in server-side storage)
 ConversationClient conversationClient = openAIClient.GetConversationClient();
-string conversationId = await ConversationsHelper.CreateAndGetConversationIdAsync(conversationClient);
+string conversationId = await ConversationsHelper.CreateAndGetIdAsync(conversationClient);
 
 ChatClientAgent agent = chatClient.AsAIAgent("""
   You are an AI assistant controlling a robot car capable of performing basic moves: forward, backward, turn left, turn right, and stop.
@@ -43,7 +43,7 @@ AgentResponse followUpResponse = await agent.RunAsync(followUpPrompt, session);
 ColorHelper.PrintColoredLine($"ASSISTANT: {followUpResponse.Text}", ConsoleColor.Green);
 
 Console.WriteLine("HISTORY:");
-await ConversationsHelper.PrintConversationAsync(conversationClient, conversationId);
+await ConversationsHelper.PrintAsync(conversationClient, conversationId);
 
 // Clean up the conversation
-await ConversationsHelper.DeleteConversationAsync(conversationClient, conversationId);
+await ConversationsHelper.DeleteAsync(conversationClient, conversationId);

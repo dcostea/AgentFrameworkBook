@@ -1,0 +1,102 @@
+﻿using AgentsWithGroupChatOrchestration;
+using AITools;
+using Helpers;
+using Microsoft.Agents.AI.Workflows;
+using Microsoft.Extensions.AI;
+using Microsoft.Extensions.Configuration;
+using OpenAI;
+using OpenAI.Chat;
+
+var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
+var model = configuration["OpenAI:ModelId"];
+var apiKey = configuration["OpenAI:ApiKey"];
+
+var navigatorAgent = new OpenAIClient(apiKey)
+  .GetChatClient(model)
+  .AsAIAgent("""
+    # PERSONA
+    You are the NavigatorAgent that approves or denies proposed move sequences.
+
+    # ACTIONS
+    Prefer turning angles of 30°, 45°, or 60° for efficient pathing. 90° turns are allowed but only when geometry requires it.
+    Respond APPROVED if the sequence is optimal; otherwise respond DENIED with concrete angle or path improvements.
+
+    # OUTPUT TEMPLATE
+    APPROVED or DENIED: <optimality tips>
+    """,
+    "NavigatorAgent"
+  );
+
+var motorsAgent = new OpenAIClient(apiKey)
+  .GetChatClient(model)
+  .AsAIAgent("""
+    # PERSONA
+    You are the MotorsAgent. Permitted moves: forward, backward, turn left, turn right, stop.
+
+    # ACTIONS
+    Break the mission into a move sequence and submit it to NavigatorAgent for approval, then end your turn.
+    NavigatorAgent's verdict is the ONLY one that matters for execution:
+    If DENIED, revise based on feedback and resubmit.
+    If APPROVED, execute the sequence using MotorTools, then respond with: EXECUTED: <one-line summary>.
+
+    # CONSTRAINTS
+    - NEVER execute a sequence you proposed, revised, or assume approval for, only if NavigatorAgent's message literally contains "APPROVED".
+    - NEVER execute a DENIED sequence.
+    """,
+    "MotorsAgent",
+    tools: [.. MotorTools.AsAITools()]
+  );
+
+var prompt = """
+  # MISSION COMMAND: Exploration Trip
+
+  "There is a tree directly in front of the car. Avoid it and then come back to the original path. The distance to the tree is 50 meters."
+  """;
+
+var workflow = AgentWorkflowBuilder.CreateGroupChatBuilderWith(agents =>
+    new ApprovedTerminationManager(agents) { MaximumIterationCount = 10 })
+  .AddParticipants(motorsAgent, navigatorAgent)
+  .WithOutputFrom(motorsAgent)
+  .WithName("RefinedExecution")
+  .Build();
+
+await WorkflowsHelper.PrintToMarkdownAsync(workflow);
+
+// Use this for streaming execution to see the events as they happen (observability)
+await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, input: prompt);
+await run.TrySendMessageAsync(new TurnToken(emitEvents: true));
+
+await PrintAsync(run);
+
+
+static async Task PrintAsync(StreamingRun run)
+{
+  await foreach (WorkflowEvent evt in run.WatchStreamAsync())
+  {
+    switch (evt)
+    {
+      case ExecutorCompletedEvent completed:
+        ColorHelper.PrintColoredLine($"[EXECUTOR] {completed.ExecutorId} completed.", ConsoleColor.White);
+        break;
+
+      case AgentResponseUpdateEvent update:
+        ColorHelper.PrintColored(update.Update.Text, ConsoleColor.Green);
+        break;
+
+      case WorkflowOutputEvent output:
+        string? summary = output
+          .As<List<Microsoft.Extensions.AI.ChatMessage>>()?
+          .LastOrDefault(m => !string.IsNullOrWhiteSpace(m.Text))?.Text;
+        ColorHelper.PrintColoredLine($"\n[WORKFLOW OUTPUT] {summary}", ConsoleColor.Yellow);
+        break;
+
+      case WorkflowErrorEvent error:
+        ColorHelper.PrintColoredLine($"\n[WORKFLOW ERROR] {error.Exception?.InnerException?.Message ?? error.Exception?.Message ?? "unknown"}", ConsoleColor.Red);
+        break;
+
+      case ExecutorFailedEvent failed:
+        ColorHelper.PrintColoredLine($"\n[EXECUTOR FAILED] {failed.Data?.Message}", ConsoleColor.Red);
+        break;
+    }
+  }
+}

@@ -24,7 +24,7 @@ ChatClientAgent agent = new OpenAIClient(apiKey)
       Respond only with the moves and their parameters (angle or distance), without any additional explanations.
       """,
       Tools = [.. MotorTools.AsAITools()],
-      AllowMultipleToolCalls = false  // false will force one tool call-response per request, true will allow multiple tool call-responses per request
+      AllowMultipleToolCalls = false  // true will allow multiple tool call-responses per request, false will force one tool call-response per request
     }
   });
 

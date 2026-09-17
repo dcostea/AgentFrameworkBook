@@ -20,7 +20,7 @@ Console.WriteLine("User:");
 Console.ResetColor();
 Console.WriteLine(prompt);
 
-// GetOpenAIResponseClient is for evaluation purposes only and is subject to change or removal in future updates.
+// GetResponsesClient is for evaluation purposes only and is subject to change or removal in future updates.
 #pragma warning disable OPENAI001
 IChatClient chatClient = new OpenAIClient(apiKey)
   .GetResponsesClient()

@@ -22,8 +22,9 @@ var apiKey = configuration["OpenAI:ApiKey"];
 
 IChatClient chatClient = new OpenAIClient(apiKey)
   .GetChatClient(model)
-  .AsIChatClient().AsBuilder()
-  .UseLogging(loggerFactory)
+  .AsIChatClient()
+  .AsBuilder()
+    .UseLogging(loggerFactory)
   .Build();
 
 AIAgent agent = new OpenAIClient(apiKey)
