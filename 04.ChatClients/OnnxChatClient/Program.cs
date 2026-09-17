@@ -43,8 +43,8 @@ config.SetProviderOption("cuda", "enable_cuda_graph", "0");
 
 var model = new Model(config);
 
-// Using ONNX Client directly
-using var onnxChatClient = new OnnxRuntimeGenAIChatClient(model);
+// Using OnnxRuntimeGenAIChatClient directly, which is an IChatClientONNX
+using OnnxRuntimeGenAIChatClient onnxChatClient = new(model);
 ChatMessage message = new(ChatRole.User, prompt);
 
 ////ChatResponse response = await onnxChatClient.GetResponseAsync(message);

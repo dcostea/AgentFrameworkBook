@@ -22,6 +22,7 @@ var modelName = "gemma4:e4b";
 //var modelName = "mistral-small3.1";
 var ollamaServer = "http://localhost:11434";
 
+// Create an instance of the OllamaApiClient which is an IChatClient
 var ollamaApiClient = new OllamaApiClient(new Uri(ollamaServer), modelName);
 
 //Quantization

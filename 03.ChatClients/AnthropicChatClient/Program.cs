@@ -18,9 +18,8 @@ var prompt = """
 Console.WriteLine($"USER: {prompt}");
 
 // Using IChatClient interface
-IChatClient chatClient = new AnthropicClient() { ApiKey = apiKey }
+IChatClient chatClient = new AnthropicClient { ApiKey = apiKey }
   .AsIChatClient(defaultModelId: model);
 
 ChatResponse chatResponse = await chatClient.GetResponseAsync(prompt);
 Console.WriteLine($"\nAssistant (IChatClient): {chatResponse.Text}");
-

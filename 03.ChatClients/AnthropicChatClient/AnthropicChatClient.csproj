@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+		<PackageReference Include="Anthropic" Version="12.48.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.12" />
-		<PackageReference Include="Microsoft.Agents.AI.Anthropic" Version="1.21.0-preview.260911.1" />
 	</ItemGroup>
 
 </Project>
