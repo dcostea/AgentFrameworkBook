@@ -58,13 +58,13 @@ public class DirectionChangeEvaluator : IEvaluator
 
     foreach (string toolName in toolNames)
     {
-      if (toolName.Equals("Stop", StringComparison.OrdinalIgnoreCase))
+      if (toolName.Equals("stop", StringComparison.OrdinalIgnoreCase))
       {
         previousLinearDirection = null;
         continue;
       }
 
-      string? currentLinearDirection = toolName is "Forward" or "Backward" ? toolName : null;
+      string? currentLinearDirection = toolName is "forward" or "backward" ? toolName : null;
       if (currentLinearDirection is null)
       {
         continue;

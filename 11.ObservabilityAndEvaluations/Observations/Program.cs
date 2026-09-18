@@ -5,7 +5,6 @@ using Microsoft.Extensions.AI;
 using Observations;
 using OpenAI;
 using OpenTelemetry.Metrics;
-
 using OpenTelemetry.Trace;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
@@ -55,9 +54,6 @@ ColorHelper.PrintColoredLine("""
 var agent = new OpenAIClient(apiKey)
   .GetChatClient(model)
   .AsIChatClient()
-  .AsBuilder()
-  .UseFunctionInvocation()
-  .Build()
   .AsAIAgent(
     name: "RobotCarDemoAgent",
     instructions: """

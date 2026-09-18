@@ -47,7 +47,7 @@ public static class ChatClientResponses
     CancellationToken cancellationToken)
   {
     var currentTokens = Interlocked.Read(ref _tokensCount);
-    if (currentTokens > MaxTokens)
+    if (currentTokens >= MaxTokens)
     {
       ColorHelper.PrintColoredLine($"[ChatClient] [Response] [Tokens] Budget exhausted ({_tokensCount} / {MaxTokens}) — LLM call skipped", ConsoleColor.Red);
       return new ChatResponse([new ChatMessage(ChatRole.Assistant, "Token budget exhausted.")]);

@@ -64,13 +64,15 @@ try
       Console.WriteLine($"\n\nPolling timeout after {maxPollingAttempts} attempts.");
       Console.WriteLine("The background response did not complete in time.");
     }
-
-    Console.ForegroundColor = ConsoleColor.Yellow;
-    Console.WriteLine($"\n\n[FINAL] Assistant:");
-    var finishReason = chatResponse.FinishReason?.Value ?? "(null)";
-    Console.WriteLine($"Finish Reason: {finishReason}");
-    Console.ResetColor();
-    Console.WriteLine(chatResponse.Text);
+    else
+    {
+      Console.ForegroundColor = ConsoleColor.Yellow;
+      Console.WriteLine($"\n\n[FINAL] Assistant:");
+      var finishReason = chatResponse.FinishReason?.Value ?? "(null)";
+      Console.WriteLine($"Finish Reason: {finishReason}");
+      Console.ResetColor();
+      Console.WriteLine(chatResponse.Text);
+    }
   }
   else
   {

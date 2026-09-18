@@ -34,7 +34,6 @@ IChatClient chatClient = client
 
 try
 {
-
   ChatOptions options = new() { AllowBackgroundResponses = true, ModelId = deploymentName };
   ChatResponse chatResponse = await chatClient.GetResponseAsync(prompt, options);
   Console.ForegroundColor = ConsoleColor.Yellow;
@@ -71,12 +70,14 @@ try
       Console.WriteLine($"\n\nPolling timeout after {maxPollingAttempts} attempts.");
       Console.WriteLine("The background response did not complete in time.");
     }
-
-    Console.ForegroundColor = ConsoleColor.Yellow;
-    Console.WriteLine($"\n\n[FINAL] Assistant:");
-    Console.WriteLine($"Finish Reason: {chatResponse.FinishReason?.Value ?? "(null)"}");
-    Console.ResetColor();
-    Console.WriteLine(chatResponse.Text);
+    else 
+    {
+      Console.ForegroundColor = ConsoleColor.Yellow;
+      Console.WriteLine($"\n\n[FINAL] Assistant:");
+      Console.WriteLine($"Finish Reason: {chatResponse.FinishReason?.Value ?? "(null)"}");
+      Console.ResetColor();
+      Console.WriteLine(chatResponse.Text);
+    }
   }
   else
   {

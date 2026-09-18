@@ -34,7 +34,7 @@ List<Microsoft.Extensions.AI.ChatMessage> conversation = [
   ////]),
   new(ChatRole.User, [
     new TextContent("Look at the image of the map and proceed safely."),
-    new DataContent(imageBytes, "image/jpeg")
+    new DataContent(imageBytes, "image/png")
   ]),
 
   ////new(ChatRole.User, [
