@@ -46,7 +46,8 @@ public class EvaluationTests
     ChatResponse response = new(new ChatMessage(ChatRole.Assistant, record.FinalResponse));
 
     IntentResolutionEvaluator intentResolutionEvaluator = new();
-    EvaluationResult result = await intentResolutionEvaluator.EvaluateAsync(history, response, new ChatConfiguration(_chatClient));
+    EvaluationResult result = await intentResolutionEvaluator.EvaluateAsync(history, response,
+      new ChatConfiguration(_chatClient), cancellationToken: TestContext.Current.CancellationToken);
     NumericMetric intentResolution = result.Get<NumericMetric>(IntentResolutionEvaluator.IntentResolutionMetricName);
 
     Assert.NotNull(intentResolution.Interpretation);
@@ -69,7 +70,8 @@ public class EvaluationTests
     ChatResponse response = new(new ChatMessage(ChatRole.Assistant, record.FinalResponse));
 
     CoherenceEvaluator coherenceEvaluator = new();
-    EvaluationResult result = await coherenceEvaluator.EvaluateAsync(history, response, new ChatConfiguration(_chatClient));
+    EvaluationResult result = await coherenceEvaluator.EvaluateAsync(history, response,
+      new ChatConfiguration(_chatClient), cancellationToken: TestContext.Current.CancellationToken);
     NumericMetric coherence = result.Get<NumericMetric>(CoherenceEvaluator.CoherenceMetricName);
 
     Assert.NotNull(coherence.Interpretation);
@@ -92,7 +94,8 @@ public class EvaluationTests
     ChatResponse response = new(new ChatMessage(ChatRole.Assistant, record.FinalResponse));
 
     RelevanceEvaluator relevanceEvaluator = new();
-    EvaluationResult result = await relevanceEvaluator.EvaluateAsync(history, response, new ChatConfiguration(_chatClient));
+    EvaluationResult result = await relevanceEvaluator.EvaluateAsync(history, response,
+      new ChatConfiguration(_chatClient), cancellationToken: TestContext.Current.CancellationToken);
     NumericMetric relevance = result.Get<NumericMetric>(RelevanceEvaluator.RelevanceMetricName);
 
     Assert.NotNull(relevance.Interpretation);
@@ -115,7 +118,8 @@ public class EvaluationTests
     ChatResponse response = new(new ChatMessage(ChatRole.Assistant, record.FinalResponse));
 
     FluencyEvaluator fluencyEvaluator = new();
-    EvaluationResult result = await fluencyEvaluator.EvaluateAsync(history, response, new ChatConfiguration(_chatClient));
+    EvaluationResult result = await fluencyEvaluator.EvaluateAsync(history, response, 
+      new ChatConfiguration(_chatClient), cancellationToken: TestContext.Current.CancellationToken);
     NumericMetric fluency = result.Get<NumericMetric>(FluencyEvaluator.FluencyMetricName);
 
     Assert.NotNull(fluency.Interpretation);
@@ -141,7 +145,8 @@ public class EvaluationTests
     GroundednessEvaluatorContext context = new(record.GroundTruth!);
 
     GroundednessEvaluator groundednessEvaluator = new();
-    EvaluationResult result = await groundednessEvaluator.EvaluateAsync(history, response, new ChatConfiguration(_chatClient), [context]);
+    EvaluationResult result = await groundednessEvaluator.EvaluateAsync(history, response, 
+      new ChatConfiguration(_chatClient), [context], cancellationToken: TestContext.Current.CancellationToken);
     NumericMetric groundedness = result.Get<NumericMetric>(GroundednessEvaluator.GroundednessMetricName);
 
     Assert.NotNull(groundedness.Interpretation);
@@ -165,7 +170,8 @@ public class EvaluationTests
     EquivalenceEvaluatorContext context = new(record.GroundTruth!);
 
     EquivalenceEvaluator equivalenceEvaluator = new();
-    EvaluationResult result = await equivalenceEvaluator.EvaluateAsync(history, response, new ChatConfiguration(_chatClient), [context]);
+    EvaluationResult result = await equivalenceEvaluator.EvaluateAsync(history, response, 
+      new ChatConfiguration(_chatClient), [context], cancellationToken: TestContext.Current.CancellationToken);
     NumericMetric equivalence = result.Get<NumericMetric>(EquivalenceEvaluator.EquivalenceMetricName);
 
     Assert.NotNull(equivalence.Interpretation);
@@ -189,7 +195,8 @@ public class EvaluationTests
     CompletenessEvaluatorContext context = new(record.GroundTruth!);
 
     CompletenessEvaluator completenessEvaluator = new();
-    EvaluationResult result = await completenessEvaluator.EvaluateAsync(history, response, new ChatConfiguration(_chatClient), [context]);
+    EvaluationResult result = await completenessEvaluator.EvaluateAsync(history, response,
+      new ChatConfiguration(_chatClient), [context], cancellationToken: TestContext.Current.CancellationToken);
     NumericMetric completeness = result.Get<NumericMetric>(CompletenessEvaluator.CompletenessMetricName);
 
     Assert.NotNull(completeness.Interpretation);
@@ -213,7 +220,8 @@ public class EvaluationTests
     RetrievalEvaluatorContext context = new(record.RetrievedContextChunks!);
 
     RetrievalEvaluator retrievalEvaluator = new();
-    EvaluationResult result = await retrievalEvaluator.EvaluateAsync(history, response, new ChatConfiguration(_chatClient), [context]);
+    EvaluationResult result = await retrievalEvaluator.EvaluateAsync(history, response, 
+      new ChatConfiguration(_chatClient), [context], cancellationToken: TestContext.Current.CancellationToken);
     NumericMetric retrieval = result.Get<NumericMetric>(RetrievalEvaluator.RetrievalMetricName);
 
     Assert.NotNull(retrieval.Interpretation);
@@ -245,7 +253,7 @@ public class EvaluationTests
 
     EvaluationResult result = await compositeEvaluator.EvaluateAsync(history, response, 
       new ChatConfiguration(_chatClient),
-      [baselineResponseForEquivalence]);
+      [baselineResponseForEquivalence], cancellationToken: TestContext.Current.CancellationToken);
     NumericMetric coherence = result.Get<NumericMetric>(CoherenceEvaluator.CoherenceMetricName);
     NumericMetric equivalence = result.Get<NumericMetric>(EquivalenceEvaluator.EquivalenceMetricName);
 
@@ -287,7 +295,8 @@ public class EvaluationTests
     TaskAdherenceEvaluatorContext context = new([.. MotorTools.AsAITools()]);
 
     TaskAdherenceEvaluator taskAdherenceEvaluator = new();
-    EvaluationResult result = await taskAdherenceEvaluator.EvaluateAsync(history, response, new ChatConfiguration(_chatClient), additionalContext: [context]);
+    EvaluationResult result = await taskAdherenceEvaluator.EvaluateAsync(history, response, 
+      new ChatConfiguration(_chatClient), additionalContext: [context], cancellationToken: TestContext.Current.CancellationToken);
     NumericMetric taskAdherence = result.Get<NumericMetric>(TaskAdherenceEvaluator.TaskAdherenceMetricName);
 
     Assert.NotNull(taskAdherence.Interpretation);
@@ -322,7 +331,8 @@ public class EvaluationTests
 
     ToolCallAccuracyEvaluatorContext context = new([.. MotorTools.AsAITools()]);
     ToolCallAccuracyEvaluator toolCallAccuracyEvaluator = new();
-    EvaluationResult result = await toolCallAccuracyEvaluator.EvaluateAsync(history, response, new ChatConfiguration(_chatClient), additionalContext: [context]);
+    EvaluationResult result = await toolCallAccuracyEvaluator.EvaluateAsync(history, response, 
+      new ChatConfiguration(_chatClient), additionalContext: [context], cancellationToken: TestContext.Current.CancellationToken);
     BooleanMetric toolAccuracy = result.Get<BooleanMetric>(ToolCallAccuracyEvaluator.ToolCallAccuracyMetricName);
 
     Assert.NotNull(toolAccuracy.Interpretation);

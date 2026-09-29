@@ -58,7 +58,8 @@ public class DirectionChangeTests
     ChatResponse response = new(new ChatMessage(ChatRole.Assistant, toolCallContents));
 
     DirectionChangeEvaluator evaluator = new();
-    EvaluationResult result = await evaluator.EvaluateAsync(history, response, new ChatConfiguration(_chatClient));
+    EvaluationResult result = await evaluator.EvaluateAsync(history, response, 
+      new ChatConfiguration(_chatClient), cancellationToken: TestContext.Current.CancellationToken);
     BooleanMetric directionChangeSafety = result.Get<BooleanMetric>(DirectionChangeEvaluator.DirectionChangeMetricName);
 
     Assert.NotNull(directionChangeSafety.Interpretation);
