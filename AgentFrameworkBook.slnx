@@ -106,10 +106,8 @@
   <Folder Name="/15.AISkills/">
     <Project Path="15.AISkills/AgentWithAISkills/AgentWithAISkills.csproj" />
   </Folder>
-  <Folder Name="/16.RAG/">
-  </Folder>
-  <Folder Name="/17.Workflows/">
-    <Project Path="17.Workflows/WorkflowWithNonAgents/WorkflowWithNonAgents.csproj" />
+  <Folder Name="/16.Workflows/">
+    <Project Path="16.Workflows/WorkflowWithNonAgents/WorkflowWithNonAgents.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path="README.md" />
