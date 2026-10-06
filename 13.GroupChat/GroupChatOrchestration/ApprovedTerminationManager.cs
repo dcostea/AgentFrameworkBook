@@ -13,9 +13,12 @@ public class ApprovedTerminationManager(IReadOnlyList<AIAgent> agents)
     if (chatManager.IterationCount >= chatManager.MaximumIterationCount)
       return ValueTask.FromResult(true);
 
-    return ValueTask.FromResult(
-      (messages.LastOrDefault()?.Text ?? string.Empty).Contains(nameof(ExecutionDecision.EXECUTED)) &&
-      messages.Any(m => m.Text != null
-        && m.Text.Contains(nameof(ExecutionDecision.APPROVED))
-        && !m.Text.Contains(nameof(ExecutionDecision.DENIED))));
+    bool approvalReceived = messages.Any(m => m.Text != null
+      && m.Text.Contains(nameof(ExecutionDecision.APPROVED))
+      && !m.Text.Contains(nameof(ExecutionDecision.DENIED)));
+
+    bool executionConfirmed = (messages.LastOrDefault()?.Text ?? string.Empty)
+      .Contains(nameof(ExecutionDecision.EXECUTED));
+
+    return ValueTask.FromResult(approvalReceived && executionConfirmed);
   });

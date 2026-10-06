@@ -1,0 +1,82 @@
+kind: source
+name: rag-postgres
+type: postgres
+host: postgres
+port: 5432
+database: rag_samples
+user: rag_demo
+password: ${POSTGRES_PASSWORD}
+---
+kind: source
+name: rag-neo4j
+type: neo4j
+uri: bolt://neo4j:7687
+user: neo4j
+password: ${NEO4J_PASSWORD}
+database: neo4j
+---
+kind: tool
+name: search_keywords
+type: postgres-sql
+source: rag-postgres
+description: Search the teaching corpus with PostgreSQL English full-text ranking (ts_rank_cd, not BM25). Blank or unknown queries return no rows.
+parameters:
+  - name: query
+    type: string
+    description: English keywords or a web-style search query.
+  - name: top
+    type: integer
+    description: Maximum number of hits, clamped to 1..10.
+statement: |
+  SELECT id AS "Id", title AS "Title", body AS "Text",
+         ts_rank_cd(search_vector, search_query)::double precision AS "Score",
+         'keyword' AS "Source", NULL::text AS "Evidence"
+  FROM rag_sample_documents, websearch_to_tsquery('english', btrim($1)) AS search_query
+  WHERE btrim($1) <> '' AND search_vector @@ search_query
+  ORDER BY "Score" DESC, id
+  LIMIT GREATEST(1, LEAST(10, $2::bigint));
+---
+kind: tool
+name: list_documents
+type: postgres-sql
+source: rag-postgres
+description: Return the complete teaching corpus in ID order for client-side BM25 scoring. No full-text prefilter or result limit is applied.
+statement: |
+  SELECT id AS "Id", service AS "Service", title AS "Title", body AS "Text"
+  FROM rag_sample_documents
+  ORDER BY id;
+---
+kind: tool
+name: search_graph
+type: neo4j-cypher
+source: rag-neo4j
+description: Find documents describing an exact service and services depending on it within two incoming DEPENDS_ON hops. Returns each document once with its shortest deterministic dependency-chain evidence; no entity extraction is performed. Blank or unknown entities return no rows.
+parameters:
+  - name: entity
+    type: string
+    description: Exact service name, matched case-insensitively after trimming, for example SafetyService.
+  - name: top
+    type: integer
+    description: Maximum number of distinct documents, clamped to 1..10.
+statement: |
+  MATCH (target:RagSampleService)
+  WHERE trim($entity) <> '' AND toLower(target.name) = toLower(trim($entity))
+  MATCH path = (service:RagSampleService)-[:DEPENDS_ON*0..2]->(target)
+  WHERE all(node IN nodes(path) WHERE node:RagSampleService)
+  MATCH (document:RagSampleDocument)-[:DESCRIBES]->(service)
+  WITH document, length(path) AS hops, [node IN nodes(path) | node.name] AS chain
+  ORDER BY hops, chain
+  WITH document, head(collect({hops: hops, chain: chain})) AS best
+  RETURN document.id AS Id, document.title AS Title, document.text AS Text,
+         1.0 / (1 + best.hops) AS Score, 'graph' AS Source,
+         reduce(evidence = head(best.chain), name IN tail(best.chain) | evidence + ' -> ' + name)
+           + ' (DEPENDS_ON; ' + toString(best.hops) + ' hops)' AS Evidence
+  ORDER BY Score DESC, Id
+  LIMIT CASE WHEN $top < 1 THEN 1 WHEN $top > 10 THEN 10 ELSE $top END;
+---
+kind: toolset
+name: rag
+tools:
+  - search_keywords
+  - list_documents
+  - search_graph

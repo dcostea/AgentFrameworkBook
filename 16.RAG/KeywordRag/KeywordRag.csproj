@@ -1,11 +1,9 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.5.3">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <PackageReference Include="MessagePack" Version="3.1.11" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\11.ObservabilityAndEvaluations\Observations\Observations.csproj" />
+    <PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="10.10.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.12" />
+    <ProjectReference Include="..\RagShared\RagShared.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

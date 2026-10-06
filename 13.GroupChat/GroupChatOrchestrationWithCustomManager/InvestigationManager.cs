@@ -15,13 +15,21 @@ public sealed class InvestigationManager(AIAgent EnvironmentAgent, AIAgent Maint
     IReadOnlyList<ChatMessage> history,
     CancellationToken cancellationToken = default)
   {
+    if (IterationCount >= MaximumIterationCount)
+      return ValueTask.FromResult(true);
+
     var lastDecision = (history.LastOrDefault()?.Text ?? string.Empty).Split(':', 2)[0].Trim();
 
-    return ValueTask.FromResult(
-      IterationCount >= MaximumIterationCount ||
-      (_lastAgent == SafetyAgent &&
-        (lastDecision.Equals(nameof(SafetyDecision.DENIED), StringComparison.OrdinalIgnoreCase) ||
-         (_calibrated && lastDecision.Equals(nameof(SafetyDecision.APPROVED), StringComparison.OrdinalIgnoreCase)))));
+    bool safetyAgentResponded = _lastAgent == SafetyAgent;
+    bool safetyDenied = lastDecision.Equals(
+      nameof(SafetyDecision.DENIED), StringComparison.OrdinalIgnoreCase);
+    bool calibratedInvestigationApproved = _calibrated && lastDecision.Equals(
+      nameof(SafetyDecision.APPROVED), StringComparison.OrdinalIgnoreCase);
+
+    bool investigationCompleted = safetyAgentResponded
+      && (safetyDenied || calibratedInvestigationApproved);
+
+    return ValueTask.FromResult(investigationCompleted);
   }
 
   protected override ValueTask<IEnumerable<ChatMessage>> UpdateHistoryAsync(

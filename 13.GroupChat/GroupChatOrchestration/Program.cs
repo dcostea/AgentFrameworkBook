@@ -75,8 +75,14 @@ static async Task PrintAsync(StreamingRun run)
   {
     switch (evt)
     {
-      case ExecutorCompletedEvent completed:
-        ColorHelper.PrintColoredLine($"[EXECUTOR] {completed.ExecutorId} completed.", ConsoleColor.White);
+      case ExecutorInvokedEvent invoked:
+        var messageType = invoked.Data switch
+        {
+          TurnToken => nameof(TurnToken),
+          List<Microsoft.Extensions.AI.ChatMessage> => "chat messages",
+          _ => invoked.Data?.GetType().Name ?? "unknown message"
+        };
+        ColorHelper.PrintColoredLine($"[EXECUTOR] {invoked.ExecutorId} received {messageType}.", ConsoleColor.White);
         break;
 
       case AgentResponseUpdateEvent update:

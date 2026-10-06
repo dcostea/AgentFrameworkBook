@@ -1,0 +1,61 @@
+{
+  "Documents": [
+    {
+      "Id": "doc-1",
+      "Service": "NavigationService",
+      "Title": "Planning Robby's routes",
+      "Text": "NavigationService plans Robby's routes between inspection waypoints. Each route has a route ID and uses the current position estimate. These are fictional teaching facts, not physical control instructions."
+    },
+    {
+      "Id": "doc-2",
+      "Service": "MotorService",
+      "Title": "Wheel calibration records",
+      "Text": "MotorService stores Robby's wheel calibration records. In this fictional teaching policy, a calibration record expires after seven days. An expired record requires a technician review before a simulated mission is approved."
+    },
+    {
+      "Id": "doc-3",
+      "Service": "SafetyService",
+      "Title": "Reviewing simulated hazard reports",
+      "Text": "SafetyService reviews Robby's simulated hazard reports. A suspicious smoke reading marks the simulated mission for human review. This teaching workflow does not certify safety, detect real fires, or operate hardware."
+    },
+    {
+      "Id": "doc-4",
+      "Service": "TelemetryService",
+      "Title": "Delivery of diagnostic messages",
+      "Text": "TelemetryService delivers Robby's diagnostic messages to the teaching dashboard. Failed deliveries are retried three times in this fictional policy. Undelivered messages remain in the demonstration queue."
+    },
+    {
+      "Id": "doc-5",
+      "Service": "MissionService",
+      "Title": "Scheduling inspection missions",
+      "Text": "MissionService lists Robby's simulated inspection missions by zone and planned date. Each mission references a map revision and a set of inspection waypoints. This catalog does not dispatch the robot car."
+    },
+    {
+      "Id": "doc-6",
+      "Service": "LocalizationService",
+      "Title": "Position estimates and map revisions",
+      "Text": "LocalizationService stores Robby's position estimate with a timestamp and map revision. In the fictional teaching policy, estimates older than thirty seconds are marked stale for review. This is not a real navigation tolerance."
+    },
+    {
+      "Id": "doc-7",
+      "Service": "IdentityService",
+      "Title": "Technician access to the dashboard",
+      "Text": "IdentityService verifies the technician's identity before access to Robby's teaching dashboard. Account recovery restores dashboard access after a forgotten password. Dashboard access does not grant permission to control hardware."
+    },
+    {
+      "Id": "doc-8",
+      "Service": "MaintenanceService",
+      "Title": "Preparing maintenance reviews",
+      "Text": "MaintenanceService prepares Robby's maintenance review using a route ID and a technician identity. A technician can request a route inspection or record a completed review. These teaching records do not perform repairs."
+    }
+  ],
+  "Dependencies": [
+    { "From": "NavigationService", "To": "MotorService" },
+    { "From": "MotorService", "To": "SafetyService" },
+    { "From": "NavigationService", "To": "LocalizationService" },
+    { "From": "NavigationService", "To": "TelemetryService" },
+    { "From": "MissionService", "To": "LocalizationService" },
+    { "From": "MaintenanceService", "To": "NavigationService" },
+    { "From": "MaintenanceService", "To": "IdentityService" }
+  ]
+}

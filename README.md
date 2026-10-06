@@ -13,7 +13,7 @@ and updated for the GA release of Microsoft Agent Framework.
 
 ## Book status
 
-The Leanpub edition currently includes **12 of 16 chapters**.
+The Leanpub edition currently includes **13 of 16 chapters**.
 
 The remaining four chapters, along with all future book updates, are included
 at no additional cost for Leanpub readers.
@@ -43,10 +43,10 @@ announcements and behind-the-scenes updates.
 - Chapter 10 — Building enterprise-ready agents with Agent middleware
 - Chapter 11 — Preparing reliable agents with observability and evaluation
 - Chapter 12 — Orchestrating agents using sequential and concurrent patterns
+- Chapter 13 — Iterative reasoning using the group chat pattern
 
 ## Upcoming chapters
 
-- Chapter 13 — Iterative reasoning using the group chat pattern
 - Chapter 14 — Conditional routing using the handoff pattern
 - Chapter 15 — Orchestrating agents dynamically using AI skills
 - Chapter 16 — Building custom orchestration using workflows

@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-		<PackageReference Include="Anthropic" Version="12.51.0" />
+		<PackageReference Include="Anthropic" Version="12.53.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.12" />
 	</ItemGroup>
 
