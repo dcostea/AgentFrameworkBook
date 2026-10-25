@@ -37,6 +37,7 @@ using ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
 
 IChatClient chatClient = new ChatClientBuilder(baseClient)
   .UseLogging(loggerFactory)
+  .UseDistributedCache()
   .Build();
 
 ChatResponse chatResponse = await chatClient.GetResponseAsync(prompt);
